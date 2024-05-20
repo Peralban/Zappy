@@ -63,18 +63,13 @@ dkms.conf
 # Clion folder
 .idea/
 
-# Executables
-client
-server
-
 # vscode folder
 .vscode/
 
-# executables
-myftp
+# Executables
+zappy_server
+zappy_ai
+zappy_gui
 
 # Test criterion
 unit_tests*
-
-# criterion file
-tests*
