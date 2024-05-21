@@ -40,7 +40,6 @@ jobs:
   check_coding_style_include:
     runs-on: ubuntu-latest
     container: ghcr.io/epitech/coding-style-checker:latest
-    needs: check_coding_style_src
     steps:
       - uses: actions/checkout@v3
       - name: start checker
