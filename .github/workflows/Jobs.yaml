@@ -4,9 +4,6 @@ on:
   push:
     branches-ignore:
       - 'ga-ignore-**'
-  pull_request:
-    branches-ignore:
-      - 'ga-ignore-**f'
 
 env:
   EXECUTABLES_1: zappy_server
@@ -43,6 +40,7 @@ jobs:
   check_coding_style_include:
     runs-on: ubuntu-latest
     container: ghcr.io/epitech/coding-style-checker:latest
+    needs: check_coding_style_src
     steps:
       - uses: actions/checkout@v3
       - name: start checker
