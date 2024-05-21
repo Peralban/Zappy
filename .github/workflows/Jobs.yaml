@@ -15,14 +15,39 @@ env:
   MIRROR_URL: git@github.com:EpitechPromo2027/B-YEP-400-NAN-4-1-zappy-alban.peralta.git
 
 jobs:
-  check_coding_style:
+  check_coding_style_src:
     runs-on: ubuntu-latest
     container: ghcr.io/epitech/coding-style-checker:latest
     steps:
       - uses: actions/checkout@v3
       - name: start checker
         run : |
-          check.sh $(pwd) $(pwd)
+          check.sh $(pwd)/Network/src $(pwd)
+      - name: print
+        run: |
+          result=$(pwd)/coding-style-reports.log
+          result=$(grep -v "libmyteams" $result)
+          result=$(grep -v "logging" $result)
+          while read line; do
+            ErrorType=$(cut -d ":" -f 3 <<< $line)
+            ErrorCode=$(cut -d ":" -f 4 <<< $line)
+            ErrorFile=$(cut -d ":" -f 1 <<< $line | sed 's/^.\{2\}//')
+            ErrorLine=$(cut -d ":" -f 2 <<< $line)
+            echo "::error title=$ErrorType coding style error: #$ErrorFile#L$ErrorLine:: $ErrorCode"
+          done < $result
+          if [ -s $result ];
+          then
+            exit 1
+          fi
+
+  check_coding_style_include:
+    runs-on: ubuntu-latest
+    container: ghcr.io/epitech/coding-style-checker:latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: start checker
+        run : |
+          check.sh $(pwd)/Network/include $(pwd)
       - name: print
         run: |
           result=$(pwd)/coding-style-reports.log
@@ -44,6 +69,9 @@ jobs:
     runs-on: ubuntu-latest
     container: epitechcontent/epitest-docker
     timeout-minutes: 2
+    needs:
+      - check_coding_style_src
+      - check_coding_style_include
     steps:
       - uses: actions/checkout@v3
       - name: make verify
@@ -63,6 +91,9 @@ jobs:
     runs-on: ubuntu-latest
     container: epitechcontent/epitest-docker
     timeout-minutes: 2
+    needs:
+      - check_coding_style_src
+      - check_coding_style_include
     steps:
       - uses: actions/checkout@v3
       - name: make verify
@@ -82,6 +113,9 @@ jobs:
     runs-on: ubuntu-latest
     container: epitechcontent/epitest-docker
     timeout-minutes: 2
+    needs:
+      - check_coding_style_src
+      - check_coding_style_include
     steps:
       - uses: actions/checkout@v3
       - name: make verify
