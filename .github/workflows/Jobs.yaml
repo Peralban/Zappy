@@ -23,8 +23,6 @@ jobs:
       - name: print
         run: |
           result=$(pwd)/coding-style-reports.log
-          result=$(grep -v "libmyteams" $result)
-          result=$(grep -v "logging" $result)
           while read line; do
             ErrorType=$(cut -d ":" -f 3 <<< $line)
             ErrorCode=$(cut -d ":" -f 4 <<< $line)
@@ -48,8 +46,6 @@ jobs:
       - name: print
         run: |
           result=$(pwd)/coding-style-reports.log
-          result=$(grep -v "libmyteams" $result)
-          result=$(grep -v "logging" $result)
           while read line; do
             ErrorType=$(cut -d ":" -f 3 <<< $line)
             ErrorCode=$(cut -d ":" -f 4 <<< $line)
