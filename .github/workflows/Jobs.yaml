@@ -58,7 +58,7 @@ jobs:
             exit 1
           fi
 
-  check_program_compilation1:
+  check_program_compilation:
     runs-on: ubuntu-latest
     container: epitechcontent/epitest-docker
     timeout-minutes: 2
@@ -79,44 +79,12 @@ jobs:
             echo "Executable file does not exist"
             exit 1
           fi
-
-  check_program_compilation2:
-    runs-on: ubuntu-latest
-    container: epitechcontent/epitest-docker
-    timeout-minutes: 2
-    needs:
-      - check_coding_style_src
-      - check_coding_style_include
-    steps:
-      - uses: actions/checkout@v3
-      - name: make verify
-        run: make
-      - name: make clean
-        run: make clean
-      - name: execute
-        run: |
           if [ -x ${{ env.EXECUTABLES_2 }} ]; then
             echo "Executable file exists"
           else
             echo "Executable file does not exist"
             exit 1
           fi
-
-  check_program_compilation3:
-    runs-on: ubuntu-latest
-    container: epitechcontent/epitest-docker
-    timeout-minutes: 2
-    needs:
-      - check_coding_style_src
-      - check_coding_style_include
-    steps:
-      - uses: actions/checkout@v3
-      - name: make verify
-        run: make
-      - name: make clean
-        run: make clean
-      - name: execute
-        run: |
           if [ -x ${{ env.EXECUTABLES_3 }} ]; then
             echo "Executable file exists"
           else
@@ -127,9 +95,7 @@ jobs:
   Repository_Mirroring:
     runs-on: ubuntu-latest
     needs:
-        - check_program_compilation1
-        - check_program_compilation2
-        - check_program_compilation3
+        - check_program_compilation
     steps:
       - uses: actions/checkout@v3
         with:
@@ -144,9 +110,7 @@ jobs:
   run_tests:
     runs-on: ubuntu-latest
     needs:
-      - check_program_compilation1
-      - check_program_compilation2
-      - check_program_compilation3
+      - check_program_compilation
     container:  epitechcontent/epitest-docker
     timeout-minutes: 2
     steps:
