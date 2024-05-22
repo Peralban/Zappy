@@ -1,0 +1,119 @@
+name: Zappy_mirror
+
+on:
+  push:
+    branches-ignore:
+      - 'ga-ignore-**'
+
+env:
+  EXECUTABLES_1: zappy_server
+  EXECUTABLES_2: zappy_gui
+  EXECUTABLES_3: zappy_ai
+  MIRROR_URL: git@github.com:EpitechPromo2027/B-YEP-400-NAN-4-1-zappy-alban.peralta.git
+
+jobs:
+  check_coding_style_src:
+    runs-on: ubuntu-latest
+    container: ghcr.io/epitech/coding-style-checker:latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: start checker
+        run : |
+          check.sh $(pwd)/Network/src $(pwd)
+      - name: print
+        run: |
+          result=$(pwd)/coding-style-reports.log
+          while read line; do
+            ErrorType=$(cut -d ":" -f 3 <<< $line)
+            ErrorCode=$(cut -d ":" -f 4 <<< $line)
+            ErrorFile=$(cut -d ":" -f 1 <<< $line | sed 's/^.\{2\}//')
+            ErrorLine=$(cut -d ":" -f 2 <<< $line)
+            echo "::error title=$ErrorType coding style error: #$ErrorFile#L$ErrorLine:: $ErrorCode"
+          done < $result
+          if [ -s $result ];
+          then
+            exit 1
+          fi
+
+  check_coding_style_include:
+    runs-on: ubuntu-latest
+    container: ghcr.io/epitech/coding-style-checker:latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: start checker
+        run : |
+          check.sh $(pwd)/Network/include $(pwd)
+      - name: print
+        run: |
+          result=$(pwd)/coding-style-reports.log
+          while read line; do
+            ErrorType=$(cut -d ":" -f 3 <<< $line)
+            ErrorCode=$(cut -d ":" -f 4 <<< $line)
+            ErrorFile=$(cut -d ":" -f 1 <<< $line | sed 's/^.\{2\}//')
+            ErrorLine=$(cut -d ":" -f 2 <<< $line)
+            echo "::error title=$ErrorType coding style error: #$ErrorFile#L$ErrorLine:: $ErrorCode"
+          done < $result
+          if [ -s $result ];
+          then
+            exit 1
+          fi
+
+  check_program_compilation:
+    runs-on: ubuntu-latest
+    container: epitechcontent/epitest-docker
+    timeout-minutes: 2
+    needs:
+      - check_coding_style_src
+      - check_coding_style_include
+    steps:
+      - uses: actions/checkout@v3
+      - name: make verify
+        run: make
+      - name: make clean
+        run: make clean
+      - name: execute
+        run: |
+          if [ -x ${{ env.EXECUTABLES_1 }} ]; then
+            echo "Executable file exists"
+          else
+            echo "Executable file does not exist"
+            exit 1
+          fi
+          if [ -x ${{ env.EXECUTABLES_2 }} ]; then
+            echo "Executable file exists"
+          else
+            echo "Executable file does not exist"
+            exit 1
+          fi
+          if [ -x ${{ env.EXECUTABLES_3 }} ]; then
+            echo "Executable file exists"
+          else
+            echo "Executable file does not exist"
+            exit 1
+          fi
+
+  Repository_Mirroring:
+    runs-on: ubuntu-latest
+    needs:
+        - check_program_compilation
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: pixta-dev/repository-mirroring-action@v1
+        with:
+          target_repo_url:
+            ${{ env.MIRROR_URL }}
+          ssh_private_key:
+            ${{ secrets.GIT_SSH_PRIVATE_KEY }}
+
+  run_tests:
+    runs-on: ubuntu-latest
+    needs:
+      - check_program_compilation
+    container:  epitechcontent/epitest-docker
+    timeout-minutes: 2
+    steps:
+      - uses: actions/checkout@v3
+      - name: make test
+        run: make tests_run
