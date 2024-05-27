@@ -5,7 +5,10 @@
 ** DESCRIPTION
 */
 
-int main(void)
+#include "Server/server.h"
+
+int main(int ac, char **av)
 {
+    zappy_network(ac, av);
     return 0;
 }
