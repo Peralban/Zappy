@@ -52,12 +52,21 @@ typedef struct client_list_s {
     struct client_list_s *prev;
 } client_list_t;
 
+typedef struct info_game_s {
+    int width;
+    int height;
+    char **team_names;
+    int clientsNb;
+    int freq;
+} info_game_t;
+
 typedef struct server_s {
     fd_set readfds;
     fd_set writefds;
     int port;
     int socket;
     struct sockaddr_in *serverAddress;
+    info_game_t *info_game;
 } server_t;
 
 /**

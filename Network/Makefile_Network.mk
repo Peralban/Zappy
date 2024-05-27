@@ -14,6 +14,7 @@ SRC		= 		main.c								\
 				ErrorHandling/check_return_value.c	\
 				Server/server_loop.c				\
 				Server/zappy_network.c				\
+				Parsing/parse_args.c				\
 
 TRUE_SRC 	= 	$(patsubst %,src/%, $(SRC))
 
