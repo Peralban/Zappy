@@ -15,7 +15,9 @@
 char **get_array_from_args(int ac, char **av)
 {
     bool n_flag = false;
+    bool return_null = false;
     char **array = malloc(sizeof(char *) * ALL_FLAGS + 1);
+    bool args[ALL_FLAGS] = {false, false, false, false, false, false};
 
     if (array == NULL)
         return NULL;
@@ -31,6 +33,7 @@ char **get_array_from_args(int ac, char **av)
                     array[NAMES] = strcat(array[NAMES], " ");
                     array[NAMES] = strcat(array[NAMES], av[i]);
                 } else {
+                    args[j] = true;
                     array[j] = av[i + 1];
                     i++;
                     n_flag = (j == NAMES);
@@ -39,6 +42,14 @@ char **get_array_from_args(int ac, char **av)
             }
         }
     }
+    for (int i = 0; i < ALL_FLAGS; i++) {
+        if (!args[i]) {
+            printf("Missing argument %s\n", FLAGS[i]);
+            return_null = true;
+        }
+    }
+    if (return_null)
+        return NULL;
     array[ALL_FLAGS] = NULL;
     return array;
 }
