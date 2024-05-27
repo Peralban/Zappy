@@ -39,9 +39,8 @@ static void recv_command(client_list_t *tmp, server_t **server)
 static void client_already_connected(client_list_t **list, server_t **server)
 {
     for (client_list_t *tmp = *list; tmp->client != NULL; tmp = tmp->next) {
-        if (FD_ISSET(tmp->client->clientServer->socket, &(*server)->readfds)) {
+        if (FD_ISSET(tmp->client->clientServer->socket, &(*server)->readfds))
             recv_command(tmp, server);
-        }
         if (tmp->next == NULL || tmp->client == NULL)
             break;
     }
@@ -57,9 +56,8 @@ static void set_all_in_fd(server_t *server, client_list_t *list, int *max_fd)
             break;
         FD_SET(tmp->client->clientServer->socket, &server->readfds);
         FD_SET(tmp->client->clientServer->socket, &server->writefds);
-        if (tmp->client->clientServer->socket > *max_fd) {
+        if (tmp->client->clientServer->socket > *max_fd)
             *max_fd = tmp->client->clientServer->socket;
-        }
         if (tmp->next == NULL)
             break;
     }

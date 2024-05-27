@@ -39,9 +39,8 @@ int add_client_to_list(client_list_t **list, client_t *client)
         while (tmp->next != NULL)
             tmp = tmp->next;
         tmp->next = malloc(sizeof(client_list_t));
-        if (tmp->next == NULL) {
+        if (tmp->next == NULL)
             return -1;
-        }
         tmp->next->client = client;
         tmp->next->next = NULL;
         tmp->next->prev = tmp;
@@ -51,9 +50,8 @@ int add_client_to_list(client_list_t **list, client_t *client)
 
 static void remove_client_bis(client_list_t *tmp, client_t *client)
 {
-    while (tmp != NULL && tmp->client != client) {
+    while (tmp != NULL && tmp->client != client)
         tmp = tmp->next;
-    }
     if (tmp == NULL)
         return;
     if (tmp->prev != NULL)
