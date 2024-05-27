@@ -12,6 +12,7 @@
 int main(int ac, char **av)
 {
     char **args = get_array_from_args(ac, av);
+
     if (args == NULL)
         return 84;
     for (int i = 0; args[i] != NULL; i++)
