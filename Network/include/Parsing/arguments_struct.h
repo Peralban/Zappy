@@ -64,3 +64,13 @@ typedef struct s_args {
 //    {"-f", &atoi, INT},
 //    {NULL, NULL, 0}
 //};
+
+/**
+ * @brief Put multiple stuff in a struct to parse easily
+ */
+typedef struct foo_s {
+    char *const *av;
+    bool *n_flag;
+    char **array;
+    bool *args;
+} foo_t;
