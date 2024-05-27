@@ -6,7 +6,6 @@
 */
 
 #include "Server/server.h"
-#include "ErrorHandling/check_return_value.h"
 #include "ClientList/client_list.h"
 #include <stdio.h>
 
@@ -28,12 +27,13 @@ static void recv_command(client_list_t *tmp, server_t **server)
     char buffer[1024];
     int buffer_length = 0;
 
+    (void)server;
     buffer_length = recv(tmp->client->clientServer->socket, buffer, 1024, 0);
     check_return_value(buffer_length, RECV);
     buffer[buffer_length] = '\0';
     printf("Received: %s\n", buffer);
     send(tmp->client->clientServer->socket, buffer, buffer_length, 0);
-} // the send is temporary, it will be deplaced in another function
+} // the send is temporary, it will be deplaced in another function, server is not used for no, but it will be used in the future
 
 static void client_already_connected(client_list_t **list, server_t **server)
 {

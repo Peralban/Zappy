@@ -5,21 +5,22 @@
 ** server.c
 */
 
-#include "../../include/Server/server.h"
+#include "Server/server.h"
 #include <unistd.h>
 
-static char *check_error(int ac, char **av)
+static int check_error(int ac, char **av)
 {
     if (ac == 2 && strcmp(av[1], "-help") == 0) {
-        exit(EXIT_SUCCESS);
-    } else if (ac != 3) {
-        exit(EXIT_FAIL);
+        printf("USAGE: ./zappy_server -p port -x width -y height -n name1 name2 ... -c clientsNb -f freq\n");
+        printf("\tport\tis the port number\n");
+        printf("\twidth\tis the width of the world\n");
+        printf("\theight\tis the height of the world\n");
+        printf("\tnameX\tis the name of the team X\n");
+        printf("\tclientsNb\tis the number of authorized clients per team\n");
+        printf("\tfreq\tis the reciprocal of time unit for execution of actions\n");
+        return 0;
     }
-    if (chdir(av[2]) == -1) {
-        exit(EXIT_FAIL);
-    } else {
-        return (getcwd(NULL, 0));
-    }
+    return 1;
 }
 
 static void setup_server_address(server_t **server)
@@ -48,9 +49,12 @@ static void bind_and_listen(server_t *server)
 int zappy_network(int ac, char **av)
 {
     server_t *server = malloc(sizeof(server_t));
+    int check = check_error(ac, av);
 
-    if (server == NULL)
-        exit(EXIT_SUCC);
+    if (server == NULL || check == -1)
+        return EXIT_FAIL;
+    if (check == 0)
+        return EXIT_SUCC;
     server->serverAddress = malloc(sizeof(struct sockaddr_in));
     server->socket = socket(AF_INET, SOCK_STREAM, 0);
     server->port = atoi(av[1]);

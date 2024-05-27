@@ -9,6 +9,5 @@
 
 int main(int ac, char **av)
 {
-    zappy_network(ac, av);
-    return 0;
+    return zappy_network(ac, av);
 }
