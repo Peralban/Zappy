@@ -27,7 +27,6 @@ client_t *create_client(int socket, struct sockaddr_in *Address)
     return (client);
 }
 
-
 int add_client_to_list(client_list_t **list, client_t *client)
 {
     client_list_t *tmp = *list;

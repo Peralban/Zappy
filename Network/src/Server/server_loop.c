@@ -33,8 +33,9 @@ static void recv_command(client_list_t *tmp, server_t **server)
     buffer[buffer_length] = '\0';
     printf("Received: %s\n", buffer);
     send(tmp->client->clientServer->socket, buffer, buffer_length, 0);
-} // the send is temporary, it will be deplaced in another function, server is not used for no, but it will be used in the future
+}// the send is temporary, it will be deplaced in another function,
 
+// server is not used for no, but it will be used in the future
 static void client_already_connected(client_list_t **list, server_t **server)
 {
     for (client_list_t *tmp = *list; tmp->client != NULL; tmp = tmp->next) {
