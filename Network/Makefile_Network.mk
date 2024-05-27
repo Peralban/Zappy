@@ -8,6 +8,8 @@
 #-------------- Main Variables --------------#
 
 SRC		= 		main.c								\
+				ClientList/client_list.c			\
+				ClientList/client_list_bis.c		\
 
 TRUE_SRC 	= 	$(patsubst %,src/%, $(SRC))
 
