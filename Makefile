@@ -64,3 +64,5 @@ tests_run:
 	@$(MAKE) -f $(NETWORK_MAKEFILE) -C Network tests_run
 	@$(MAKE) -f $(GUI_MAKEFILE) -C GUI tests_run
 	@$(MAKE) -f $(AI_MAKEFILE) -C AI tests_run
+	gcovr --exclude Network/Tests --exclude GUI/Tests --exclude AI/Tests
+	printf "\033[1;32mCoverage generated ✅\033[0m\n"
