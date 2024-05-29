@@ -20,7 +20,8 @@
 
 /**
  * @enum args_name
- * @brief Enumerates the different argument types that can be passed to the program.
+ * @brief Enumerates the different argument types that can be passed
+ * to the program.
  */
 enum args_name {
     PORT,
