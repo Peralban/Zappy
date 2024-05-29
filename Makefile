@@ -47,10 +47,8 @@ clean:
 	@$(MAKE) -f $(GUI_MAKEFILE) -C GUI clean
 	@$(MAKE) -f $(AI_MAKEFILE) -C AI clean
 
-fclean:
-	@$(MAKE) -f $(NETWORK_MAKEFILE) -C Network fclean
-	@$(MAKE) -f $(GUI_MAKEFILE) -C GUI fclean
-	@$(MAKE) -f $(AI_MAKEFILE) -C AI fclean
+fclean: clean
+	rm -f zappy_server zappy_ai zappy_gui
 
 re: fclean all
 
