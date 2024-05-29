@@ -3,7 +3,7 @@
 EPITECH PROJECT, 2024
 client_module.py
 Description:
-Add socket client functionalities
+Add socket client functionalities.
 """
 
 import socket
