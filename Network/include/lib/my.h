@@ -7,8 +7,6 @@
 
 #pragma once
 
-#define ARRAY 0
-
 #include <stdbool.h>
 
 /**

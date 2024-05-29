@@ -32,7 +32,7 @@ INCLUDE		=	-I./include
 
 VALGRIND	= -g3
 
-CFLAGS	=	$(INCLUDE) $(WARNINGS) $(VALGRIND)
+CFLAGS	=	$(INCLUDE) $(WARNINGS) #$(VALGRIND)
 
 #-------------- Tests Variables --------------#
 
@@ -75,7 +75,7 @@ $(NAME):	$(OBJ)
 
 clean:
 	rm -f $(OBJ)
-	printf "\033[1;35mObject files removed ✅\033[0m\n"
+	@printf "\033[1;35mObject files removed ✅\033[0m\n"
 
 fclean:	clean
 	rm -f $(NAME)
@@ -83,7 +83,7 @@ fclean:	clean
 	rm -f *.gc*
 	rm -f vgcore*
 	rm -f *.so
-	printf "\033[1;35mBinary removed ✅\033[0m\n"
+	@printf "\033[1;35mBinary removed ✅\033[0m\n"
 
 re: fclean all
 
@@ -100,4 +100,4 @@ tests_launch:
 	printf "\033[1;35mNetWork Tests launched ✅\033[0m\n"
 
 tests_run: tests_compile tests_launch
-	printf "\033[1;32mTests runned ✅\033[0m\n"
+	@printf "\033[1;32mTests runned ✅\033[0m\n"

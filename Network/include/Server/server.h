@@ -20,6 +20,10 @@
 #define EXIT_FAIL 84
 #define EXIT_SUCC 0
 
+/**
+ * @brief Enum for the different types of errors that may occur.
+ * @warning The NONE type is used as a default value.
+ */
 typedef enum {
     SOCKET,
     SETSOCKOPT,
@@ -37,21 +41,38 @@ typedef enum {
     SEND
 } error_type_t;
 
+
+/**
+ * @struct client_server_s
+ * @brief Structure representing a client server.
+ */
 typedef struct client_server_s {
     int socket;
     struct sockaddr_in *clientAddress;
 } client_server_t;
 
+/**
+ * @struct client_s
+ * @brief Structure representing a client.
+ */
 typedef struct client_s {
     client_server_t *clientServer;
 } client_t;
 
+/**
+ * @struct client_list_s
+ * @brief Structure representing a list of clients.
+ */
 typedef struct client_list_s {
     client_t *client;
     struct client_list_s *next;
     struct client_list_s *prev;
 } client_list_t;
 
+/**
+ * @struct info_game_s
+ * @brief Structure representing game information.
+ */
 typedef struct info_game_s {
     int width;
     int height;
@@ -60,6 +81,10 @@ typedef struct info_game_s {
     int freq;
 } info_game_t;
 
+/**
+ * @struct server_s
+ * @brief Structure representing a server.
+ */
 typedef struct server_s {
     fd_set readfds;
     fd_set writefds;
