@@ -1,3 +1,4 @@
+
 ##
 ## EPITECH PROJECT, 2024
 ## Zappy
@@ -5,70 +6,22 @@
 ## Makefile
 ##
 
-SRC			= 		main.cpp
+SRC_DIR = src
+MAIN_PY = $(SRC_DIR)/main.py
+TARGET = zappy_ai
 
-TRUE_SRC 	= 		$(patsubst %,src/%, $(SRC))
+all: $(TARGET)
 
-OBJ			= 		$(TRUE_SRC:.cpp=.o)
-
-NAME		= 		zappy_ai
-
-WARNINGS	= 		-Wall -Wextra -Wshadow
-
-INCLUDE		= 		-I./include
-
-VALGRIND	= 		-g3
-
-LIBS		=
-
-CXXFLAGS	= $(INCLUDE) $(WARNINGS)
-
-.PHONY: all clean fclean re
-
-.SILENT: clean fclean re
-
-all:
-	@g++ -o $(NAME) $(TRUE_SRC) $(CXXFLAGS)
-	@if [ -f $(NAME) ]; then \
-		printf "\033[1;32mCompilation completed ✅\033[0m\n"; \
-	else \
-		printf "\033[1;31mCompilation failed ❌\033[0m\n"; \
-	fi
+$(TARGET): $(MAIN_PY)
+	cp $(MAIN_PY) $(TARGET)
+	chmod 777 $(TARGET)
 
 clean:
-	@rm -f $(OBJ)
-	@if [ ! -f $(OBJ) ]; then \
-		printf "\033[1;32mObject files deleted ✅\033[0m\n"; \
-	else \
-		printf "\033[1;31mObject files deletion failed ❌\033[0m\n"; \
-	fi
+	@echo ""
 
 fclean: clean
-	@rm -f $(NAME)
-	@if [ ! -f $(NAME) ]; then \
-		printf "\033[1;32mBinary deleted ✅\033[0m\n"; \
-	else \
-		printf "\033[1;31mBinary deletion failed ❌\033[0m\n"; \
-	fi
+	rm -f $(TARGET)
 
 re: fclean all
 
-# Tests
-
-tests_compile:
-	@g++ -o unit_tests $(TEST_TRUE_SRC) $(TESTS_FLAGS)
-	@if [ -f unit_tests ]; then \
-		printf "\033[1;32mTests compilation completed ✅\033[0m\n"; \
-	else \
-		printf "\033[1;31mTests compilation failed ❌\033[0m\n"; \
-	fi
-
-tests_launch:
-	@./unit_tests
-	@if [ $$? -eq 0 ]; then \
-		printf "\033[1;32mTests passed ✅\033[0m\n"; \
-	else \
-		printf "\033[1;31mTests failed ❌\033[0m\n"; \
-	fi
-
-tests_run: #tests_compile tests_launch
+.PHONY: all clean fclean re
