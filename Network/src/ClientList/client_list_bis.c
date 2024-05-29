@@ -11,7 +11,7 @@ client_t *get_client_from_list(client_list_t *list, int socket)
 {
     client_list_t *tmp = list;
 
-    while (tmp != NULL) {
+    while (tmp != NULL && tmp->client != NULL) {
         if (tmp->client->clientServer->socket == socket)
             return (tmp->client);
         tmp = tmp->next;

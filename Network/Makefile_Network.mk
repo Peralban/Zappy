@@ -10,10 +10,15 @@
 SRC		= 		main.c								\
 				ClientList/client_list.c			\
 				ClientList/client_list_bis.c		\
-				ErrorHandling/return_error_str.c	\
 				ErrorHandling/check_return_value.c	\
-				Server/server_loop.c				\
 				Server/zappy_network.c				\
+				Server/server_loop.c				\
+				Parsing/parse_args.c				\
+				Parsing/move_args_to_struct.c		\
+				lib/my_str_to_word_array.c			\
+				lib/char_is_in_str.c				\
+				lib/my_len_before_char.c			\
+				lib/get_nbr_of_char.c				\
 
 TRUE_SRC 	= 	$(patsubst %,src/%, $(SRC))
 
@@ -27,7 +32,7 @@ INCLUDE		=	-I./include
 
 VALGRIND	= -g3
 
-CFLAGS	=	$(INCLUDE) $(WARNINGS) #$(VALGRIND)
+CFLAGS	=	$(INCLUDE) $(WARNINGS) $(VALGRIND)
 
 #-------------- Tests Variables --------------#
 

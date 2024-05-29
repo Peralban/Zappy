@@ -6,8 +6,14 @@
 */
 
 #include "Server/server.h"
+#include "Parsing/parse_args.h"
+#include <stdio.h>
 
 int main(int ac, char **av)
 {
-    return zappy_network(ac, av);
+    char **args = get_array_from_args(ac, av);
+
+    if (args == NULL)
+        return 84;
+    return zappy_network(args);
 }
