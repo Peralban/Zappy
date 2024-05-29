@@ -50,8 +50,6 @@ clean:
 fclean: clean
 	rm -f zappy_server zappy_ai zappy_gui
 
-re: fclean zappy_ai zappy_server zappy_gui
-
 fclean:
 	@$(MAKE) -f $(NETWORK_MAKEFILE) -C Network fclean
 	@$(MAKE) -f $(GUI_MAKEFILE) -C GUI fclean
@@ -62,3 +60,10 @@ fclean:
 	rm -f zappy_server
 	rm -f zappy_ai
 	rm -f zappy_gui
+
+re: fclean zappy_ai zappy_server zappy_gui
+
+tests_run:
+	@$(MAKE) -f $(NETWORK_MAKEFILE) -C Network tests_run
+	@$(MAKE) -f $(GUI_MAKEFILE) -C GUI tests_run
+	@$(MAKE) -f $(AI_MAKEFILE) -C AI tests_run
