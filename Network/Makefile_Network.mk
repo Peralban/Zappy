@@ -14,7 +14,9 @@ SRC		= 		main.c								\
 				ErrorHandling/check_return_value.c	\
 				Server/server_loop.c				\
 				Server/zappy_network.c				\
+				Server/server_loop.c				\
 				Parsing/parse_args.c				\
+				Parsing/move_args_to_struct.c		\
 				lib/my_str_to_word_array.c			\
 				lib/char_is_in_str.c				\
 				lib/my_len_before_char.c			\
