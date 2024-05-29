@@ -16,7 +16,8 @@ static void new_client(client_list_t **list, server_t *server)
     int client_socket = accept(server->socket,
     (struct sockaddr *) &client_address, &client_address_length);
 
-    check_return_value(client_socket, ACCEPT);
+    if (!check_return_value(client_socket, ACCEPT))
+        return;
     add_client_to_list(list, create_client(client_socket, &client_address));
     FD_SET(client_socket, &server->readfds);
     FD_SET(client_socket, &server->writefds);
@@ -29,7 +30,8 @@ static void recv_command(client_list_t *tmp, server_t **server)
 
     (void)server;
     buffer_length = recv(tmp->client->clientServer->socket, buffer, 1024, 0);
-    check_return_value(buffer_length, RECV);
+    if (!check_return_value(buffer_length, RECV))
+        return;
     buffer[buffer_length] = '\0';
     printf("Received: %s\n", buffer);
     send(tmp->client->clientServer->socket, buffer, buffer_length, 0);
@@ -76,7 +78,8 @@ int server_loop(server_t *server)
         FD_ZERO(&server->writefds);
         set_all_in_fd(server, list, &max_fd);
         select_status = select(max_fd + 1, &server->readfds, NULL, NULL, NULL);
-        check_return_value(select_status, SELECT);
+        if (!check_return_value(select_status, SELECT))
+            continue;
         client_already_connected(&list, &server);
     }
 }
