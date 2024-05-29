@@ -32,7 +32,7 @@ INCLUDE		=	-I./include
 
 VALGRIND	= -g3
 
-CFLAGS	=	$(INCLUDE) $(WARNINGS) $(VALGRIND)
+CFLAGS	=	$(INCLUDE) $(WARNINGS) #$(VALGRIND)
 
 #-------------- Tests Variables --------------#
 
