@@ -8,11 +8,11 @@ add_executable(Zappy_Server
     src/main.c
     src/ClientList/client_list.c
     src/ClientList/client_list_bis.c
-    src/ErrorHandling/return_error_str.c
     src/ErrorHandling/check_return_value.c
-    src/Server/server_loop.c
     src/Server/zappy_network.c
+    src/Server/server_loop.c
     src/Parsing/parse_args.c
+    src/Parsing/move_args_to_struct.c
 )
 
 # Specify the C standard
