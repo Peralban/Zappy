@@ -40,37 +40,9 @@ typedef struct arg_processing_s {
     bool args[6];
 } arg_processing_t;
 
-typedef struct get_true_args {
-    char *args;
-    void *(*func)(char *args);
-    enum args_type type;
-} get_true_args_t;
-
-typedef struct s_args {
-    int port;
-    int width;
-    int height;
-    char **names;
-    int clientsNb;
-    int freq;
-} args_t;
-
-//const get_true_args_t get_true_args[] = {
-//    {"-p", &atoi, INT},
-//    {"-x", &atoi, INT},
-//    {"-y", &atoi, INT},
-//    {"-n", &str_to_word_array, STRING},
-//    {"-c", &atoi, INT},
-//    {"-f", &atoi, INT},
-//    {NULL, NULL, 0}
-//};
-
-/**
- * @brief Put multiple stuff in a struct to parse easily
- */
-typedef struct foo_s {
+typedef struct parsing_argument_s {
     char *const *av;
     bool *n_flag;
     char **array;
     bool *args;
-} foo_t;
+} parsing_argument_t;

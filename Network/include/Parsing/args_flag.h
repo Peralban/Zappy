@@ -9,9 +9,11 @@
 
 /**
  * @file args_flag.h
- * @brief This file contains the declaration of the flags used in the application.
+ * @brief This file contains the declaration of the flags used in the
+ * application.
  *
- * The flags are used to control the behavior of the application. Each flag corresponds to a specific feature or setting.
+ * The flags are used to control the behavior of the application.
+ * Each flag corresponds to a specific feature or setting.
  * The flags are:
  * - "-p": Description of what this flag does
  * - "-x": Description of what this flag does
