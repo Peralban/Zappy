@@ -24,4 +24,10 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: all clean fclean re
+test_compile:
+
+tests_launch:
+
+tests_run:
+
+.PHONY: all clean fclean re tests_run tests_launch test_compile
