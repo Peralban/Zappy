@@ -15,6 +15,10 @@ SRC		= 		main.c								\
 				Server/server_loop.c				\
 				Server/zappy_network.c				\
 				Parsing/parse_args.c				\
+				lib/my_str_to_word_array.c			\
+				lib/char_is_in_str.c				\
+				lib/my_len_before_char.c			\
+				lib/get_nbr_of_char.c				\
 
 TRUE_SRC 	= 	$(patsubst %,src/%, $(SRC))
 
