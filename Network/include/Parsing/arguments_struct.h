@@ -18,11 +18,6 @@
  *  -f freq reciprocal of time unit for execution of actions
  */
 
-enum args_type {
-    INT,
-    STRING
-};
-
 enum args_name {
     PORT,
     WIDTH,
