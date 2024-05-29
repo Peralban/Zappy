@@ -61,3 +61,24 @@ void remove_client_from_list(client_list_t **list, client_t *client);
  * @return A pointer to the client if found, NULL otherwise.
  */
 client_t *get_client_from_list(client_list_t *list, int socket);
+
+/**
+ * @brief Frees a client list.
+ *
+ * This function frees a given client list.
+ *
+ * @param list A pointer to the client list to be freed.
+ */
+void destroy_client_list(client_list_t *list);
+
+/**
+ * @brief Removes a client from a server.
+ *
+ * This function removes a given client from a given server.
+ *
+ * @param client A pointer to the client to be removed.
+ * @param list A pointer to the client list.
+ * @param server A pointer to the server.
+ */
+void eject_client_from_server(client_t *client, client_list_t **list,
+    server_t **server);
