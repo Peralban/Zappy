@@ -56,7 +56,7 @@ typedef struct info_game_s {
     int width;
     int height;
     char **team_names;
-    int clientsNb;
+    int nb_client;
     int freq;
 } info_game_t;
 
@@ -66,7 +66,7 @@ typedef struct server_s {
     int port;
     int socket;
     struct sockaddr_in *serverAddress;
-    info_game_t *info_game;
+    info_game_t info_game;
 } server_t;
 
 /**
@@ -80,7 +80,7 @@ typedef struct server_s {
  * @param av The array of command line arguments.
  * @return Returns 0 on successful execution and non-zero on failure.
  */
-int zappy_network(int ac, char **av);
+int zappy_network(char **args);
 
 /**
  * @brief Checks the return value of a function and handles errors.
@@ -92,8 +92,9 @@ int zappy_network(int ac, char **av);
  *
  * @param value_to_check The return value to check.
  * @param error_type The type of error that may have occurred.
+ * @return Returns true if the value is an error, false otherwise.
  */
-void check_return_value(int value_to_check, error_type_t error_type);
+bool check_return_value(int value_to_check, error_type_t error_type);
 
 /**
  * @brief Main loop for the FTP server.
