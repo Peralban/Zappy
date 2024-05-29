@@ -50,6 +50,7 @@
 *.su
 *.idb
 *.pdb
+*.log
 
 # Kernel Module Compile Results
 *.mod*
@@ -59,6 +60,7 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+cmake-build-debug/
 
 # Clion folder
 .idea/

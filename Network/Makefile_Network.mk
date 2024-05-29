@@ -10,10 +10,15 @@
 SRC		= 		main.c								\
 				ClientList/client_list.c			\
 				ClientList/client_list_bis.c		\
-				ErrorHandling/return_error_str.c	\
 				ErrorHandling/check_return_value.c	\
-				Server/server_loop.c				\
 				Server/zappy_network.c				\
+				Server/server_loop.c				\
+				Parsing/parse_args.c				\
+				Parsing/move_args_to_struct.c		\
+				lib/my_str_to_word_array.c			\
+				lib/char_is_in_str.c				\
+				lib/my_len_before_char.c			\
+				lib/get_nbr_of_char.c				\
 
 TRUE_SRC 	= 	$(patsubst %,src/%, $(SRC))
 
@@ -59,7 +64,7 @@ $(NAME):	$(OBJ)
 
 clean:
 	rm -f $(OBJ)
-	printf "\033[1;35mObject files removed ✅\033[0m\n"
+	@printf "\033[1;35mObject files removed ✅\033[0m\n"
 
 fclean:	clean
 	rm -f $(NAME)
@@ -67,7 +72,7 @@ fclean:	clean
 	rm -f *.gc*
 	rm -f vgcore*
 	rm -f *.so
-	printf "\033[1;35mBinary removed ✅\033[0m\n"
+	@printf "\033[1;35mBinary removed ✅\033[0m\n"
 
 re: fclean all
 
@@ -83,10 +88,10 @@ tests_compile: fclean
 
 tests_launch:
 	./unit_tests
-	printf "\033[1;35mTests launched ✅\033[0m\n"
+	@printf "\033[1;35mTests launched ✅\033[0m\n"
 	gcovr --exclude tests/
 	gcovr --exclude tests/ --branches
-	printf "\033[1;35mCoverage generated ✅\033[0m\n"
+	@printf "\033[1;35mCoverage generated ✅\033[0m\n"
 
 tests_run: tests_compile tests_launch
-	printf "\033[1;32mTests runned ✅\033[0m\n"
+	@printf "\033[1;32mTests runned ✅\033[0m\n"
