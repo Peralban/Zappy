@@ -1,3 +1,11 @@
+# -*- coding: utf-8 -*-
+"""
+EPITECH PROJECT, 2024
+client_module.py
+Description:
+Add socket client functionalities
+"""
+
 import socket
 
 def connect_to_server(server_host, server_port):
