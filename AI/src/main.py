@@ -5,7 +5,7 @@
 EPITECH PROJECT, 2024
 main.py
 Description:
-Entry point of the AI
+Entry point of the AI.
 """
 
 from AI.src.client_module import connect_to_server, send_receive_messages
