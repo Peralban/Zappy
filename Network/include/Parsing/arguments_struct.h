@@ -18,6 +18,10 @@
  *  -f freq reciprocal of time unit for execution of actions
  */
 
+/**
+ * @enum args_name
+ * @brief Enumerates the different argument types that can be passed to the program.
+ */
 enum args_name {
     PORT,
     WIDTH,
@@ -28,6 +32,10 @@ enum args_name {
     ALL_FLAGS
 };
 
+/**
+ * @struct arg_processing_s
+ * @brief Structure to hold the state of argument processing.
+ */
 typedef struct arg_processing_s {
     char **array;
     int *array_index;
@@ -35,6 +43,10 @@ typedef struct arg_processing_s {
     bool args[6];
 } arg_processing_t;
 
+/**
+ * @struct parsing_argument_s
+ * @brief Structure to hold the state of argument parsing.
+ */
 typedef struct parsing_argument_s {
     char *const *av;
     bool *n_flag;
