@@ -15,8 +15,5 @@ int main(int ac, char **av)
 
     if (args == NULL)
         return 84;
-    for (int i = 0; args[i] != NULL; i++)
-        printf("%s\n", args[i]);
-    return 0;
-    return zappy_network(ac, av);
+    return zappy_network(args);
 }
