@@ -7,7 +7,11 @@
 
 #-------------- Main Variables --------------#
 
-SRC		= 		main.cpp								\
+SRC		= 		objFile/objLoader.cpp       \
+				chessElement/chessBoard.cpp \
+				chessElement/chessPiece.cpp \
+				main.cpp    \
+				event/eventHandler.cpp
 
 TRUE_SRC 	= 	$(patsubst %,src/%, $(SRC))
 
@@ -15,13 +19,16 @@ OBJ			=	$(TRUE_SRC:.cpp=.o)
 
 NAME		=	zappy_gui
 
-WARNINGS	=	-Wall -Wextra -Wshadow
+WARNINGS	=	-Wall -Wextra -Wshadow -O3 -ffast-math
 
-INCLUDE		=	-I./src -I.
+IRRLICHTPATH = /home/smalluwu/Documents/Irrlicht/
+
+# -I../../include  -L../../lib/Linux
+INCLUDE		=	-I./include -I/usr/X11R6/include -I$(IRRLICHTPATH)include
 
 VALGRIND	=
 
-LIBS		=
+LIBS		= -L$(IRRLICHTPATH)lib/Linux -lIrrlicht -L/usr/X11R6/lib -lGL -lXxf86vm -lXext -lX11 -lXcursor
 
 CXXFLAGS	=	$(INCLUDE) $(WARNINGS) $(LIBS) #$(VALGRIND)
 
@@ -79,7 +86,10 @@ tests_compile: fclean
 
 tests_launch:
 	./unit_tests
-	printf "\033[1;35mGUI Tests launched ✅\033[0m\n"
+	printf "\033[1;35mTests launched ✅\033[0m\n"
+	gcovr --exclude tests/
+	gcovr --exclude tests/ --branches
+	printf "\033[1;35mCoverage generated ✅\033[0m\n"
 
 tests_run: tests_compile tests_launch
 	printf "\033[1;32mTests runned ✅\033[0m\n"
