@@ -18,7 +18,7 @@ class Bot:
     def __init__(self, team_name, x, y):
         self.team_name = team_name
         self.map = init_map(x, y)
-        self.invantory = {'food' : 0, 'linemate' : 0, 'deraumere' : 0, 'sibur' : 0, 'mendiane' : 0, 'phiras' : 0, 'thystame' : 0}
+        self.inventory = {'food' : 0, 'linemate' : 0, 'deraumere' : 0, 'sibur' : 0, 'mendiane' : 0, 'phiras' : 0, 'thystame' : 0}
         self.position_x = 0
         self.position_y = 0
         self.level = 0
