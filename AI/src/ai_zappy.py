@@ -72,7 +72,7 @@ class Bot:
     def look(self):
         return
     
-    def inventory(self):
+    def update_inventory(self):
         return
     
     def connect_nbr(self):
