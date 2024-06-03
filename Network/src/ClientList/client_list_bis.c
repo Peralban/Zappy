@@ -20,14 +20,14 @@ client_t *get_client_from_list(client_list_t *list, int socket)
 }
 
 void eject_client_from_server(client_t *client, client_list_t **list,
-    server_t **server)
+    server_t *server)
 {
     int return_value = close(client->clientServer->socket);
 
     check_return_value(return_value, CLOSE);
     remove_client_from_list(list, client);
-    FD_CLR(client->clientServer->socket, &(*server)->readfds);
-    FD_CLR(client->clientServer->socket, &(*server)->writefds);
+    FD_CLR(client->clientServer->socket, &server->readfds);
+    FD_CLR(client->clientServer->socket, &server->writefds);
 }
 
 void destroy_client_list(client_list_t *list)

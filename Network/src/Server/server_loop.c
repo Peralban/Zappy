@@ -9,6 +9,28 @@
 #include "ClientList/client_list.h"
 #include <stdio.h>
 
+static void start_communication_with_client(int client_socket, info_game_t info_game, client_list_t **list, server_t *server)
+{
+    char buffer[1024];
+    int buffer_length;
+
+    sprintf(buffer, "WELCOME\n");
+    send(client_socket, buffer, strlen(buffer), 0);
+    buffer_length = recv(client_socket, buffer, 1024, 0);
+    if (!check_return_value(buffer_length, RECV))
+        return;
+    buffer[buffer_length - 2] = '\0';
+    printf("Received: %s\n", buffer);
+    for (int i = 0; info_game.team_names[i] != NULL; i++) {
+        if (strcmp(buffer, info_game.team_names[i]) == 0) {
+            sprintf(buffer, "%d\n%d %d\n", 1, info_game.width, info_game.height);
+            send(client_socket, buffer, strlen(buffer), 0);
+            return;
+        }
+    }
+    eject_client_from_server(get_client_from_list(*list, client_socket), list, server);
+}
+
 static void new_client(client_list_t **list, server_t *server)
 {
     struct sockaddr_in client_address;
@@ -21,6 +43,8 @@ static void new_client(client_list_t **list, server_t *server)
     add_client_to_list(list, create_client(client_socket, &client_address));
     FD_SET(client_socket, &server->readfds);
     FD_SET(client_socket, &server->writefds);
+    // start communication with the client protocol
+    start_communication_with_client(client_socket, server->info_game, list, server);
 }
 
 static void recv_command(client_list_t *tmp, server_t **server)

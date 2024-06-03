@@ -81,4 +81,4 @@ void destroy_client_list(client_list_t *list);
  * @param server A pointer to the server.
  */
 void eject_client_from_server(client_t *client, client_list_t **list,
-    server_t **server);
+    server_t *server);
