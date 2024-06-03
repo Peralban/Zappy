@@ -91,10 +91,20 @@ class Bot:
     def eject(self):
         return
     
-    def take(self):
+    def take(self, object_name):
+        res = ""
+
+        #function calling for connection
+        if res == "ok":
+            self.inventory[object_name] += 1
         return
     
-    def set(self):
+    def set(self, object_name):
+        res = ""
+
+        #function calling for connection
+        if res == "ok":
+            self.inventory[object_name] -= 1
         return
     
     def incantation(self):
