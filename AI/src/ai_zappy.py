@@ -73,6 +73,13 @@ class Bot:
         return
     
     def update_inventory(self):
+        res = ""
+
+        #function calling for connection
+        res = res.split(',')
+        for object in res:
+            object = object.split()
+            self.inventory[object[0]] = int(object[1])
         return
     
     def connect_nbr(self):
