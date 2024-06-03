@@ -60,6 +60,13 @@ class Bot:
         return
     
     def left(self):
+        res = 0
+
+        #function calling for connection
+        if res == "ok":
+            self.direction += 1
+            if self.direction == 4:
+                self.direction = 0
         return
     
     def look(self):
