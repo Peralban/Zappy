@@ -1,16 +1,14 @@
-#!/usr/bin/env python3
-
 def init_map(x, y):
         game_map = []
-        object = {'food' : 0, 'linemate' : 0, 'deraumere' : 0, 'sibur' : 0, 'mendiane' : 0, 'phiras' : 0, 'thystame' : 0}
+        tile = {'food' : 0, 'linemate' : 0, 'deraumere' : 0, 'sibur' : 0, 'mendiane' : 0, 'phiras' : 0, 'thystame' : 0}
 
         for i in range(y):
-            temp = []
+            line = []
 
             for u in range(x):
-                temp.append(object)
+                line.append(tile)
             
-            game_map.append(temp)
+            game_map.append(line)
  
         return (game_map)
 
@@ -26,35 +24,35 @@ class Bot:
     def run(self):
         return
 
-    def Forward(self):
+    def forward(self):
         return
     
-    def Right(self):
+    def right(self):
         return
     
-    def Left(self):
+    def left(self):
         return
     
-    def Look(self):
+    def look(self):
         return
     
-    def Inventory(self):
+    def inventory(self):
         return
     
-    def Connect_nbr(self):
+    def connect_nbr(self):
         return
     
-    def Fork(self):
+    def fork(self):
         return
     
-    def Eject(self):
+    def eject(self):
         return
     
-    def Take(self):
+    def take(self):
         return
     
-    def Set(self):
+    def set(self):
         return
     
-    def Incantation(self):
+    def incantation(self):
         return
