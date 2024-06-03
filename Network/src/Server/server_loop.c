@@ -21,7 +21,6 @@ static void start_communication_with_client(int client_socket,
     if (!check_return_value(buffer_length, RECV))
         return;
     buffer[buffer_length - 2] = '\0';
-    printf("Received: %s\n", buffer);
     for (int i = 0; info_game.team_names[i] != NULL; i++) {
         if (strcmp(buffer, info_game.team_names[i]) == 0) {
             sprintf(buffer, "%d\n%d %d\n",
@@ -97,6 +96,7 @@ int server_loop(server_t *server)
     client_list_t *list = create_client_list();
     int max_fd = server->socket;
     int select_status;
+    struct timeval timeout = {0, 0};
 
     while (1) {
         if (FD_ISSET(server->socket, &server->readfds))
@@ -104,9 +104,11 @@ int server_loop(server_t *server)
         FD_ZERO(&server->readfds);
         FD_ZERO(&server->writefds);
         set_all_in_fd(server, list, &max_fd);
-        select_status = select(max_fd + 1, &server->readfds, NULL, NULL, NULL);
+        select_status = select(
+            max_fd + 1, &server->readfds,NULL, NULL, &timeout);
         if (!check_return_value(select_status, SELECT))
             continue;
         client_already_connected(list, &server);
+        // if time is up, do one game tick
     }
 }
