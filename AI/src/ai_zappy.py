@@ -26,6 +26,27 @@ class Bot:
         return
 
     def forward(self):
+        res = 0
+
+        #function calling for connection
+        if res == "ok":
+            if self.direction == 1:
+                self.position_x += 1
+            if self.direction == 2:
+                self.position_y += 1
+            if self.direction == 3:
+                self.position_x -= 1
+            if self.direction == 4:
+                self.position_y -= 1
+
+            if self.position_y >= len(self.map):
+                self.position_y == 0
+            if self.position_y < 0:
+                self.position_y == len(self.map) - 1
+            if self.position_x >= len(self.map[0]):
+                self.position_x == 0
+            if self.position_y < 0:
+                self.position_y == len(self.map[0]) - 1
         return
     
     def right(self):
