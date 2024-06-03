@@ -7,11 +7,15 @@
 
 #-------------- Main Variables --------------#
 
-SRC		= 		objFile/objLoader.cpp       \
-				chessElement/chessBoard.cpp \
+SRC		=       chessElement/chessBoard.cpp \
 				chessElement/chessPiece.cpp \
-				event/eventHandler.cpp \
+				event/irrlichtEventHandler.cpp \
 				zappyIrrlicht/irrlichtWindow.cpp       \
+				player/playerInventory.cpp  \
+				player/team.cpp     \
+				player/player.cpp   \
+				player/playerPosition.cpp   \
+				game/game.cpp			\
 				main.cpp
 
 

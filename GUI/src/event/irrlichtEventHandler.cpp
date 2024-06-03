@@ -5,7 +5,7 @@
 ** eventHandler
 */
 
-#include "event/eventHandler.hpp"
+#include "event/irrlichtEventHandler.hpp"
 
 myEventReceiver::myEventReceiver(IrrlichtDevice* device) :
     _Device(device)

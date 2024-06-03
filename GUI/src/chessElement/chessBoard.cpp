@@ -16,6 +16,10 @@ chessBoard::chessBoard(scene::ISceneManager *smgr, video::IVideoDriver *driver, 
     this->_TileSize = tileSize;	
     _WhiteTexture = driver->getTexture("./assets/White.png");
     _BlackTexture = driver->getTexture("./assets/Black.png");
+    if (!_WhiteTexture || !_BlackTexture) {
+        std::cerr << "Error: Could not load textures" << std::endl;
+        exit(84);
+    }
 }
 
 chessBoard::~chessBoard()

@@ -13,23 +13,16 @@ chessPiece::chessPiece(ISceneManager *sceneManager = nullptr, IVideoDriver *driv
     _Device = device;
     _Driver = driver;
     _CurrentQuality = LowPoly;
-    this->initTextures();
-    std::cout << "chess piece creator" << std::endl;
+    _WhiteTexture = _Driver->getTexture("./assets/White.png");
+    _BlackTexture = _Driver->getTexture("./assets/Black.png");
+    if (!_WhiteTexture || !_BlackTexture) {
+        std::cerr << "Error: Could not load textures" << std::endl;
+        exit(84);
+    }
 }
 
 chessPiece::~chessPiece()
 {
-}
-
-void chessPiece::initTextures()
-{
-    whiteTexture = _Driver->getTexture("./assets/White.png");
-    blackTexture = _Driver->getTexture("./assets/Black.png");
-    if (!whiteTexture || !blackTexture) {
-        std::cerr << "Error: Could not load textures" << std::endl;
-        exit(84);
-    }
-
 }
 
 void chessPiece::loadPiece(const char *path)
@@ -78,16 +71,21 @@ void chessPiece::setCurrentQuality(quality newQuality)
     loadPiece(("./assets/obj" + std::to_string(newQuality)).c_str());
 }
 
-IAnimatedMeshSceneNode *chessPiece::placePiece(IAnimatedMesh *pieceToPlace, vector3df position, pieceColor color = WHITE)
+IAnimatedMeshSceneNode *chessPiece::placePiece(IAnimatedMesh *pieceToPlace, vector3df position, teamColor color = DEFAULT)
 {
     IAnimatedMeshSceneNode* pawnNode = _SceneManager->addAnimatedMeshSceneNode(pieceToPlace);
     if (pawnNode) {
         pawnNode->setPosition(position); // Adjust position as needed
         pawnNode->setMaterialFlag(EMF_LIGHTING, false);
-        if (color == WHITE)
-            pawnNode->setMaterialTexture(0, whiteTexture);
-        else
-            pawnNode->setMaterialTexture(0, blackTexture);
+        if (color == WHITE) {
+            std::cout << "white" << std::endl;
+            pawnNode->setMaterialTexture(0, _WhiteTexture);
+        } else {
+            std::cout << "black" << std::endl;
+            pawnNode->setMaterialTexture(0, _BlackTexture);
+        }
+        pawnNode->setMaterialType(video::EMT_SOLID);
+        pawnNode->setMaterialFlag(video::EMF_BACK_FACE_CULLING, false);
     } else {
         std::cerr << "Error: Could not create mesh scene node for pawn." << std::endl;
         _Device->drop();

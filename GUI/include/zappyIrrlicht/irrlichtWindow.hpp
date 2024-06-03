@@ -7,22 +7,8 @@
 
 #pragma once
 
-#pragma once
-
-#include <irrlicht.h>
-#include <iostream>
-#include <filesystem> 
-#include <fstream>
-
-using namespace irr;
-using namespace core;
-using namespace scene;
-using namespace video;
-using namespace io;
-using namespace gui;
-
-#include "event/eventHandler.hpp"
-#include "objFile/objLoader.hpp"
+#include "main.hpp"
+#include "event/irrlichtEventHandler.hpp"
 #include "chessElement/chessBoard.hpp"
 #include "chessElement/chessPiece.hpp"
 #include "zappyIrrlicht/irrlichtWindow.hpp"

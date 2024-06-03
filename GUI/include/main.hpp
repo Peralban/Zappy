@@ -7,14 +7,15 @@
 
 #pragma once
 
-#include <irrlicht.h>
+#include <../irrlicht/irrlicht.h>
 #include <iostream>
 #include <filesystem> 
 #include <fstream>
+#include <map>
 
 enum pieceType {BISHOP, KING, KNIGHT, PAWN, QUEEN, ROOK};
-enum pieceColor {BLACK, WHITE};
-enum quality {LowPoly, MidPoly, HighPoly};	
+enum quality {LowPoly, MidPoly, HighPoly};
+enum teamColor {DEFAULT, BLACK, WHITE, RED, GREEN, BLUE};
 
 using namespace irr;
 using namespace core;
@@ -22,4 +23,3 @@ using namespace scene;
 using namespace video;
 using namespace io;
 using namespace gui;
-

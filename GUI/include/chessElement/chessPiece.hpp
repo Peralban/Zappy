@@ -17,7 +17,7 @@ class chessPiece {
         void loadPiece(const char *path);
         void initTextures();
         void setCurrentQuality(quality newQuality);
-        IAnimatedMeshSceneNode *placePiece(IAnimatedMesh *pieceToPlace, vector3df position, pieceColor color);
+        IAnimatedMeshSceneNode *placePiece(IAnimatedMesh *pieceToPlace, vector3df position, teamColor color);
 		IAnimatedMesh* getPiece(pieceType type);
 
 	private:
@@ -32,6 +32,6 @@ class chessPiece {
 		scene::IAnimatedMesh* _Pawn;
 		scene::IAnimatedMesh* _Queen;
 		scene::IAnimatedMesh* _Rook;
-        ITexture* whiteTexture;
-        ITexture* blackTexture;
+        ITexture* _WhiteTexture;
+        ITexture* _BlackTexture;
 };
