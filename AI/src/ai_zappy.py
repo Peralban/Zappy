@@ -19,7 +19,7 @@ class Bot:
         self.dimension = {'x' : x - 1, 'y' : y - 1}
         self.inventory = {'food' : 0, 'linemate' : 0, 'deraumere' : 0, 'sibur' : 0, 'mendiane' : 0, 'phiras' : 0, 'thystame' : 0}
         self.position = {'x' : 0, 'y' : 0}
-        self.direction = 0
+        self.direction = 1
         self.level = 1
 
     def run(self):
@@ -50,6 +50,13 @@ class Bot:
         return
     
     def right(self):
+        res = 0
+
+        #function calling for connection
+        if res == "ok":
+            self.direction -= 1
+            if self.direction == 0:
+                self.direction = 4
         return
     
     def left(self):
