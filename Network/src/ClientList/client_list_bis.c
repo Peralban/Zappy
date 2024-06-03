@@ -19,7 +19,7 @@ client_t *get_client_from_list(client_list_t *list, int socket)
     return NULL;
 }
 
-void eject_client_from_server(client_t *client, client_list_t **list,
+void eject_client_from_server(client_t *client, client_list_t *list,
     server_t *server)
 {
     int return_value = close(client->clientServer->socket);

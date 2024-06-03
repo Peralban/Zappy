@@ -9,7 +9,7 @@
 #include "ClientList/client_list.h"
 #include <stdio.h>
 
-static void start_communication_with_client(int client_socket, info_game_t info_game, client_list_t **list, server_t *server)
+static void start_communication_with_client(int client_socket, info_game_t info_game, client_list_t *list, server_t *server)
 {
     char buffer[1024];
     int buffer_length;
@@ -28,10 +28,10 @@ static void start_communication_with_client(int client_socket, info_game_t info_
             return;
         }
     }
-    eject_client_from_server(get_client_from_list(*list, client_socket), list, server);
+    eject_client_from_server(get_client_from_list(list, client_socket), list, server);
 }
 
-static void new_client(client_list_t **list, server_t *server)
+static void new_client(client_list_t *list, server_t *server)
 {
     struct sockaddr_in client_address;
     socklen_t client_address_length = sizeof(client_address);
@@ -62,9 +62,9 @@ static void recv_command(client_list_t *tmp, server_t **server)
 }// the send is temporary, it will be deplaced in another function,
 
 // server is not used for no, but it will be used in the future
-static void client_already_connected(client_list_t **list, server_t **server)
+static void client_already_connected(client_list_t *list, server_t **server)
 {
-    for (client_list_t *tmp = *list; tmp->client != NULL; tmp = tmp->next) {
+    for (client_list_t *tmp = list; tmp->client != NULL; tmp = tmp->next) {
         if (FD_ISSET(tmp->client->clientServer->socket, &(*server)->readfds))
             recv_command(tmp, server);
         if (tmp->next == NULL || tmp->client == NULL)
@@ -97,13 +97,13 @@ int server_loop(server_t *server)
 
     while (1) {
         if (FD_ISSET(server->socket, &server->readfds))
-            new_client(&list, server);
+            new_client(list, server);
         FD_ZERO(&server->readfds);
         FD_ZERO(&server->writefds);
         set_all_in_fd(server, list, &max_fd);
         select_status = select(max_fd + 1, &server->readfds, NULL, NULL, NULL);
         if (!check_return_value(select_status, SELECT))
             continue;
-        client_already_connected(&list, &server);
+        client_already_connected(list, &server);
     }
 }
