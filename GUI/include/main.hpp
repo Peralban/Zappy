@@ -12,6 +12,9 @@
 #include <filesystem> 
 #include <fstream>
 
+enum pieceType {BISHOP, KING, KNIGHT, PAWN, QUEEN, ROOK};
+enum pieceColor {BLACK, WHITE};
+enum quality {LowPoly, MidPoly, HighPoly};	
 
 using namespace irr;
 using namespace core;

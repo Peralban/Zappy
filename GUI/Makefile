@@ -30,7 +30,7 @@ INCLUDE		=	-I./include -I/usr/X11R6/include -I$(IRRLICHTPATH)include
 
 VALGRIND	=
 
-LIBS		= -L$(IRRLICHTPATH)lib/Linux -lIrrlicht -L/usr/X11R6/lib -lGL -lXxf86vm -lXext -lX11 -lXcursor
+LIBS		= -L$(IRRLICHTPATH)lib/Linux -lIrrlicht -L/usr/X11R6/lib -lGL -lXxf86vm -lXext -lX11 -lXcursor -lstdc++fs -fopenmp -lpthread -ldl
 
 CXXFLAGS	=	$(INCLUDE) $(WARNINGS) $(LIBS) -O3 -ffast-math #$(VALGRIND)
 

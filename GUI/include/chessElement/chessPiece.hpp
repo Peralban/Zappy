@@ -9,13 +9,8 @@
 
 #include "main.hpp"
 
-enum pieceType {BISHOP, KING, KNIGHT, PAWN, QUEEN, ROOK};
-enum pieceColor {BLACK, WHITE};
-enum quality {LowPoly, MidPoly, HighPoly};	
-
 class chessPiece {
 	public:
-        chessPiece();
         chessPiece(ISceneManager *smgr, IVideoDriver *_Driver, IrrlichtDevice *_Device);
         ~chessPiece();
 

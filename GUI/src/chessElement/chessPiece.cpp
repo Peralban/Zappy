@@ -7,15 +7,6 @@
 
 #include "chessElement/chessPiece.hpp"
 
-chessPiece::chessPiece()
-{
-    _CurrentQuality = LowPoly;
-    _SceneManager = nullptr;
-    _Driver = nullptr;
-    _Device = nullptr;
-    std::cout << "default chess piece creator" << std::endl;
-}
-
 chessPiece::chessPiece(ISceneManager *sceneManager = nullptr, IVideoDriver *driver = nullptr, IrrlichtDevice *device = nullptr)
 {
     _SceneManager = sceneManager;

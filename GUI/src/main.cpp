@@ -5,16 +5,16 @@
 ** main
 */
 
-#include "main.hpp"
 #include "zappyIrrlicht/irrlichtWindow.hpp"
 
 int main(void)
 {
 	int width = 1920;
 	int height = 1080;
-	int platformX = 10;
-	int platformY = 25;
+	int platformX = 30;
+	int platformY = 10;
 	float tileSize = 10.0f;
+	quality quality = LowPoly;
 	int lastFPS = -1;
 
 	irrlichtWindow window(width, height, platformX, platformY, tileSize, video::EDT_OPENGL);
@@ -35,9 +35,9 @@ int main(void)
 	std::cout << "Initializing chess board" << std::endl;
 	window.initChessBoard();
 	std::cout << "Chess board initialized" << std::endl;
-	// std::cout << "Initializing event receiver" << std::endl;
-	// window.initEventReceiver();
-	// std::cout << "Event receiver initialized" << std::endl;
+	std::cout << "Initializing event receiver" << std::endl;
+	window.initEventReceiver();
+	std::cout << "Event receiver initialized" << std::endl;
 	std::cout << "Running window" << std::endl;
 	window.runWindow();
 	std::cout << "stopping window" << std::endl;

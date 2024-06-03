@@ -7,7 +7,20 @@
 
 #pragma once
 
-#include "main.hpp"
+#pragma once
+
+#include <irrlicht.h>
+#include <iostream>
+#include <filesystem> 
+#include <fstream>
+
+using namespace irr;
+using namespace core;
+using namespace scene;
+using namespace video;
+using namespace io;
+using namespace gui;
+
 #include "event/eventHandler.hpp"
 #include "objFile/objLoader.hpp"
 #include "chessElement/chessBoard.hpp"
@@ -44,8 +57,8 @@ class irrlichtWindow {
         IVideoDriver *_Driver;
         ISceneManager *_SceneManager;
         video::E_DRIVER_TYPE _DriverType;
-        chessPiece _chessPieces;
-        chessBoard _chessBoard;
+        chessPiece *_chessPieces;
+        chessBoard *_chessBoard;
         myEventReceiver *_EventReceiver;
         IAnimatedMeshSceneNode *_chessPieceNode;
 };

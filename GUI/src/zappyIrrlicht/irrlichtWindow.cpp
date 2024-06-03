@@ -62,22 +62,22 @@ void irrlichtWindow::initCamera()
 
 void irrlichtWindow::initEventReceiver()
 {
-    myEventReceiver receiver(_Device);
-    _Device->setEventReceiver(&receiver);
+    _EventReceiver = new myEventReceiver(_Device);
+    _Device->setEventReceiver(_EventReceiver);
 }
 
 void irrlichtWindow::initChessBoard()
 {
-	this->_chessBoard = chessBoard(this->_SceneManager, this->_Driver, this->_PlatformX, this->_PlatformY, this->_TileSize);
-    this->_chessBoard.createBoard();
+    this->_chessBoard = new chessBoard(this->_SceneManager, this->_Driver, this->_PlatformX, this->_PlatformY, this->_TileSize);
+    this->_chessBoard->createBoard();
 	std::cout << "chessBoard created" << std::endl;
 }
 
 void irrlichtWindow::initChessPiece()
 {
-    this->_chessPieces = chessPiece(this->_SceneManager, this->_Driver, this->_Device);
-    this->_chessPieces.loadPiece("./assets/obj/objLowPoly");
-    this-> _chessPieceNode = this->_chessPieces.placePiece(this->_chessPieces.getPiece(QUEEN), vector3df(40, 5, 40), BLACK);
+    this->_chessPieces = new chessPiece(this->_SceneManager, this->_Driver, this->_Device);
+    this->_chessPieces->loadPiece("./assets/obj/objHighPoly");
+    this-> _chessPieceNode = this->_chessPieces->placePiece(this->_chessPieces->getPiece(QUEEN), vector3df(40, 5, 40), WHITE);
 }
 
 int irrlichtWindow::runWindow()
