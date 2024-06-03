@@ -17,13 +17,11 @@ client_list_t *create_client_list(void)
     return (list);
 }
 
-client_t *create_client(int socket, struct sockaddr_in *Address)
+client_t *create_client(int socket)
 {
     client_t *client = malloc(sizeof(client_t));
 
-    client->clientServer = malloc(sizeof(struct sockaddr_in) * 1);
-    client->clientServer->socket = socket;
-    client->clientServer->clientAddress = Address;
+    client->socket = socket;
     return (client);
 }
 

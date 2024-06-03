@@ -43,7 +43,7 @@ static void new_client(client_list_t *list, server_t *server)
 
     if (!check_return_value(client_socket, ACCEPT))
         return;
-    add_client_to_list(list, create_client(client_socket, &client_address));
+    add_client_to_list(list, create_client(client_socket));
     FD_SET(client_socket, &server->readfds);
     FD_SET(client_socket, &server->writefds);
     start_communication_with_client(
@@ -56,19 +56,19 @@ static void recv_command(client_list_t *tmp, server_t **server)
     int buffer_length = 0;
 
     (void)server;
-    buffer_length = recv(tmp->client->clientServer->socket, buffer, 1024, 0);
+    buffer_length = recv(tmp->client->socket, buffer, 1024, 0);
     if (!check_return_value(buffer_length, RECV))
         return;
     buffer[buffer_length] = '\0';
     printf("Received: %s\n", buffer);
-    send(tmp->client->clientServer->socket, buffer, buffer_length, 0);
+    send(tmp->client->socket, buffer, buffer_length, 0);
 }// the send is temporary, it will be deplaced in another function,
 
 // server is not used for no, but it will be used in the future
 static void client_already_connected(client_list_t *list, server_t **server)
 {
     for (client_list_t *tmp = list; tmp->client != NULL; tmp = tmp->next) {
-        if (FD_ISSET(tmp->client->clientServer->socket, &(*server)->readfds))
+        if (FD_ISSET(tmp->client->socket, &(*server)->readfds))
             recv_command(tmp, server);
         if (tmp->next == NULL || tmp->client == NULL)
             break;
@@ -83,10 +83,10 @@ static void set_all_in_fd(server_t *server, client_list_t *list, int *max_fd)
     for (client_list_t *tmp = list; tmp->client != NULL; tmp = tmp->next) {
         if (tmp->client == NULL)
             break;
-        FD_SET(tmp->client->clientServer->socket, &server->readfds);
-        FD_SET(tmp->client->clientServer->socket, &server->writefds);
-        if (tmp->client->clientServer->socket > *max_fd)
-            *max_fd = tmp->client->clientServer->socket;
+        FD_SET(tmp->client->socket, &server->readfds);
+        FD_SET(tmp->client->socket, &server->writefds);
+        if (tmp->client->socket > *max_fd)
+            *max_fd = tmp->client->socket;
         if (tmp->next == NULL)
             break;
     }

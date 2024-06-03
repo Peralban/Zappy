@@ -35,7 +35,7 @@ bool complete_integer_data(server_t *server, char **args)
 
 server_t *move_args_to_server_struct(char **args)
 {
-    server_t *server = malloc(sizeof(server_t));
+    server_t *server = calloc(1, sizeof(server_t));
     bool return_null = 0;
 
     if (server == NULL || args == NULL || args[NAMES] == NULL)

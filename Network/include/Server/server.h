@@ -41,22 +41,12 @@ typedef enum {
     SEND
 } error_type_t;
 
-
-/**
- * @struct client_server_s
- * @brief Structure representing a client server.
- */
-typedef struct client_server_s {
-    int socket;
-    struct sockaddr_in *clientAddress;
-} client_server_t;
-
 /**
  * @struct client_s
  * @brief Structure representing a client.
  */
 typedef struct client_s {
-    client_server_t *clientServer;
+    int socket;
 } client_t;
 
 /**

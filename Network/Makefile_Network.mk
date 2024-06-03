@@ -66,7 +66,7 @@ TESTS_FLAGS		= $(TESTS_INCLUDE) $(WARNINGS) $(TESTS_LIBS)
 all:	$(NAME)
 
 $(NAME):	$(OBJ)
-	@gcc -o $(NAME) $(OBJ) $(CFLAGS)
+	@gcc -o $(NAME) $(OBJ) $(CFLAGS) $(VALGRIND)
 	@if [ -f $(NAME) ]; then \
 		printf "\033[1;32mCompilation completed ✅\033[0m\n"; \
 	else \

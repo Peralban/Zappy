@@ -24,10 +24,9 @@ client_list_t *create_client_list(void);
  * This function creates a new client with the given socket and server address.
  *
  * @param socket The socket of the client.
- * @param serverAddress The server address of the client.
  * @return A pointer to the newly created client.
  */
-client_t *create_client(int socket, struct sockaddr_in *Address);
+client_t *create_client(int socket);
 
 /**
  * @brief Adds a client to a client list.
