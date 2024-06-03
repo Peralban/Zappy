@@ -7,10 +7,31 @@
 
 #include "chessElement/chessBoard.hpp"
 
-chessBoard::chessBoard(scene::ISceneManager *smgr, video::IVideoDriver *driver, int width, int height, float tileSize)
-    : sceneManager(smgr), driver(driver), width(width), height(height), tileSize(tileSize)
+chessBoard::chessBoard()
 {
-	whiteTexture = driver->getTexture("./assets/White.png");
+    this->sceneManager = nullptr;
+    this->driver = nullptr;
+    this->width = 0;
+    this->height = 0;
+    this->tileSize = 0;
+}
+
+chessBoard::chessBoard(scene::ISceneManager *smgr, video::IVideoDriver *driver, int width, int height, float tileSize)
+{
+    this->sceneManager = smgr;
+    this->driver = driver;
+    this->width = width;
+    this->height = height;
+    this->tileSize = tileSize;	
+}
+
+chessBoard::~chessBoard()
+{
+}
+
+void chessBoard::createBoard()
+{
+    whiteTexture = driver->getTexture("./assets/White.png");
     blackTexture = driver->getTexture("./assets/Black.png");
     for (int x = 0; x < width; ++x) {
         for (int y = 0; y < height; ++y) {
@@ -25,8 +46,4 @@ chessBoard::chessBoard(scene::ISceneManager *smgr, video::IVideoDriver *driver, 
             }
         }
     }
-}
-
-chessBoard::~chessBoard()
-{
 }

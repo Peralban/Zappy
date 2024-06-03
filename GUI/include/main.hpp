@@ -9,6 +9,9 @@
 
 #include <irrlicht.h>
 #include <iostream>
+#include <filesystem> 
+#include <fstream>
+
 
 using namespace irr;
 using namespace core;
@@ -16,9 +19,4 @@ using namespace scene;
 using namespace video;
 using namespace io;
 using namespace gui;
-
-#include "event/eventHandler.hpp"
-#include "objFile/objLoader.hpp"
-#include "chessElement/chessBoard.hpp"
-#include "chessElement/chessPiece.hpp"
 

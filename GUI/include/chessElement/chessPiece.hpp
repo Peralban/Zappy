@@ -9,26 +9,34 @@
 
 #include "main.hpp"
 
+enum pieceType {BISHOP, KING, KNIGHT, PAWN, QUEEN, ROOK};
+enum pieceColor {BLACK, WHITE};
+enum quality {LowPoly, MidPoly, HighPoly};	
+
 class chessPiece {
 	public:
-		enum pieceType {BISHOP, KING, KNIGHT, PAWN, QUEEN, ROOK};
-		enum pieceColor {BLACK, WHITE};
-		enum quality {LowPoly, MidPoly, HighPoly};	
-
-		chessPiece(IrrlichtDevice *device);
+        chessPiece();
+        chessPiece(ISceneManager *smgr, IVideoDriver *_Driver, IrrlichtDevice *_Device);
         ~chessPiece();
 
         void loadPiece(const char *path);
+        void initTextures();
         void setCurrentQuality(quality newQuality);
+        IAnimatedMeshSceneNode *placePiece(IAnimatedMesh *pieceToPlace, vector3df position, pieceColor color);
 		IAnimatedMesh* getPiece(pieceType type);
 
 	private:
-        IrrlichtDevice* Device;
-		quality currentQuality;
-		std::pair<scene::IAnimatedMesh*, quality> bishop;
-		std::pair<scene::IAnimatedMesh*, quality> king;
-		std::pair<scene::IAnimatedMesh*, quality> knight;
-		std::pair<scene::IAnimatedMesh*, quality> pawn;
-		std::pair<scene::IAnimatedMesh*, quality> queen;
-		std::pair<scene::IAnimatedMesh*, quality> rook;
+        ISceneManager *_SceneManager;
+        IVideoDriver *_Driver;
+        IrrlichtDevice *_Device;
+        IAnimatedMeshSceneNode *_Piece;
+		quality _CurrentQuality;
+		scene::IAnimatedMesh* _Bishop;
+		scene::IAnimatedMesh* _King;
+		scene::IAnimatedMesh* _Knight;
+		scene::IAnimatedMesh* _Pawn;
+		scene::IAnimatedMesh* _Queen;
+		scene::IAnimatedMesh* _Rook;
+        ITexture* whiteTexture;
+        ITexture* blackTexture;
 };

@@ -11,15 +11,18 @@
 
 class chessBoard {
     public:
+        chessBoard();
         chessBoard(ISceneManager *device, video::IVideoDriver *driver,
             int width, int height, float tileSize);
         ~chessBoard();
+
+        void createBoard();
     private:
-        const int width;
-        const int height;
-        const float tileSize;
-        const ISceneManager *sceneManager;
-        const video::IVideoDriver *driver;
+        int width;
+        int height;
+        float tileSize;
+        ISceneManager *sceneManager;
+        video::IVideoDriver *driver;
         ITexture* whiteTexture;
         ITexture* blackTexture;
 };
