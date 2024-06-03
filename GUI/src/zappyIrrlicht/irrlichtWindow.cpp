@@ -18,6 +18,13 @@ irrlichtWindow::irrlichtWindow(
     this->_PlatformY = platformY;
     this->_TileSize = tileSize;
     this->_DriverType = driverType;
+    this->_Device = nullptr;
+    this->_Driver = nullptr;
+    this->_SceneManager = nullptr;
+    this->_chessBoard = nullptr;
+    this->_EventReceiver = nullptr;
+    this->_LinkedZappyGame = nullptr;
+    this->_Quality = MidPoly;
 }
 
 void irrlichtWindow::windowCreateDevice()
@@ -73,13 +80,6 @@ void irrlichtWindow::initChessBoard()
 	std::cout << "chessBoard created" << std::endl;
 }
 
-void irrlichtWindow::initChessPiece()
-{
-    this->_chessPieces = new chessPiece(this->_SceneManager, this->_Driver, this->_Device);
-    this->_chessPieces->loadPiece("./assets/obj/objHighPoly");
-    this-> _chessPieceNode = this->_chessPieces->placePiece(this->_chessPieces->getPiece(QUEEN), vector3df(40, 5, 40), WHITE);
-}
-
 int irrlichtWindow::runWindow()
 {
     while(this->_Device->run()) {
@@ -98,3 +98,30 @@ IrrlichtDevice *irrlichtWindow::getDevice()
 {
     return this->_Device;
 }
+
+IVideoDriver *irrlichtWindow::getDriver()
+{
+    return this->_Driver;
+}
+
+ISceneManager *irrlichtWindow::getSceneManager()
+{
+    return this->_SceneManager;
+}
+
+quality irrlichtWindow::getQuality()
+{
+    return this->_Quality;
+}
+
+void irrlichtWindow::linkZappyGame(ZappyGame *gameToLink)
+{
+    this->_LinkedZappyGame = gameToLink;
+    gameToLink->linkWithDevice(this);
+}
+
+ZappyGame *irrlichtWindow::getLinkedZappyGame()
+{
+    return this->_LinkedZappyGame;
+}
+

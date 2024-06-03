@@ -6,13 +6,26 @@
 */
 
 #include "chessElement/chessPiece.hpp"
+#include "zappyIrrlicht/irrlichtWindow.hpp"
 
 chessPiece::chessPiece(ISceneManager *sceneManager = nullptr, IVideoDriver *driver = nullptr, IrrlichtDevice *device = nullptr)
 {
     _SceneManager = sceneManager;
     _Device = device;
     _Driver = driver;
-    _CurrentQuality = LowPoly;
+    _WhiteTexture = _Driver->getTexture("./assets/White.png");
+    _BlackTexture = _Driver->getTexture("./assets/Black.png");
+    if (!_WhiteTexture || !_BlackTexture) {
+        std::cerr << "Error: Could not load textures" << std::endl;
+        exit(84);
+    }
+}
+
+chessPiece::chessPiece(irrlichtWindow *window)
+{
+    _SceneManager = window->getSceneManager();
+    _Device = window->getDevice();
+    _Driver = window->getDriver();
     _WhiteTexture = _Driver->getTexture("./assets/White.png");
     _BlackTexture = _Driver->getTexture("./assets/Black.png");
     if (!_WhiteTexture || !_BlackTexture) {
@@ -25,8 +38,11 @@ chessPiece::~chessPiece()
 {
 }
 
-void chessPiece::loadPiece(const char *path)
+void chessPiece::loadPiece(quality choosedQuality)
 {
+    std::string qualityStr = (choosedQuality == LOW) ? "LowPoly" : (choosedQuality == MID) ? "MidPoly" : "HighPoly";
+    std::string path = ("./assets/obj/obj" + qualityStr).c_str();
+
     std::string pawnPath = std::string(path) + "/Pawn.obj";
     std::string kingPath = std::string(path) + "/King.obj";
     std::string queenPath = std::string(path) + "/Queen.obj";
@@ -34,7 +50,7 @@ void chessPiece::loadPiece(const char *path)
     std::string bishopPath = std::string(path) + "/Bishop.obj";
     std::string knightPath = std::string(path) + "/Knight.obj";
 
-    
+    std::cout << pawnPath << std::endl;
     if (!std::filesystem::exists(pawnPath) || !std::filesystem::exists(kingPath) || !std::filesystem::exists(queenPath) || !std::filesystem::exists(rookPath) || !std::filesystem::exists(bishopPath) || !std::filesystem::exists(knightPath)) {
         std::cerr << "Error: Could not find chess piece files" << std::endl;
         exit(84);
@@ -68,11 +84,12 @@ void chessPiece::setCurrentQuality(quality newQuality)
     if (newQuality == _CurrentQuality)
         return;
     _CurrentQuality = newQuality;
-    loadPiece(("./assets/obj" + std::to_string(newQuality)).c_str());
+    loadPiece(newQuality);
 }
 
 IAnimatedMeshSceneNode *chessPiece::placePiece(IAnimatedMesh *pieceToPlace, vector3df position, teamColor color = DEFAULT)
 {
+    std::cout << "placePiece" << std::endl;
     IAnimatedMeshSceneNode* pawnNode = _SceneManager->addAnimatedMeshSceneNode(pieceToPlace);
     if (pawnNode) {
         pawnNode->setPosition(position); // Adjust position as needed
@@ -96,6 +113,7 @@ IAnimatedMeshSceneNode *chessPiece::placePiece(IAnimatedMesh *pieceToPlace, vect
 
 IAnimatedMesh *chessPiece::getPiece(pieceType type)
 {
+    std::cout << "getPiece" << std::endl;
     switch (type) {
     case PAWN:
         return _Pawn;

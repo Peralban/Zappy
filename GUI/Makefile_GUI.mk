@@ -15,7 +15,7 @@ SRC		=       chessElement/chessBoard.cpp \
 				player/team.cpp     \
 				player/player.cpp   \
 				player/playerPosition.cpp   \
-				game/game.cpp			\
+				game/ZappyGame.cpp			\
 				main.cpp
 
 

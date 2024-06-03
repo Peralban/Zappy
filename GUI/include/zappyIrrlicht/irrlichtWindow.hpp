@@ -8,10 +8,10 @@
 #pragma once
 
 #include "main.hpp"
-#include "event/irrlichtEventHandler.hpp"
+#include "game/ZappyGame.hpp"
 #include "chessElement/chessBoard.hpp"
-#include "chessElement/chessPiece.hpp"
-#include "zappyIrrlicht/irrlichtWindow.hpp"
+#include "event/irrlichtEventHandler.hpp"
+
 
 class irrlichtWindow {
     public:
@@ -26,25 +26,29 @@ class irrlichtWindow {
         void initChessBoard();
         void initEventReceiver();
         void initCamera();
-        void initChessPiece();
-
+        void linkZappyGame(ZappyGame *ZappyGameToLink);
         int runWindow();
 
         IrrlichtDevice *getDevice();
+        IVideoDriver *getDriver();
+        ISceneManager *getSceneManager();
+        quality getQuality();
+        ZappyGame *getLinkedZappyGame();
 
 
-    private:
+    protected:
         int _Width;
         int _Height;
         int _PlatformX;
         int _PlatformY;
         float _TileSize;
+
+        quality _Quality;
         IrrlichtDevice *_Device;
         IVideoDriver *_Driver;
         ISceneManager *_SceneManager;
         video::E_DRIVER_TYPE _DriverType;
-        chessPiece *_chessPieces;
         chessBoard *_chessBoard;
         myEventReceiver *_EventReceiver;
-        IAnimatedMeshSceneNode *_chessPieceNode;
+        ZappyGame *_LinkedZappyGame;
 };

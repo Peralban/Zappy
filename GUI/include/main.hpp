@@ -14,7 +14,7 @@
 #include <map>
 
 enum pieceType {BISHOP, KING, KNIGHT, PAWN, QUEEN, ROOK};
-enum quality {LowPoly, MidPoly, HighPoly};
+enum quality {LOW, MID, HIGH};
 enum teamColor {DEFAULT, BLACK, WHITE, RED, GREEN, BLUE};
 
 using namespace irr;

@@ -9,12 +9,15 @@
 
 #include "main.hpp"
 
+class irrlichtWindow;
+
 class chessPiece {
 	public:
         chessPiece(ISceneManager *smgr, IVideoDriver *_Driver, IrrlichtDevice *_Device);
+        chessPiece(irrlichtWindow *window);
         ~chessPiece();
 
-        void loadPiece(const char *path);
+        void loadPiece(quality choosedQuality);
         void initTextures();
         void setCurrentQuality(quality newQuality);
         IAnimatedMeshSceneNode *placePiece(IAnimatedMesh *pieceToPlace, vector3df position, teamColor color);
