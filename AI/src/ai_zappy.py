@@ -98,4 +98,10 @@ class Bot:
         return
     
     def incantation(self):
+        res = ""
+
+        #function calling for connection
+        if res != "ko":
+            self.level += 1
+            self.update_inventory()
         return
