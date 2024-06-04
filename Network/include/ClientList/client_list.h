@@ -79,5 +79,4 @@ void destroy_client_list(client_list_t *list);
  * @param list A pointer to the client list.
  * @param server A pointer to the server.
  */
-void eject_client_from_server(client_t *client, client_list_t *list,
-    server_t *server);
+void eject_client_from_server(client_t *client, server_t *server);

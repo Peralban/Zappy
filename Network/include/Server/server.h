@@ -82,6 +82,7 @@ typedef struct server_s {
     int socket;
     struct sockaddr_in *serverAddress;
     info_game_t info_game;
+    client_list_t *list;
 } server_t;
 
 /**

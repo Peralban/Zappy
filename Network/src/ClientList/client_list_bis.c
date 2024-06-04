@@ -19,13 +19,12 @@ client_t *get_client_from_list(client_list_t *list, int socket)
     return NULL;
 }
 
-void eject_client_from_server(client_t *client, client_list_t *list,
-    server_t *server)
+void eject_client_from_server(client_t *client, server_t *server)
 {
     int return_value = close(client->socket);
 
     check_return_value(return_value, CLOSE);
-    remove_client_from_list(list, client);
+    remove_client_from_list(server->list, client);
     FD_CLR(client->socket, &server->readfds);
     FD_CLR(client->socket, &server->writefds);
     free(client);
