@@ -9,21 +9,13 @@
 #include "ClientList/client_list.h"
 #include <stdio.h>
 
-static void start_communication_with_client(int client_socket,
-    server_t *server)
+static void check_if_connection_possible(int client_socket, server_t *server,
+    char *buffer)
 {
-    char buffer[1024];
-    int buffer_length;
-
-    send(client_socket, "WELCOME\n", 8, 0);
-    buffer_length = recv(client_socket, buffer, 1024, 0);
-    if (!check_return_value(buffer_length, RECV))
-        return;
-    buffer[buffer_length - 2] = '\0';
     for (int i = 0; server->info_game.team_names[i] != NULL; i++) {
         if (strcmp(buffer, server->info_game.team_names[i]) == 0 &&
-        server->game->teams[i].connected_clients < server->info_game.nb_client)
-        {
+        server->game->teams[i].connected_clients <
+        server->info_game.nb_client) {
             server->game->teams[i].connected_clients++;
             sprintf(buffer, "%d\n%d %d\n",
                 server->info_game.nb_client -
@@ -36,6 +28,20 @@ static void start_communication_with_client(int client_socket,
     send(client_socket, "ko\n", 3, 0);
     eject_client_from_server(
         get_client_from_list(server->list, client_socket), server);
+}
+
+static void start_communication_with_client(int client_socket,
+    server_t *server)
+{
+    char buffer[1024];
+    int buffer_length;
+
+    send(client_socket, "WELCOME\n", 8, 0);
+    buffer_length = recv(client_socket, buffer, 1024, 0);
+    if (!check_return_value(buffer_length, RECV))
+        return;
+    buffer[buffer_length - 2] = '\0';
+    check_if_connection_possible(client_socket, server, buffer);
 }
 
 static void new_client(server_t *server)
@@ -70,7 +76,8 @@ static void recv_command(client_list_t *tmp, server_t **server)
 // server is not used for no, but it will be used in the future
 static void client_already_connected(server_t **server)
 {
-    for (client_list_t *tmp = (*server)->list; tmp->client != NULL; tmp = tmp->next) {
+    for (client_list_t *tmp = (*server)->list;
+    tmp->client != NULL; tmp = tmp->next) {
         if (FD_ISSET(tmp->client->socket, &(*server)->readfds))
             recv_command(tmp, server);
         if (tmp->next == NULL || tmp->client == NULL)
@@ -83,7 +90,8 @@ static void set_all_in_fd(server_t *server, int *max_fd)
     FD_SET(server->socket, &server->readfds);
     FD_SET(server->socket, &server->writefds);
     *max_fd = server->socket;
-    for (client_list_t *tmp = server->list; tmp->client != NULL; tmp = tmp->next) {
+    for (client_list_t *tmp = server->list;
+    tmp->client != NULL; tmp = tmp->next) {
         if (tmp->client == NULL)
             break;
         FD_SET(tmp->client->socket, &server->readfds);
@@ -109,10 +117,10 @@ int server_loop(server_t *server)
         FD_ZERO(&server->writefds);
         set_all_in_fd(server, &max_fd);
         select_status = select(
-            max_fd + 1, &server->readfds,NULL, NULL, &timeout);
+            max_fd + 1, &server->readfds, NULL, NULL, &timeout);
         if (!check_return_value(select_status, SELECT))
             continue;
         client_already_connected(&server);
-        // if time is up, do one game tick
     }
 }
+// at each loop, if time is up, do one game tick: TODO
