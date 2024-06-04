@@ -8,6 +8,7 @@
 #include "Server/server.h"
 #include "Parsing/arguments_struct.h"
 #include "lib/my.h"
+#include "Server/game.h"
 
 bool complete_integer_data(server_t *server, char **args)
 {
@@ -45,7 +46,8 @@ server_t *move_args_to_server_struct(char **args)
         printf("Error while parsing names\n");
         return_null = true;
     }
-    if (return_null || complete_integer_data(server, args)) {
+    if (return_null || complete_integer_data(server, args) ||
+    init_game(server->info_game) == NULL) {
         if (server->info_game.team_names != NULL)
             my_free_array(server->info_game.team_names);
         free(server);

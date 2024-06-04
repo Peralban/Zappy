@@ -67,3 +67,10 @@ void my_free_array(char **array);
  * @return The number of words in the string.
  */
 int word_nbr(char *str, char *delim);
+
+/**
+ * @brief Counts the number of elements in a null-terminated array of strings.
+ * @param array The null-terminated array of strings.
+ * @return The number of elements in the array.
+ */
+int my_array_len(char **array);

@@ -65,3 +65,11 @@ void my_free_array(char **array)
         free(array[i]);
     free(array);
 }
+
+int my_array_len(char **array)
+{
+    int i = 0;
+
+    for (; array[i] != NULL; i++);
+    return i;
+}
