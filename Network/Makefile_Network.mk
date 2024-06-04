@@ -8,6 +8,17 @@
 #-------------- Main Variables --------------#
 
 SRC		= 		main.c								\
+				ClientList/client_list.c			\
+				ClientList/client_list_bis.c		\
+				ErrorHandling/check_return_value.c	\
+				Server/zappy_network.c				\
+				Server/server_loop.c				\
+				Parsing/parse_args.c				\
+				Parsing/move_args_to_struct.c		\
+				lib/my_str_to_word_array.c			\
+				lib/char_is_in_str.c				\
+				lib/my_len_before_char.c			\
+				lib/get_nbr_of_char.c				\
 
 TRUE_SRC 	= 	$(patsubst %,src/%, $(SRC))
 
@@ -25,12 +36,24 @@ CFLAGS	=	$(INCLUDE) $(WARNINGS) #$(VALGRIND)
 
 #-------------- Tests Variables --------------#
 
-TESTS_SRC		=	mainTests.c
+TESTS_SRC		=	mainTest.c									\
+					ClientListTests/tests_linked_list.c			\
+					libTests/char_is_in_str_test.c				\
+					libTests/get_nbr_of_char_test.c				\
+					libTests/my_len_before_char_test.c			\
+					libTests/my_str_to_word_array_test.c		\
+					ErrorHandlingTests/check_return_value_test.c\
+					ParsingTests/move_args_to_struct_test.c		\
+					ParsingTests/parse_args_test.c				\
 
-TESTS_TRUE_SRC	=	$(patsubst %,Tests/src/%, $(TEST_SRC))	\
+TESTS_TRUE_SRC	=	$(patsubst %,Tests/src/%, $(TESTS_SRC)) \
 					$(filter-out src/main.c, $(TRUE_SRC))
 
-TESTS_FLAGS		=	--coverage -lcriterion
+TESTS_LIBS		=	--coverage -lcriterion
+
+TESTS_INCLUDE	=	$(INCLUDE) -I./Tests/src
+
+TESTS_FLAGS		= $(TESTS_INCLUDE) $(WARNINGS) $(TESTS_LIBS)
 
 #-------------- Phony & Silent Rules --------------#
 
@@ -52,16 +75,20 @@ $(NAME):	$(OBJ)
 
 clean:
 	rm -f $(OBJ)
-	printf "\033[1;35mObject files removed ✅\033[0m\n"
+	@printf "\033[1;35mObject files removed ✅\033[0m\n"
 
 fclean:	clean
 	rm -f $(NAME)
-	printf "\033[1;35mBinary removed ✅\033[0m\n"
+	rm -f unit_tests*
+	rm -f *.gc*
+	rm -f vgcore*
+	rm -f *.so
+	@printf "\033[1;35mBinary removed ✅\033[0m\n"
 
 re: fclean all
 
 tests_compile: fclean
-	gcc -o unit_tests $(TESTS_TRUE_SRC) $(CFLAGS) $(TESTS_FLAGS)
+	gcc -o unit_tests $(TESTS_TRUE_SRC) $(TESTS_FLAGS)
 	@if [ -f unit_tests ]; then \
 		printf "\033[1;32mTests compiled ✅\033[0m\n"; \
 	else \
@@ -70,10 +97,7 @@ tests_compile: fclean
 
 tests_launch:
 	./unit_tests
-	printf "\033[1;35mTests launched ✅\033[0m\n"
-	gcovr --exclude tests/
-	gcovr --exclude tests/ --branches
-	printf "\033[1;35mCoverage generated ✅\033[0m\n"
+	printf "\033[1;35mNetWork Tests launched ✅\033[0m\n"
 
 tests_run: tests_compile tests_launch
-	printf "\033[1;32mTests runned ✅\033[0m\n"
+	@printf "\033[1;32mTests runned ✅\033[0m\n"

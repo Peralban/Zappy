@@ -9,6 +9,7 @@ Retrieve value from arguments given by the user.
 """
 
 from AI.src.client_module import connect_to_server
+import sys
 from AI.src.parsing import parse_arguments
 
 def main():
