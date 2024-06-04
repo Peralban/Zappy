@@ -17,7 +17,7 @@ $(TARGET): $(MAIN_PY)
 	@chmod 777 $(TARGET)
 
 clean:
-	@rm -rf src/__pycache__
+	rm -rf src/__pycache__
 
 fclean: clean
 	@rm -f $(TARGET)

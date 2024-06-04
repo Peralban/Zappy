@@ -10,12 +10,14 @@ import socket
 import select
 import sys
 
-def connect_to_server(host, port,name):
+def connect_to_server(host, port, name):
     server_address = (host, port)
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    LatLng = ()
 
     try:
         sock.connect(server_address)
+        sock.sendall((name + '\n').encode())
     except ConnectionRefusedError:
         sys.exit(84)
 
@@ -27,12 +29,15 @@ def connect_to_server(host, port,name):
             readable, _, _ = select.select(inputs, [], [])
             for s in readable:
                 if s is sock_file:
-                    message = s.readline()
-                    if not message:
-                        print('Disconnected from server')
-                        sys.exit()
-                    else:
-                        print(message.strip())
+                    for message in s:
+                        if not message:
+                            print('Disconnected from server')
+                            sys.exit()
+                        else:
+                            print(message.strip())
+                            parts = message.strip().split()
+                            if len(parts) == 2:
+                                LatLng = (int(parts[0]), int(parts[1]))
                 else:
                     message = sys.stdin.readline()
                     sock.sendall(message.encode())
@@ -40,6 +45,6 @@ def connect_to_server(host, port,name):
                     sys.stdout.write(message)
                     sys.stdout.flush()
     except KeyboardInterrupt:
-        print('')
+        print("\nClient interrupted.")
     finally:
         sock.close()
