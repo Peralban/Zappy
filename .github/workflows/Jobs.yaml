@@ -68,7 +68,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: install irrlicht
-        run: sudo dnf install irrlicht -y
+        run: sudo dnf install irrlicht irrlicht-devel -y
       - name: make verify
         run: make
       - name: make clean
@@ -118,6 +118,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: install irrlicht
-        run: sudo dnf install irrlicht -y
+        run: sudo dnf install irrlicht irrlicht-devel -y
       - name: make test
         run: make tests_run

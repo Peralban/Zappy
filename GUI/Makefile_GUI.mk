@@ -29,11 +29,11 @@ WARNINGS	=	-Wall -Wextra -Wshadow
 
 INCLUDE		=	-I./src
 
-VALGRIND	=
+VALGRIND	= -g3
 
 LIBS		= -lIrrlicht
 
-CXXFLAGS	=	$(INCLUDE) $(WARNINGS) $(LIBS) -O3 -ffast-math #$(VALGRIND)
+CXXFLAGS	=	$(INCLUDE) $(WARNINGS) $(LIBS) #$(VALGRIND)
 
 #-------------- Tests Variables --------------#
 
