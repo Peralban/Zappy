@@ -8,7 +8,6 @@
 #include "Server/server.h"
 #include "Parsing/arguments_struct.h"
 #include "lib/my.h"
-#include "Server/game.h"
 
 bool complete_integer_data(server_t *server, char **args)
 {
@@ -34,20 +33,11 @@ bool complete_integer_data(server_t *server, char **args)
     return false;
 }
 
-server_t *move_args_to_server_struct(char **args)
+static server_t *getS(char **args, server_t *server, bool return_null)
 {
-    server_t *server = calloc(1, sizeof(server_t));
-    bool return_null = 0;
-
-    if (server == NULL || args == NULL || args[NAMES] == NULL)
-        return NULL;
-    server->info_game.team_names = my_str_to_word_array(args[NAMES], " ");
-    if (server->info_game.team_names == NULL) {
-        printf("Error while parsing names\n");
-        return_null = true;
-    }
+    server->game = init_game(server->info_game);
     if (return_null || complete_integer_data(server, args) ||
-    init_game(server->info_game) == NULL) {
+    server->game == NULL) {
         if (server->info_game.team_names != NULL)
             my_free_array(server->info_game.team_names);
         free(server);
@@ -56,4 +46,20 @@ server_t *move_args_to_server_struct(char **args)
     }
     free(args);
     return server;
+}
+
+server_t *move_args_to_server_struct(char **args)
+{
+    server_t *server = calloc(1, sizeof(server_t));
+    bool return_null = 0;
+
+    if (server == NULL || args == NULL || args[NAMES] == NULL)
+        return NULL;
+    server->info_game.team_names = my_str_to_word_array(args[NAMES], " ");
+    server->info_game.nb_teams = my_array_len(server->info_game.team_names);
+    if (server->info_game.team_names == NULL) {
+        printf("Error while parsing names\n");
+        return_null = true;
+    }
+    return getS(args, server, return_null);
 }

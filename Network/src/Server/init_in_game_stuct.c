@@ -39,16 +39,20 @@ static team_t *get_team(char **team_names)
 
 in_game_t *init_game(info_game_t info_game)
 {
-    in_game_t *game = malloc(sizeof(in_game_t));
-    int nb_teams = my_array_len(info_game.team_names);
+    in_game_t *game = calloc(1, sizeof(in_game_t));
 
-    if (game == NULL || nb_teams == 0)
+    if (game == NULL || info_game.nb_teams == 0)
         return NULL;
     game->map = get_tile(info_game.width, info_game.height);
-    if (game->map == NULL)
+    if (game->map == NULL) {
+        free(game);
         return NULL;
+    }
     game->teams = get_team(info_game.team_names);
-    if (game->teams == NULL)
+    if (game->teams == NULL) {
+        free(game->map);
+        free(game);
         return NULL;
+    }
     return game;
 }

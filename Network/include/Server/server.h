@@ -67,6 +67,7 @@ typedef struct client_list_s {
 typedef struct info_game_s {
     int width;
     int height;
+    int nb_teams;
     char **team_names;
     int nb_client;
     int freq;

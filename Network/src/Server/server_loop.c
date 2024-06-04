@@ -10,25 +10,30 @@
 #include <stdio.h>
 
 static void start_communication_with_client(int client_socket,
-    info_game_t info_game, server_t *server)
+    server_t *server)
 {
     char buffer[1024];
     int buffer_length;
 
-    sprintf(buffer, "WELCOME\n");
-    send(client_socket, buffer, strlen(buffer), 0);
+    send(client_socket, "WELCOME\n", 8, 0);
     buffer_length = recv(client_socket, buffer, 1024, 0);
     if (!check_return_value(buffer_length, RECV))
         return;
     buffer[buffer_length - 2] = '\0';
-    for (int i = 0; info_game.team_names[i] != NULL; i++) {
-        if (strcmp(buffer, info_game.team_names[i]) == 0) {
+    for (int i = 0; server->info_game.team_names[i] != NULL; i++) {
+        if (strcmp(buffer, server->info_game.team_names[i]) == 0 &&
+        server->game->teams[i].connected_clients < server->info_game.nb_client)
+        {
+            server->game->teams[i].connected_clients++;
             sprintf(buffer, "%d\n%d %d\n",
-                1, info_game.width, info_game.height);
+                server->info_game.nb_client -
+                server->game->teams[i].connected_clients,
+                server->info_game.width, server->info_game.height);
             send(client_socket, buffer, strlen(buffer), 0);
             return;
         }
     }
+    send(client_socket, "ko\n", 3, 0);
     eject_client_from_server(
         get_client_from_list(server->list, client_socket), server);
 }
@@ -45,8 +50,7 @@ static void new_client(server_t *server)
     add_client_to_list(server->list, create_client(client_socket));
     FD_SET(client_socket, &server->readfds);
     FD_SET(client_socket, &server->writefds);
-    start_communication_with_client(
-        client_socket, server->info_game, server);
+    start_communication_with_client(client_socket, server);
 }
 
 static void recv_command(client_list_t *tmp, server_t **server)
