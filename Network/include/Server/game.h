@@ -19,13 +19,26 @@ typedef enum orientation_e {
 } orientation_t;
 
 /**
+ * @enum crystal_type_e
+ * @brief Enumeration representing the type of a crystal.
+ */
+typedef enum crystal_type_e {
+    LINEMATE,
+    DERAUMERE,
+    SIBUR,
+    MENDIANE,
+    PHIRAS,
+    THYSTAME
+} crystal_type_t;
+
+/**
  * @struct item_s
  * @brief Structure representing an item in the game.
  */
-typedef struct item_s {
-    char *name;
-    int quantity;
-} item_t;
+typedef struct inventory_s {
+    int crystals[6];
+    int food;
+} inventory_t;
 
 /**
  * @struct drone_s
@@ -35,16 +48,27 @@ typedef struct drone_s {
     orientation_t orientation;
     int id;
     int level;
-    int inventory[7];
+    inventory_t *inventory;
+    char *team_name;
 } drone_t;
+
+/**
+ * @struct linked_list_drone_s
+ * @brief Structure representing a linked list of drones.
+ */
+typedef struct linked_list_drone_s {
+    drone_t *drone;
+    struct linked_list_drone_s *next;
+    struct linked_list_drone_s *prev;
+} linked_list_drone_t;
 
 /**
  * @struct tile_s
  * @brief Structure representing a tile in the game.
  */
 typedef struct tile_s {
-    item_t *items;
-    drone_t *drone;
+    inventory_t *inventory;
+    linked_list_drone_t *drone;
 } tile_t;
 
 /**
@@ -54,7 +78,6 @@ typedef struct tile_s {
 typedef struct team_s {
     char *name;
     int connected_clients;
-    drone_t *drone;
 } team_t;
 
 /**

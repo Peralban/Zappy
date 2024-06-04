@@ -7,7 +7,6 @@
 
 #include "Server/server.h"
 #include <unistd.h>
-#include "Parsing/parse_args.h"
 #include "Server/game.h"
 #include "lib/my.h"
 
@@ -21,6 +20,13 @@ static tile_t **get_tile(int x, int y)
         tile[i] = malloc(sizeof(tile_t) * (y + 1));
         if (tile[i] == NULL)
             return NULL;
+        tile[i]->drone = NULL;
+        tile[i]->inventory = malloc(sizeof(inventory_t));
+        if (tile[i]->inventory == NULL)
+            return NULL;
+        tile[i]->inventory->food = 0;
+        for (int j = 0; j < 6; j++)
+            tile[i]->inventory->crystals[j] = 0;
     }
     return tile;
 }
@@ -35,7 +41,6 @@ static team_t *get_team(char **team_names)
     for (int i = 0; i < nb_teams; i++) {
         teams[i].name = team_names[i];
         teams[i].connected_clients = 0;
-        teams[i].drone = NULL;
     }
     return teams;
 }
