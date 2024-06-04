@@ -47,6 +47,8 @@ typedef struct drone_s {
     orientation_t orientation;
     int id;
     int level;
+    int x;
+    int y;
     inventory_t inventory;
     char *team_name;
 } drone_t;
@@ -67,7 +69,7 @@ typedef struct linked_list_drone_s {
  */
 typedef struct tile_s {
     inventory_t inventory;
-    linked_list_drone_t *drone;
+    linked_list_drone_t *drone_list;
 } tile_t;
 
 /**

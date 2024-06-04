@@ -58,6 +58,7 @@ typedef struct client_server_s {
  */
 typedef struct client_s {
     client_server_t *clientServer;
+    drone_t *drone;
 } client_t;
 
 /**
