@@ -1,8 +1,16 @@
+# -*- coding: utf-8 -*-
+"""
+EPITECH PROJECT, 2024
+client_module.py
+Description:
+Socket connection to the server.
+"""
+
 import socket
 import select
 import sys
 
-def connect_to_server(host, port, name):
+def connect_to_server(host, port,name):
     server_address = (host, port)
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
