@@ -8,7 +8,6 @@
 #include "Server/server.h"
 #include <unistd.h>
 #include "Parsing/parse_args.h"
-#include "lib/my.h"
 
 static void setup_server_address(server_t *server)
 {
