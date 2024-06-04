@@ -3,28 +3,43 @@
 EPITECH PROJECT, 2024
 client_module.py
 Description:
-Add socket client functionalities.
+Socket connection to the server.
 """
 
 import socket
+import select
+import sys
 
-def connect_to_server(server_host, server_port):
-    client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    client_socket.connect((server_host, server_port))
-    print("Connected to server.")
-    return client_socket
+def connect_to_server(host, port,name):
+    server_address = (host, port)
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-def send_receive_messages(client_socket):
+    try:
+        sock.connect(server_address)
+    except ConnectionRefusedError:
+        sys.exit(84)
+
+    sock_file = sock.makefile('r')
+    inputs = [sock_file, sys.stdin]
+
     try:
         while True:
-            message = input("Enter message: ")
-            if message.lower() == 'exit':
-                break
-            client_socket.sendall(message.encode())
-            response = client_socket.recv(1024).decode()
-            print("Server response:", response)
+            readable, _, _ = select.select(inputs, [], [])
+            for s in readable:
+                if s is sock_file:
+                    message = s.readline()
+                    if not message:
+                        print('Disconnected from server')
+                        sys.exit()
+                    else:
+                        print(message.strip())
+                else:
+                    message = sys.stdin.readline()
+                    sock.sendall(message.encode())
+                    sys.stdout.write('<You> ')
+                    sys.stdout.write(message)
+                    sys.stdout.flush()
     except KeyboardInterrupt:
-        print("\nClient interrupted.")
+        print('')
     finally:
-        client_socket.close()
-        print("Disconnected from server.")
+        sock.close()
