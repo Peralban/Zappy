@@ -11,7 +11,7 @@
  * @enum orientation_e
  * @brief Enumeration representing the orientation of a drone.
  */
-typedef enum orientation_e {
+typedef enum {
     NORTH,
     EAST,
     SOUTH,
@@ -22,7 +22,7 @@ typedef enum orientation_e {
  * @enum crystal_type_e
  * @brief Enumeration representing the type of a crystal.
  */
-typedef enum item_type_e {
+typedef enum{
     FOOD,
     LINEMATE,
     DERAUMERE,
@@ -31,7 +31,7 @@ typedef enum item_type_e {
     PHIRAS,
     THYSTAME,
     MAX_ITEMS
-} item_type_e;
+} item_type_t;
 
 /**
  * @struct item_s
@@ -87,4 +87,3 @@ typedef struct in_game_s {
     tile_t **map;
     team_t *teams;
 } in_game_t;
-
