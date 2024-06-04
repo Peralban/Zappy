@@ -12,8 +12,9 @@
 #include <filesystem> 
 #include <fstream>
 #include <map>
+#include <vector>
 
-enum pieceType {BISHOP, KING, KNIGHT, PAWN, QUEEN, ROOK};
+enum pieceType {PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING};
 enum quality {LOW, MID, HIGH};
 enum teamColor {DEFAULT, BLACK, WHITE, RED, GREEN, BLUE};
 

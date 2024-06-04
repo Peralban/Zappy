@@ -13,41 +13,33 @@ int main(void)
 	int height = 1080;
 	int platformX = 30;
 	int platformY = 10;
-	float tileSize = 10.0f;
-	quality quality = MID;
+	float tileSize = 15.0f;
+	quality quality = HIGH;
 	int lastFPS = -1;
+	bool debug = false;
+
+	std::cout << "Starting Zappy" << std::endl;
 
 	ZappyGame zappy = ZappyGame();
 
-	irrlichtWindow window(width, height, platformX, platformY, tileSize, video::EDT_OPENGL);
-	std::cout << "Creating window..." << std::endl;
+	irrlichtWindow window(width, height, platformX, platformY, tileSize, video::EDT_OPENGL, quality, debug);
 	window.windowCreateDevice();
 	if (window.getDevice() == nullptr)
 		return 1;
-	std::cout << "Window created\n"
-	<< "Initializing drivers..." << std::endl;
 	window.initDrivers();
-	std::cout << "Drivers initialized\n"
-	<< "Initializing camera..." << std::endl;
 	window.initCamera();
-	std::cout << "Camera initialized\n"
-	<< "Initializing chess board..." << std::endl;
 	window.initChessBoard();
-	std::cout << "Chess board initialized\n"
-	<< "Initializing event receiver..." << std::endl;
 	window.initEventReceiver();
-	std::cout << "Event receiver initialized\n"
-	<< "Creating zappy game..." << std::endl;
 	window.linkZappyGame(&zappy);
-	std::cout << "Done creating zappy game\n"
-	<< "Loading chess pieces..." << std::endl;
 	zappy.loadChessPieces();
-	std::cout << "Chess pieces loaded\n"
-	<< "Creating a player..." << std::endl;
 	window.getLinkedZappyGame()->addPlayer("player1");
-	std::cout << "Player created\n"
-	<< "Running window..." << std::endl;
+	window.getLinkedZappyGame()->getPlayer("player1")->getPlayerPosition()->setPos(5, 3);
+	window.getLinkedZappyGame()->getPlayer("player1")->getPlayerPosition()->setConvertedZ(5.0f);
+	window.getLinkedZappyGame()->getPlayer("player1")->getPlayerPosition()->setOrientation(0, 0, 2);
+	window.getLinkedZappyGame()->getPlayer("player1")->updatePlayerPos();
+	window.getLinkedZappyGame()->getPlayer("player1")->setLevel(2);
 	window.runWindow();
-	std::cout << "stopping window" << std::endl;
+	if (debug)
+		std::cout << "stopping window" << std::endl;
 	return 0;
 }

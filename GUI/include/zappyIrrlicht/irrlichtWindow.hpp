@@ -18,7 +18,8 @@ class irrlichtWindow {
         irrlichtWindow(
             int width, int height,
             int platformX, int platformY,
-            float tileSize, video::E_DRIVER_TYPE driverType);
+            float tileSize, video::E_DRIVER_TYPE driverType,
+            quality selectedQuality, bool debug);
         ~irrlichtWindow();
 
         void windowCreateDevice();
@@ -35,13 +36,23 @@ class irrlichtWindow {
         quality getQuality();
         ZappyGame *getLinkedZappyGame();
 
+        int getWidth();
+        int getHeight();
+        int getPlatformX();
+        int getPlatformY();
+        float getTileSize();
 
-    protected:
+        bool getDebugState();
+
+
+    private:
         int _Width;
         int _Height;
         int _PlatformX;
         int _PlatformY;
         float _TileSize;
+
+        bool _Debug;
 
         quality _Quality;
         IrrlichtDevice *_Device;

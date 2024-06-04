@@ -50,12 +50,6 @@ void chessPiece::loadPiece(quality choosedQuality)
     std::string bishopPath = std::string(path) + "/Bishop.obj";
     std::string knightPath = std::string(path) + "/Knight.obj";
 
-    std::cout << pawnPath << std::endl;
-    if (!std::filesystem::exists(pawnPath) || !std::filesystem::exists(kingPath) || !std::filesystem::exists(queenPath) || !std::filesystem::exists(rookPath) || !std::filesystem::exists(bishopPath) || !std::filesystem::exists(knightPath)) {
-        std::cerr << "Error: Could not find chess piece files" << std::endl;
-        exit(84);
-    }
-
     IAnimatedMesh* pawnMesh = _SceneManager->getMesh(pawnPath.c_str());
     IAnimatedMesh* kingMesh = _SceneManager->getMesh(kingPath.c_str());
     IAnimatedMesh* queenMesh = _SceneManager->getMesh(queenPath.c_str());
@@ -87,12 +81,12 @@ void chessPiece::setCurrentQuality(quality newQuality)
     loadPiece(newQuality);
 }
 
-IAnimatedMeshSceneNode *chessPiece::placePiece(IAnimatedMesh *pieceToPlace, vector3df position, teamColor color = DEFAULT)
+IAnimatedMeshSceneNode *chessPiece::placePiece(IAnimatedMesh *pieceToPlace, vector3df position, vector3df rotation, teamColor color = DEFAULT)
 {
-    std::cout << "placePiece" << std::endl;
     IAnimatedMeshSceneNode* pawnNode = _SceneManager->addAnimatedMeshSceneNode(pieceToPlace);
     if (pawnNode) {
         pawnNode->setPosition(position); // Adjust position as needed
+        pawnNode->setRotation(rotation);
         pawnNode->setMaterialFlag(EMF_LIGHTING, false);
         if (color == WHITE) {
             std::cout << "white" << std::endl;
@@ -113,7 +107,6 @@ IAnimatedMeshSceneNode *chessPiece::placePiece(IAnimatedMesh *pieceToPlace, vect
 
 IAnimatedMesh *chessPiece::getPiece(pieceType type)
 {
-    std::cout << "getPiece" << std::endl;
     switch (type) {
     case PAWN:
         return _Pawn;

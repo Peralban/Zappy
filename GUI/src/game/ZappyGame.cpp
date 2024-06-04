@@ -7,6 +7,7 @@
 
 #include "game/ZappyGame.hpp"
 #include "zappyIrrlicht/irrlichtWindow.hpp"
+#include "player/player.hpp"
 
 ZappyGame::ZappyGame()
 {
@@ -41,10 +42,28 @@ irrlichtWindow *ZappyGame::getParentDevice()
 }
 
 void ZappyGame::addPlayer(std::string name)
-{
-    Player player = Player();
-    player.setParentGame(this);
-    player.playerInit();
-    this->playerList[name] = player;
-
+{    
+    if (this->getPlayer(name) != nullptr)
+        return;
+    Player *player = new Player(this, name);
+    player->playerInit();
+    this->_playerList.push_back(std::make_pair(name, player));
 }
+
+
+
+std::vector<std::pair<std::string, Player*>> *ZappyGame::getPlayerList()
+{
+    return &this->_playerList;
+}
+
+Player *ZappyGame::getPlayer(std::string name)
+{
+    for (auto &player : this->_playerList) {
+        if (player.first == name) {
+            return player.second;
+        }
+    }
+    return nullptr;
+}
+

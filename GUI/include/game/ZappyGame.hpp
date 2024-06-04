@@ -25,8 +25,12 @@ class ZappyGame {
         
         chessPiece *getChessPieces();
         irrlichtWindow *getParentDevice();
+
+        std::vector<std::pair<std::string, Player*>> *getPlayerList();
+        Player *getPlayer(std::string name);
     private:
         irrlichtWindow *_ParentDevice;
-        std::map<std::string, Player> playerList;
         chessPiece *_chessPieces;
+        std::vector<std::pair<std::string, Player*>> _playerList;
+
 };

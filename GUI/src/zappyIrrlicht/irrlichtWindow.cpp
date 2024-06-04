@@ -10,7 +10,8 @@
 irrlichtWindow::irrlichtWindow(
     int width, int height,
     int platformX, int platformY,
-    float tileSize, video::E_DRIVER_TYPE driverType = video::EDT_OPENGL)
+    float tileSize, video::E_DRIVER_TYPE driverType = video::EDT_OPENGL,
+    quality selectedQuality = MID, bool debug = false)
 {
     this->_Width = width;
     this->_Height = height;
@@ -24,7 +25,8 @@ irrlichtWindow::irrlichtWindow(
     this->_chessBoard = nullptr;
     this->_EventReceiver = nullptr;
     this->_LinkedZappyGame = nullptr;
-    this->_Quality = MidPoly;
+    this->_Quality = selectedQuality;
+    this->_Debug = debug;
 }
 
 void irrlichtWindow::windowCreateDevice()
@@ -65,6 +67,8 @@ void irrlichtWindow::initCamera()
 	activeCamera->setInputReceiverEnabled(true);
 	activeCamera->setDebugDataVisible(scene::EDS_FULL);
 	activeCamera->setViewMatrixAffector(core::matrix4());
+    if (this->_Debug)
+        std::cout << "Camera initialized" << std::endl;
 }
 
 void irrlichtWindow::initEventReceiver()
@@ -77,7 +81,8 @@ void irrlichtWindow::initChessBoard()
 {
     this->_chessBoard = new chessBoard(this->_SceneManager, this->_Driver, this->_PlatformX, this->_PlatformY, this->_TileSize);
     this->_chessBoard->createBoard();
-	std::cout << "chessBoard created" << std::endl;
+    if (this->_Debug)
+	    std::cout << "chessBoard created" << std::endl;
 }
 
 int irrlichtWindow::runWindow()
@@ -125,3 +130,32 @@ ZappyGame *irrlichtWindow::getLinkedZappyGame()
     return this->_LinkedZappyGame;
 }
 
+int irrlichtWindow::getWidth()
+{
+    return this->_Width;
+}
+
+int irrlichtWindow::getHeight()
+{
+    return this->_Height;
+}
+
+int irrlichtWindow::getPlatformX()
+{
+    return this->_PlatformX;
+}
+
+int irrlichtWindow::getPlatformY()
+{
+    return this->_PlatformY;
+}
+
+float irrlichtWindow::getTileSize()
+{
+    return this->_TileSize;
+}
+
+bool irrlichtWindow::getDebugState()
+{
+    return this->_Debug;
+}

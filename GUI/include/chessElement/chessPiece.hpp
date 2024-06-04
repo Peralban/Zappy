@@ -20,7 +20,7 @@ class chessPiece {
         void loadPiece(quality choosedQuality);
         void initTextures();
         void setCurrentQuality(quality newQuality);
-        IAnimatedMeshSceneNode *placePiece(IAnimatedMesh *pieceToPlace, vector3df position, teamColor color);
+        IAnimatedMeshSceneNode *placePiece(IAnimatedMesh *pieceToPlace, vector3df position, vector3df rotation, teamColor color);
 		IAnimatedMesh* getPiece(pieceType type);
 
 	private:

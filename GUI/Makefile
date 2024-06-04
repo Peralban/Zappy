@@ -7,15 +7,15 @@
 
 #-------------- Main Variables --------------#
 
-SRC		=       chessElement/chessBoard.cpp \
-				chessElement/chessPiece.cpp \
-				event/irrlichtEventHandler.cpp \
-				zappyIrrlicht/irrlichtWindow.cpp       \
-				player/playerInventory.cpp  \
-				player/team.cpp     \
-				player/player.cpp   \
-				player/playerPosition.cpp   \
-				game/ZappyGame.cpp			\
+SRC		=       chessElement/chessBoard.cpp 		\
+				chessElement/chessPiece.cpp 		\
+				event/irrlichtEventHandler.cpp 		\
+				zappyIrrlicht/irrlichtWindow.cpp    \
+				player/playerInventory.cpp  		\
+				player/team.cpp     				\
+				player/player.cpp   				\
+				player/playerPosition.cpp   		\
+				game/ZappyGame.cpp					\
 				main.cpp
 
 
@@ -29,7 +29,6 @@ WARNINGS	=	#-Wall -Wextra -Wshadow
 
 IRRLICHTPATH = /home/smalluwu/Documents/Irrlicht/
 
-# -I../../include  -L../../lib/Linux
 INCLUDE		=	-I./include -I/usr/X11R6/include -I$(IRRLICHTPATH)include
 
 VALGRIND	=
@@ -64,6 +63,7 @@ $(NAME):	$(OBJ)
 	else \
 		printf "\033[1;31mCompilation failed ❌\033[0m\n"; \
 	fi
+
 
 clean:
 	rm -f $(OBJ)
