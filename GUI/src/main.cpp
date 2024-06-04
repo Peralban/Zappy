@@ -6,6 +6,7 @@
 */
 
 #include "zappyIrrlicht/irrlichtWindow.hpp"
+#include <iostream>
 
 int main(void)
 {
@@ -14,15 +15,14 @@ int main(void)
 	int platformX = 30;
 	int platformY = 10;
 	float tileSize = 15.0f;
-	quality quality = HIGH;
-	int lastFPS = -1;
+	quality quality = MID;
 	bool debug = false;
 
 	std::cout << "Starting Zappy" << std::endl;
 
 	ZappyGame zappy = ZappyGame();
 
-	irrlichtWindow window(width, height, platformX, platformY, tileSize, video::EDT_OPENGL, quality, debug);
+	irrlichtWindow window(width, height, platformX, platformY, tileSize, irr::video::EDT_OPENGL, quality, debug);
 	window.windowCreateDevice();
 	if (window.getDevice() == nullptr)
 		return 1;
@@ -39,7 +39,5 @@ int main(void)
 	window.getLinkedZappyGame()->getPlayer("player1")->updatePlayerPos();
 	window.getLinkedZappyGame()->getPlayer("player1")->setLevel(2);
 	window.runWindow();
-	if (debug)
-		std::cout << "stopping window" << std::endl;
 	return 0;
 }

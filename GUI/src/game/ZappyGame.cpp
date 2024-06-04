@@ -5,9 +5,9 @@
 ** ZappyGame
 */
 
-#include "game/ZappyGame.hpp"
-#include "zappyIrrlicht/irrlichtWindow.hpp"
-#include "player/player.hpp"
+#include "ZappyGame.hpp"
+#include "../zappyIrrlicht/irrlichtWindow.hpp"
+#include "../player/player.hpp"
 
 ZappyGame::ZappyGame()
 {

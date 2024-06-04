@@ -5,7 +5,7 @@
 ** playerInventory
 */
 
-#include "player/playerInventory.hpp"
+#include "playerInventory.hpp"
 
 playerInventoy::playerInventoy()
 {

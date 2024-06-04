@@ -5,16 +5,17 @@
 ** chessPiece
 */
 
-#include "chessElement/chessPiece.hpp"
-#include "zappyIrrlicht/irrlichtWindow.hpp"
+#include "chessPiece.hpp"
+#include "../zappyIrrlicht/irrlichtWindow.hpp"
+#include <iostream>
 
-chessPiece::chessPiece(ISceneManager *sceneManager = nullptr, IVideoDriver *driver = nullptr, IrrlichtDevice *device = nullptr)
+chessPiece::chessPiece(irr::scene::ISceneManager *sceneManager, irr::video::IVideoDriver *driver, irr::IrrlichtDevice *device)
 {
     _SceneManager = sceneManager;
     _Device = device;
     _Driver = driver;
-    _WhiteTexture = _Driver->getTexture("./assets/White.png");
-    _BlackTexture = _Driver->getTexture("./assets/Black.png");
+    _WhiteTexture = _Driver->getTexture("./GUI/assets/White.png");
+    _BlackTexture = _Driver->getTexture("./GUI/assets/Black.png");
     if (!_WhiteTexture || !_BlackTexture) {
         std::cerr << "Error: Could not load textures" << std::endl;
         exit(84);
@@ -26,8 +27,8 @@ chessPiece::chessPiece(irrlichtWindow *window)
     _SceneManager = window->getSceneManager();
     _Device = window->getDevice();
     _Driver = window->getDriver();
-    _WhiteTexture = _Driver->getTexture("./assets/White.png");
-    _BlackTexture = _Driver->getTexture("./assets/Black.png");
+    _WhiteTexture = _Driver->getTexture("./GUI/assets/White.png");
+    _BlackTexture = _Driver->getTexture("./GUI/assets/Black.png");
     if (!_WhiteTexture || !_BlackTexture) {
         std::cerr << "Error: Could not load textures" << std::endl;
         exit(84);
@@ -41,7 +42,7 @@ chessPiece::~chessPiece()
 void chessPiece::loadPiece(quality choosedQuality)
 {
     std::string qualityStr = (choosedQuality == LOW) ? "LowPoly" : (choosedQuality == MID) ? "MidPoly" : "HighPoly";
-    std::string path = ("./assets/obj/obj" + qualityStr).c_str();
+    std::string path = ("./GUI/assets/obj/obj" + qualityStr).c_str();
 
     std::string pawnPath = std::string(path) + "/Pawn.obj";
     std::string kingPath = std::string(path) + "/King.obj";
@@ -50,12 +51,12 @@ void chessPiece::loadPiece(quality choosedQuality)
     std::string bishopPath = std::string(path) + "/Bishop.obj";
     std::string knightPath = std::string(path) + "/Knight.obj";
 
-    IAnimatedMesh* pawnMesh = _SceneManager->getMesh(pawnPath.c_str());
-    IAnimatedMesh* kingMesh = _SceneManager->getMesh(kingPath.c_str());
-    IAnimatedMesh* queenMesh = _SceneManager->getMesh(queenPath.c_str());
-    IAnimatedMesh* rookMesh = _SceneManager->getMesh(rookPath.c_str());
-    IAnimatedMesh* bishopMesh = _SceneManager->getMesh(bishopPath.c_str());
-    IAnimatedMesh* knightMesh = _SceneManager->getMesh(knightPath.c_str());
+    irr::scene::IAnimatedMesh* pawnMesh = _SceneManager->getMesh(pawnPath.c_str());
+    irr::scene::IAnimatedMesh* kingMesh = _SceneManager->getMesh(kingPath.c_str());
+    irr::scene::IAnimatedMesh* queenMesh = _SceneManager->getMesh(queenPath.c_str());
+    irr::scene::IAnimatedMesh* rookMesh = _SceneManager->getMesh(rookPath.c_str());
+    irr::scene::IAnimatedMesh* bishopMesh = _SceneManager->getMesh(bishopPath.c_str());
+    irr::scene::IAnimatedMesh* knightMesh = _SceneManager->getMesh(knightPath.c_str());
 
 
     if (!pawnMesh || !kingMesh || !queenMesh || !rookMesh || !bishopMesh || !knightMesh) {
@@ -81,13 +82,13 @@ void chessPiece::setCurrentQuality(quality newQuality)
     loadPiece(newQuality);
 }
 
-IAnimatedMeshSceneNode *chessPiece::placePiece(IAnimatedMesh *pieceToPlace, vector3df position, vector3df rotation, teamColor color = DEFAULT)
+irr::scene::IAnimatedMeshSceneNode *chessPiece::placePiece(irr::scene::IAnimatedMesh *pieceToPlace, irr::core::vector3df position, irr::core::vector3df rotation, teamColor color = DEFAULT)
 {
-    IAnimatedMeshSceneNode* pawnNode = _SceneManager->addAnimatedMeshSceneNode(pieceToPlace);
+    irr::scene::IAnimatedMeshSceneNode* pawnNode = _SceneManager->addAnimatedMeshSceneNode(pieceToPlace);
     if (pawnNode) {
         pawnNode->setPosition(position); // Adjust position as needed
         pawnNode->setRotation(rotation);
-        pawnNode->setMaterialFlag(EMF_LIGHTING, false);
+        pawnNode->setMaterialFlag(irr::video::EMF_LIGHTING, false);
         if (color == WHITE) {
             std::cout << "white" << std::endl;
             pawnNode->setMaterialTexture(0, _WhiteTexture);
@@ -95,8 +96,8 @@ IAnimatedMeshSceneNode *chessPiece::placePiece(IAnimatedMesh *pieceToPlace, vect
             std::cout << "black" << std::endl;
             pawnNode->setMaterialTexture(0, _BlackTexture);
         }
-        pawnNode->setMaterialType(video::EMT_SOLID);
-        pawnNode->setMaterialFlag(video::EMF_BACK_FACE_CULLING, false);
+        pawnNode->setMaterialType(irr::video::EMT_SOLID);
+        pawnNode->setMaterialFlag(irr::video::EMF_BACK_FACE_CULLING, false);
     } else {
         std::cerr << "Error: Could not create mesh scene node for pawn." << std::endl;
         _Device->drop();
@@ -105,7 +106,7 @@ IAnimatedMeshSceneNode *chessPiece::placePiece(IAnimatedMesh *pieceToPlace, vect
     return pawnNode;
 }
 
-IAnimatedMesh *chessPiece::getPiece(pieceType type)
+irr::scene::IAnimatedMesh *chessPiece::getPiece(pieceType type)
 {
     switch (type) {
     case PAWN:

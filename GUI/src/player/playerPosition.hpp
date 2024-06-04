@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "main.hpp"
+#include <irrlicht/irrlicht.h>
 
 class Player;
 
@@ -62,11 +62,11 @@ class PlayerPos {
 
         PlayerPos *getPlayerPos();
 
-        vector3df getVecPosConverted();
-        vector3di getVecPos();
+        irr::core::vector3df getVecPosConverted();
+        irr::core::vector3di getVecPos();
 
-        vector3df getVecRotConverted();
-        vector3di getVecRot();
+        irr::core::vector3df getVecRotConverted();
+        irr::core::vector3di getVecRot();
 
     private:
         int _X;

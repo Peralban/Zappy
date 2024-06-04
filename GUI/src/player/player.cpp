@@ -5,10 +5,10 @@
 ** player
 */
 
-#include "player/player.hpp"
-
+#include "player.hpp"
 #include "game/ZappyGame.hpp"
 #include "chessElement/chessPiece.hpp"
+#include <iostream>
 
 Player::Player(std::string name) :
 _PlayerPosition(PlayerPos(this))
@@ -55,8 +55,6 @@ void Player::setName(std::string name)
 void Player::playerInit()
 {
     this->_PlayerPosition.initPos();
-    float posx = this->_PlayerPosition.getConvertedX();
-    float posy = this->_PlayerPosition.getConvertedY();
     chessPiece *_chessPieces = this->_ParentGame->getChessPieces();
     this-> _chessPieceNode = _chessPieces->placePiece(
         _chessPieces->getPiece(_PieceType),

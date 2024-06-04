@@ -5,10 +5,11 @@
 ** playerPosition
 */
 
-#include "player/playerPosition.hpp"
-#include "player/player.hpp"
+#include "playerPosition.hpp"
+#include "player.hpp"
 #include "game/ZappyGame.hpp"
 #include "zappyIrrlicht/irrlichtWindow.hpp"
+#include <iostream>
 
 PlayerPos::PlayerPos()
 {
@@ -246,22 +247,22 @@ PlayerPos *PlayerPos::getPlayerPos()
     return this;
 }
 
-vector3df PlayerPos::getVecPosConverted()
+irr::core::vector3df PlayerPos::getVecPosConverted()
 {
-    return vector3df(this->_Converted_x, this->_Converted_z, this->_Converted_y);
+    return irr::core::vector3df(this->_Converted_x, this->_Converted_z, this->_Converted_y);
 }
 
-vector3di PlayerPos::getVecPos()
+irr::core::vector3di PlayerPos::getVecPos()
 {
-    return vector3di(this->_X, this->_Z, this->_Y);
+    return irr::core::vector3di(this->_X, this->_Z, this->_Y);
 }
 
-vector3df PlayerPos::getVecRotConverted()
+irr::core::vector3df PlayerPos::getVecRotConverted()
 {
-    return vector3df(float(this->_Converted_Orientation_x), float(this->_Converted_Orientation_z), float(this->_Converted_Orientation_y));
+    return irr::core::vector3df(float(this->_Converted_Orientation_x), float(this->_Converted_Orientation_z), float(this->_Converted_Orientation_y));
 }
 
-vector3di PlayerPos::getVecRot()
+irr::core::vector3di PlayerPos::getVecRot()
 {
-    return vector3di(this->_Orientation_x, this->_Orientation_z, this->_Orientation_y);
+    return irr::core::vector3di(this->_Orientation_x, this->_Orientation_z, this->_Orientation_y);
 }

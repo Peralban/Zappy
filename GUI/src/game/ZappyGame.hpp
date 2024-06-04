@@ -7,9 +7,10 @@
 
 #pragma once
 
-#include "main.hpp"
+#include <irrlicht/irrlicht.h>
 #include "chessElement/chessPiece.hpp"
 #include "player/player.hpp"
+#include <vector>
 
 class irrlichtWindow;
 

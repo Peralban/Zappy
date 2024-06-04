@@ -25,15 +25,13 @@ OBJ			=	$(TRUE_SRC:.cpp=.o)
 
 NAME		=	zappy_gui
 
-WARNINGS	=	#-Wall -Wextra -Wshadow
+WARNINGS	=	-Wall -Wextra -Wshadow
 
-IRRLICHTPATH = /home/smalluwu/Documents/Irrlicht/
-
-INCLUDE		=	-I./include -I/usr/X11R6/include -I$(IRRLICHTPATH)include
+INCLUDE		=	-I./src
 
 VALGRIND	=
 
-LIBS		= -L$(IRRLICHTPATH)lib/Linux -lIrrlicht -L/usr/X11R6/lib -lGL -lXxf86vm -lXext -lX11 -lXcursor -lstdc++fs -fopenmp -lpthread -ldl
+LIBS		= -lIrrlicht
 
 CXXFLAGS	=	$(INCLUDE) $(WARNINGS) $(LIBS) -O3 -ffast-math #$(VALGRIND)
 

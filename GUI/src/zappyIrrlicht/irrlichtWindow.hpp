@@ -7,18 +7,17 @@
 
 #pragma once
 
-#include "main.hpp"
+#include <irrlicht/irrlicht.h>
 #include "game/ZappyGame.hpp"
 #include "chessElement/chessBoard.hpp"
 #include "event/irrlichtEventHandler.hpp"
-
 
 class irrlichtWindow {
     public:
         irrlichtWindow(
             int width, int height,
             int platformX, int platformY,
-            float tileSize, video::E_DRIVER_TYPE driverType,
+            float tileSize, irr::video::E_DRIVER_TYPE driverType,
             quality selectedQuality, bool debug);
         ~irrlichtWindow();
 
@@ -30,9 +29,9 @@ class irrlichtWindow {
         void linkZappyGame(ZappyGame *ZappyGameToLink);
         int runWindow();
 
-        IrrlichtDevice *getDevice();
-        IVideoDriver *getDriver();
-        ISceneManager *getSceneManager();
+        irr::IrrlichtDevice *getDevice();
+        irr::video::IVideoDriver *getDriver();
+        irr::scene::ISceneManager *getSceneManager();
         quality getQuality();
         ZappyGame *getLinkedZappyGame();
 
@@ -55,10 +54,10 @@ class irrlichtWindow {
         bool _Debug;
 
         quality _Quality;
-        IrrlichtDevice *_Device;
-        IVideoDriver *_Driver;
-        ISceneManager *_SceneManager;
-        video::E_DRIVER_TYPE _DriverType;
+        irr::IrrlichtDevice *_Device;
+        irr::video::IVideoDriver *_Driver;
+        irr::scene::ISceneManager *_SceneManager;
+        irr::video::E_DRIVER_TYPE _DriverType;
         chessBoard *_chessBoard;
         myEventReceiver *_EventReceiver;
         ZappyGame *_LinkedZappyGame;

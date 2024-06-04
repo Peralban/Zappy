@@ -5,8 +5,8 @@
 ** team
 */
 
-#include "main.hpp"
-#include "player/team.hpp"
+#include "chessElement/chessPiece.hpp"
+#include "team.hpp"
 
 Team::Team()
 {

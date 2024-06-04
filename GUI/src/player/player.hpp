@@ -7,10 +7,12 @@
 
 #pragma once
 
-#include "main.hpp"
-#include "player/team.hpp"
-#include "player/playerInventory.hpp"
-#include "player/playerPosition.hpp"
+#include <irrlicht/irrlicht.h>
+#include "team.hpp"
+#include "playerInventory.hpp"
+#include "playerPosition.hpp"
+#include "chessElement/chessPiece.hpp"
+#include <string>
 
 class ZappyGame;
 class chessPiece;
@@ -43,6 +45,6 @@ class Player {
         PlayerPos _PlayerPosition;
         Team *_PlayerTeam;
         playerInventoy _Inventory;
-        IAnimatedMeshSceneNode *_chessPieceNode;
+        irr::scene::IAnimatedMeshSceneNode *_chessPieceNode;
         ZappyGame *_ParentGame;
 };

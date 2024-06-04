@@ -7,7 +7,8 @@
 
 #pragma once
 
-#include "main.hpp"
+#include <string>
+#include "chessElement/chessPiece.hpp"
 
 class Team {
     public:

@@ -7,8 +7,6 @@
 
 #pragma once
 
-#include "main.hpp"
-
 class playerInventoy {
     public:
         playerInventoy();
