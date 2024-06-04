@@ -46,6 +46,7 @@ TESTS_SRC		=	mainTest.c									\
 					ErrorHandlingTests/check_return_value_test.c\
 					ParsingTests/move_args_to_struct_test.c		\
 					ParsingTests/parse_args_test.c				\
+					ServerTests/init_in_game_stuct_test.c		\
 
 TESTS_TRUE_SRC	=	$(patsubst %,Tests/src/%, $(TESTS_SRC)) \
 					$(filter-out src/main.c, $(TRUE_SRC))
@@ -98,7 +99,7 @@ tests_compile: fclean
 
 tests_launch:
 	./unit_tests
-	printf "\033[1;35mNetWork Tests launched ✅\033[0m\n"
+	@printf "\033[1;35mNetWork Tests launched ✅\033[0m\n"
 
 tests_run: tests_compile tests_launch
 	@printf "\033[1;32mTests runned ✅\033[0m\n"
