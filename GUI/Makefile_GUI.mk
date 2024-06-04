@@ -42,7 +42,11 @@ TESTS_SRC		=	mainTests.cpp
 TESTS_TRUE_SRC	=	$(patsubst %,Tests/src/%, $(TEST_SRC))	\
 					$(filter-out src/main.cpp, $(TRUE_SRC))
 
-TESTS_FLAGS		=	--coverage -lcriterion
+TESTS_INCLUDE	=	-I./src -I./Tests/src
+
+TESTS_LIBS		=	-lcriterion -lgcov -lIrrlicht
+
+TESTS_FLAGS		=	--coverage $(TESTS_INCLUDE) $(TESTS_LIBS)
 
 #-------------- Phony & Silent Rules --------------#
 
