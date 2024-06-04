@@ -73,7 +73,7 @@ class Bot:
         return
     
     def update_inventory(self):
-        res = ""
+        res = 0
 
         #function calling for connection
         res = res.split(',')
@@ -83,12 +83,23 @@ class Bot:
         return
     
     def connect_nbr(self):
+        res = 0
+
+        #function calling for connection
+        if res > 0:
+            self.fork()
         return
     
     def fork(self):
+        #function calling for connection
         return
     
     def eject(self):
+        res = 0
+
+        #function calling for connection
+        if res == "ko":
+            self.eject()
         return
     
     def take(self, object_name):
