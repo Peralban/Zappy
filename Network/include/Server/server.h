@@ -25,7 +25,7 @@
  * @brief Enum for the different types of errors that may occur.
  * @warning The NONE type is used as a default value.
  */
-typedef enum {
+typedef enum error_type_e {
     SOCKET,
     SETSOCKOPT,
     BIND,
@@ -40,12 +40,12 @@ typedef enum {
     CHDIR,
     RECV,
     SEND
-} error_type_t;
+} error_type;
 
 typedef enum client_state_e {
     WAITING,
     CONNECTED
-} client_state_e;
+} client_state;
 
 /**
  * @struct client_s
@@ -53,7 +53,7 @@ typedef enum client_state_e {
  */
 typedef struct client_s {
     int socket;
-    client_state_e state;
+    client_state state;
 } client_t;
 
 /**
@@ -119,7 +119,7 @@ int zappy_network(char **args);
  * @param error_type The type of error that may have occurred.
  * @return Returns true if the value is an error, false otherwise.
  */
-bool check_return_value(int value_to_check, error_type_t error_type);
+bool check_return_value(int value_to_check, error_type error_type);
 
 /**
  * @brief Main loop for the FTP server.
