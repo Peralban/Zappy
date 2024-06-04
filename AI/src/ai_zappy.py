@@ -103,7 +103,7 @@ class Bot:
         return
     
     def take(self, object_name):
-        res = ""
+        res = 0
 
         #function calling for connection
         if res == "ok":
@@ -111,7 +111,7 @@ class Bot:
         return
     
     def set(self, object_name):
-        res = ""
+        res = 0
 
         #function calling for connection
         if res == "ok":
@@ -119,7 +119,7 @@ class Bot:
         return
     
     def incantation(self):
-        res = ""
+        res = 0
 
         #function calling for connection
         if res != "ko":
