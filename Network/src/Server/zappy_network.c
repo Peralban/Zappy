@@ -8,7 +8,7 @@
 #include "Server/server.h"
 #include <unistd.h>
 #include "Parsing/parse_args.h"
-#include "lib/my.h"
+#include "Server/game.h"
 
 static void setup_server_address(server_t *server)
 {
@@ -38,8 +38,12 @@ static void bind_and_listen(server_t *server)
 int zappy_network(char **args)
 {
     server_t *server = move_args_to_server_struct(args);
+    in_game_t *game = NULL;
 
     if (server == NULL)
+        return EXIT_FAIL;
+    game = init_game(server->info_game);
+    if (game == NULL)
         return EXIT_FAIL;
     server->serverAddress = malloc(sizeof(struct sockaddr_in));
     if (server->serverAddress == NULL)
