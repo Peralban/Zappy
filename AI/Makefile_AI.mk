@@ -16,12 +16,15 @@ $(TARGET): $(MAIN_PY)
 	cp $(MAIN_PY) $(TARGET)
 	chmod 777 $(TARGET)
 
-clean:
+tests_run:
 	@echo ""
+
+clean:
+	rm -rf src/__pycache__
 
 fclean: clean
 	rm -f $(TARGET)
 
 re: fclean all
 
-.PHONY: all clean fclean re
+.PHONY: all clean fclean re tests_run
