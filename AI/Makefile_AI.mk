@@ -13,18 +13,21 @@ TARGET = zappy_ai
 all: $(TARGET)
 
 $(TARGET): $(MAIN_PY)
-	cp $(MAIN_PY) $(TARGET)
-	chmod 777 $(TARGET)
-
-tests_run:
-	@echo ""
+	@cp $(MAIN_PY) $(TARGET)
+	@chmod 777 $(TARGET)
 
 clean:
 	rm -rf src/__pycache__
 
 fclean: clean
-	rm -f $(TARGET)
+	@rm -f $(TARGET)
 
 re: fclean all
 
-.PHONY: all clean fclean re tests_run
+test_compile:
+
+tests_launch:
+
+tests_run:
+
+.PHONY: all clean fclean re tests_run tests_launch test_compile
