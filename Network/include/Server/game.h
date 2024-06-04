@@ -22,23 +22,22 @@ typedef enum orientation_e {
  * @enum crystal_type_e
  * @brief Enumeration representing the type of a crystal.
  */
-typedef enum crystal_type_e {
+typedef enum item_type_e {
+    FOOD,
     LINEMATE,
     DERAUMERE,
     SIBUR,
     MENDIANE,
     PHIRAS,
-    THYSTAME
-} crystal_type_t;
+    THYSTAME,
+    MAX_ITEMS
+} item_type_e;
 
 /**
  * @struct item_s
  * @brief Structure representing an item in the game.
  */
-typedef struct inventory_s {
-    int crystals[6];
-    int food;
-} inventory_t;
+typedef int inventory_t[MAX_ITEMS];
 
 /**
  * @struct drone_s
@@ -48,7 +47,7 @@ typedef struct drone_s {
     orientation_t orientation;
     int id;
     int level;
-    inventory_t *inventory;
+    inventory_t inventory;
     char *team_name;
 } drone_t;
 
@@ -67,7 +66,7 @@ typedef struct linked_list_drone_s {
  * @brief Structure representing a tile in the game.
  */
 typedef struct tile_s {
-    inventory_t *inventory;
+    inventory_t inventory;
     linked_list_drone_t *drone;
 } tile_t;
 
@@ -89,9 +88,3 @@ typedef struct in_game_s {
     team_t *teams;
 } in_game_t;
 
-/**
- * @brief Initializes the game with the provided game information.
- * @param info_game The game information to initialize the game with.
- * @return A pointer to the initialized game.
- */
-in_game_t *init_game(info_game_t info_game);

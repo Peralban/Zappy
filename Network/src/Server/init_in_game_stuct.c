@@ -6,7 +6,6 @@
 */
 
 #include "Server/server.h"
-#include <unistd.h>
 #include "Server/game.h"
 #include "lib/my.h"
 
@@ -17,16 +16,9 @@ static tile_t **get_tile(int x, int y)
     if (tile == NULL)
         return NULL;
     for (int i = 0; i < x; i++) {
-        tile[i] = malloc(sizeof(tile_t) * (y + 1));
+        tile[i] = calloc((y + 1), sizeof(tile_t));
         if (tile[i] == NULL)
             return NULL;
-        tile[i]->drone = NULL;
-        tile[i]->inventory = malloc(sizeof(inventory_t));
-        if (tile[i]->inventory == NULL)
-            return NULL;
-        tile[i]->inventory->food = 0;
-        for (int j = 0; j < 6; j++)
-            tile[i]->inventory->crystals[j] = 0;
     }
     return tile;
 }

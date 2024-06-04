@@ -16,6 +16,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <Server/game.h>
 
 #define EXIT_FAIL 84
 #define EXIT_SUCC 0
@@ -92,6 +93,7 @@ typedef struct server_s {
     int socket;
     struct sockaddr_in *serverAddress;
     info_game_t info_game;
+    in_game_t *game;
 } server_t;
 
 /**
@@ -132,3 +134,11 @@ bool check_return_value(int value_to_check, error_type_t error_type);
  * @return Returns 0 on successful execution and non-zero on failure.
  */
 int server_loop(server_t *server);
+
+
+/**
+ * @brief Initializes the game with the provided game information.
+ * @param info_game The game information to initialize the game with.
+ * @return A pointer to the initialized game.
+ */
+in_game_t *init_game(info_game_t info_game);
