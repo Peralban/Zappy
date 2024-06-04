@@ -33,7 +33,7 @@ bool complete_integer_data(server_t *server, char **args)
     return false;
 }
 
-static server_t *get_s(char **args, server_t *server, bool return_null)
+static server_t *get_server(char **args, server_t *server, bool return_null)
 {
     server->game = init_game(server->info_game);
     if (return_null || complete_integer_data(server, args) ||
@@ -61,5 +61,5 @@ server_t *move_args_to_server_struct(char **args)
         printf("Error while parsing names\n");
         return_null = true;
     }
-    return get_s(args, server, return_null);
+    return get_server(args, server, return_null);
 }
