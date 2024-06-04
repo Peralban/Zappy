@@ -22,6 +22,7 @@ client_t *create_client(int socket)
     client_t *client = malloc(sizeof(client_t));
 
     client->socket = socket;
+    client->state = WAITING;
     return (client);
 }
 

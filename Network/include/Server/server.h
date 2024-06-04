@@ -42,12 +42,18 @@ typedef enum {
     SEND
 } error_type_t;
 
+typedef enum client_state_e {
+    WAITING,
+    CONNECTED
+} client_state_e;
+
 /**
  * @struct client_s
  * @brief Structure representing a client.
  */
 typedef struct client_s {
     int socket;
+    client_state_e state;
 } client_t;
 
 /**
