@@ -25,7 +25,7 @@
  * @brief Enum for the different types of errors that may occur.
  * @warning The NONE type is used as a default value.
  */
-typedef enum {
+typedef enum error_type_e {
     SOCKET,
     SETSOCKOPT,
     BIND,
@@ -42,22 +42,18 @@ typedef enum {
     SEND
 } error_type_t;
 
-
-/**
- * @struct client_server_s
- * @brief Structure representing a client server.
- */
-typedef struct client_server_s {
-    int socket;
-    struct sockaddr_in *clientAddress;
-} client_server_t;
+typedef enum client_state_e {
+    WAITING,
+    CONNECTED
+} client_state_t;
 
 /**
  * @struct client_s
  * @brief Structure representing a client.
  */
 typedef struct client_s {
-    client_server_t *clientServer;
+    int socket;
+    client_state_t state;
 } client_t;
 
 /**
@@ -77,6 +73,7 @@ typedef struct client_list_s {
 typedef struct info_game_s {
     int width;
     int height;
+    int nb_teams;
     char **team_names;
     int nb_client;
     int freq;
@@ -92,6 +89,7 @@ typedef struct server_s {
     int port;
     int socket;
     struct sockaddr_in *serverAddress;
+    client_list_t *list;
     info_game_t info_game;
     in_game_t *game;
 } server_t;

@@ -24,10 +24,9 @@ client_list_t *create_client_list(void);
  * This function creates a new client with the given socket and server address.
  *
  * @param socket The socket of the client.
- * @param serverAddress The server address of the client.
  * @return A pointer to the newly created client.
  */
-client_t *create_client(int socket, struct sockaddr_in *Address);
+client_t *create_client(int socket);
 
 /**
  * @brief Adds a client to a client list.
@@ -38,7 +37,7 @@ client_t *create_client(int socket, struct sockaddr_in *Address);
  * @param client A pointer to the client to be added.
  * @return 0 if the client was added successfully, -1 otherwise.
  */
-int add_client_to_list(client_list_t **list, client_t *client);
+int add_client_to_list(client_list_t *list, client_t *client);
 
 /**
  * @brief Removes a client from a client list.
@@ -48,7 +47,7 @@ int add_client_to_list(client_list_t **list, client_t *client);
  * @param list A pointer to the client list.
  * @param client A pointer to the client to be removed.
  */
-void remove_client_from_list(client_list_t **list, client_t *client);
+void remove_client_from_list(client_list_t *list, client_t *client);
 
 /**
  * @brief Retrieves a client from a client list by socket.
@@ -80,5 +79,4 @@ void destroy_client_list(client_list_t *list);
  * @param list A pointer to the client list.
  * @param server A pointer to the server.
  */
-void eject_client_from_server(client_t *client, client_list_t **list,
-    server_t **server);
+void eject_client_from_server(client_t *client, server_t *server);

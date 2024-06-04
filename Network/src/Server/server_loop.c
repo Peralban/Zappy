@@ -9,7 +9,27 @@
 #include "ClientList/client_list.h"
 #include <stdio.h>
 
-static void new_client(client_list_t **list, server_t *server)
+static void start_communication_with_client(client_t *client,
+    server_t *server, char *buffer)
+{
+    for (int i = 0; server->info_game.team_names[i] != NULL; i++) {
+        if (strcmp(buffer, server->info_game.team_names[i]) == 0 &&
+            server->game->teams[i].connected_clients <
+            server->info_game.nb_client) {
+            server->game->teams[i].connected_clients++;
+            sprintf(buffer, "%d\n%d %d\n",
+                server->info_game.nb_client -
+                server->game->teams[i].connected_clients,
+                server->info_game.width, server->info_game.height);
+            send(client->socket, buffer, strlen(buffer), 0);
+            client->state = CONNECTED;
+            return;
+        }
+    }
+    send(client->socket, "ko\n", 3, 0);
+}
+
+static void new_client(server_t *server)
 {
     struct sockaddr_in client_address;
     socklen_t client_address_length = sizeof(client_address);
@@ -18,48 +38,56 @@ static void new_client(client_list_t **list, server_t *server)
 
     if (!check_return_value(client_socket, ACCEPT))
         return;
-    add_client_to_list(list, create_client(client_socket, &client_address));
+    add_client_to_list(server->list, create_client(client_socket));
     FD_SET(client_socket, &server->readfds);
     FD_SET(client_socket, &server->writefds);
+    send(client_socket, "WELCOME\n", 8, 0);
 }
 
-static void recv_command(client_list_t *tmp, server_t **server)
+// the send is temporary, it will be deplaced in another function.
+// the "quit" command may be temporary.
+static void recv_command(client_t *client, server_t *server)
 {
     char buffer[1024];
-    int buffer_length = 0;
+    int buffer_length;
 
-    (void)server;
-    buffer_length = recv(tmp->client->clientServer->socket, buffer, 1024, 0);
+    buffer_length = (int)recv(client->socket, buffer, 1024, 0);
     if (!check_return_value(buffer_length, RECV))
         return;
-    buffer[buffer_length] = '\0';
+    buffer[buffer_length - 2] = '\0';
     printf("Received: %s\n", buffer);
-    send(tmp->client->clientServer->socket, buffer, buffer_length, 0);
-}// the send is temporary, it will be deplaced in another function,
+    if (strcmp(buffer, "quit") == 0)
+        eject_client_from_server(client, server);
+    else if (client->state == WAITING)
+        start_communication_with_client(client, server, buffer);
+    else
+        send(client->socket, buffer, buffer_length, 0);
+}
 
-// server is not used for no, but it will be used in the future
-static void client_already_connected(client_list_t **list, server_t **server)
+static void client_already_connected(server_t *server)
 {
-    for (client_list_t *tmp = *list; tmp->client != NULL; tmp = tmp->next) {
-        if (FD_ISSET(tmp->client->clientServer->socket, &(*server)->readfds))
-            recv_command(tmp, server);
+    for (client_list_t *tmp = server->list;
+    tmp->client != NULL; tmp = tmp->next) {
+        if (FD_ISSET(tmp->client->socket, &server->readfds))
+            recv_command(tmp->client, server);
         if (tmp->next == NULL || tmp->client == NULL)
             break;
     }
 }
 
-static void set_all_in_fd(server_t *server, client_list_t *list, int *max_fd)
+static void set_all_in_fd(server_t *server, int *max_fd)
 {
     FD_SET(server->socket, &server->readfds);
     FD_SET(server->socket, &server->writefds);
     *max_fd = server->socket;
-    for (client_list_t *tmp = list; tmp->client != NULL; tmp = tmp->next) {
+    for (client_list_t *tmp = server->list;
+    tmp->client != NULL; tmp = tmp->next) {
         if (tmp->client == NULL)
             break;
-        FD_SET(tmp->client->clientServer->socket, &server->readfds);
-        FD_SET(tmp->client->clientServer->socket, &server->writefds);
-        if (tmp->client->clientServer->socket > *max_fd)
-            *max_fd = tmp->client->clientServer->socket;
+        FD_SET(tmp->client->socket, &server->readfds);
+        FD_SET(tmp->client->socket, &server->writefds);
+        if (tmp->client->socket > *max_fd)
+            *max_fd = tmp->client->socket;
         if (tmp->next == NULL)
             break;
     }
@@ -67,19 +95,22 @@ static void set_all_in_fd(server_t *server, client_list_t *list, int *max_fd)
 
 int server_loop(server_t *server)
 {
-    client_list_t *list = create_client_list();
     int max_fd = server->socket;
     int select_status;
+    struct timeval timeout = {0, 0};
 
+    server->list = create_client_list();
     while (1) {
         if (FD_ISSET(server->socket, &server->readfds))
-            new_client(&list, server);
+            new_client(server);
         FD_ZERO(&server->readfds);
         FD_ZERO(&server->writefds);
-        set_all_in_fd(server, list, &max_fd);
-        select_status = select(max_fd + 1, &server->readfds, NULL, NULL, NULL);
+        set_all_in_fd(server, &max_fd);
+        select_status = select(
+            max_fd + 1, &server->readfds, NULL, NULL, &timeout);
         if (!check_return_value(select_status, SELECT))
             continue;
-        client_already_connected(&list, &server);
+        client_already_connected(server);
     }
 }
+// at each loop, if time is up, do one game tick: TODO

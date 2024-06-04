@@ -23,7 +23,7 @@ static void setup_server_address(server_t *server)
 
 static void bind_and_listen(server_t *server)
 {
-    int listenStatus = 0;
+    int listenStatus;
     int bindStatus = bind(server->socket,
     (struct sockaddr *)server->serverAddress, sizeof(*server->serverAddress));
 
