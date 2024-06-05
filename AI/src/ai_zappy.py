@@ -21,11 +21,14 @@ class Bot:
         self.position = {'x' : 0, 'y' : 0}
         self.direction = 1
         self.level = 1
+        self.alive = True
+        self.command_number = 0
 
     def run(self):
         return
 
     def forward(self):
+        self.command_number += 1
         res = 0
 
         #function calling for connection
@@ -50,6 +53,7 @@ class Bot:
         return
     
     def right(self):
+        self.command_number += 1
         res = 0
 
         #function calling for connection
@@ -60,6 +64,7 @@ class Bot:
         return
     
     def left(self):
+        self.command_number += 1
         res = 0
 
         #function calling for connection
@@ -70,9 +75,11 @@ class Bot:
         return
     
     def look(self):
+        self.command_number += 1
         return
     
     def update_inventory(self):
+        self.command_number += 1
         res = 0
 
         #function calling for connection
@@ -83,6 +90,7 @@ class Bot:
         return
     
     def connect_nbr(self):
+        self.command_number += 1
         res = 0
 
         #function calling for connection
@@ -91,10 +99,12 @@ class Bot:
         return
     
     def fork(self):
+        self.command_number += 1
         #function calling for connection
         return
     
     def eject(self):
+        self.command_number += 1
         res = 0
 
         #function calling for connection
@@ -103,6 +113,7 @@ class Bot:
         return
     
     def take(self, object_name):
+        self.command_number += 1
         res = 0
 
         #function calling for connection
@@ -111,6 +122,7 @@ class Bot:
         return
     
     def set(self, object_name):
+        self.command_number += 1
         res = 0
 
         #function calling for connection
@@ -119,6 +131,7 @@ class Bot:
         return
     
     def incantation(self):
+        self.command_number += 1
         res = 0
 
         #function calling for connection
