@@ -6,3 +6,7 @@
 */
 
 #pragma once
+
+#include "Server/server.h"
+
+void create_player(server_t *server, char *team_name);

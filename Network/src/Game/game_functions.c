@@ -5,7 +5,7 @@
 ** DESCRIPTION
 */
 
-#include "Server/server.h"
+#include "game_functions.h"
 #include <stdlib.h>
 
 static void create_drone_list(tile_t **tile, drone_t *drone)
@@ -36,7 +36,7 @@ void add_drone_at_pos(in_game_t *game, drone_t *drone)
     tmp->next->drone = drone;
 }
 
-void create_player(server_t *server, char *team_name)
+void create_player(server_t *server, client_t *client, char *team_name)
 {
     drone_t *drone = malloc(sizeof(drone_t));
     static int id = 0;
@@ -49,7 +49,21 @@ void create_player(server_t *server, char *team_name)
     drone->x = rand() % server->game->info_game.width;
     drone->y = rand() % server->game->info_game.height;
     drone->team_name = team_name;
-    server->game->nb_players++;
-    // client drone = drone;
+    server->game->current_nb_players += 1;
+    client->drone = drone;
     add_drone_at_pos(server->game, drone);
+}
+
+void move(drone_t *drone, direction dir, info_game_t *info_game)
+{
+    int movement = dir == FORWARD ? 1 : -1;
+
+    if (drone->orientation == NORTH && drone->y + movement < info_game->height)
+        drone->y += movement;
+    if (drone->orientation == SOUTH && drone->y - movement >= 0)
+        drone->y -= movement;
+    if (drone->orientation == EAST && drone->x + movement < info_game->width)
+        drone->x += movement;
+    if (drone->orientation == WEST && drone->x - movement >= 0)
+        drone->x -= movement;
 }

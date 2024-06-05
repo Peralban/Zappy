@@ -7,6 +7,8 @@
 
 #pragma once
 
+#include "Server/server.h"
+
 /**
  * @enum orientation_e
  * @brief Enumeration representing the orientation of a drone.
@@ -17,6 +19,14 @@ typedef enum {
     SOUTH,
     WEST
 } orientation_t;
+
+/**
+ * @enum  direction
+ */
+typedef enum {
+    FORWARD,
+    BACKWARD
+};
 
 /**
  * @enum crystal_type_e
@@ -44,6 +54,7 @@ typedef int inventory_t[MAX_ITEMS];
  * @brief Structure representing a drone in the game.
  */
 typedef struct drone_s {
+    /*----- Data -----*/
     orientation_t orientation;
     int id;
     int level;
@@ -51,6 +62,8 @@ typedef struct drone_s {
     int y;
     inventory_t inventory;
     char *team_name;
+    /*----- Function -----*/
+    void (*move)(struct drone_s *drone, direction dir, info_game_t *info_game);
 } drone_t;
 
 /**
@@ -88,4 +101,5 @@ typedef struct team_s {
 typedef struct in_game_s {
     tile_t **map;
     team_t *teams;
+    int current_nb_players;
 } in_game_t;

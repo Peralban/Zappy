@@ -54,5 +54,6 @@ in_game_t *init_game(info_game_t info_game)
         free(game);
         return NULL;
     }
+    game->current_nb_players = 0;
     return game;
 }
