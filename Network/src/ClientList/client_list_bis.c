@@ -12,22 +12,22 @@ client_t *get_client_from_list(client_list_t *list, int socket)
     client_list_t *tmp = list;
 
     while (tmp != NULL && tmp->client != NULL) {
-        if (tmp->client->clientServer->socket == socket)
+        if (tmp->client->socket == socket)
             return (tmp->client);
         tmp = tmp->next;
     }
     return NULL;
 }
 
-void eject_client_from_server(client_t *client, client_list_t **list,
-    server_t **server)
+void eject_client_from_server(client_t *client, server_t *server)
 {
-    int return_value = close(client->clientServer->socket);
+    int return_value = close(client->socket);
 
     check_return_value(return_value, CLOSE);
-    remove_client_from_list(list, client);
-    FD_CLR(client->clientServer->socket, &(*server)->readfds);
-    FD_CLR(client->clientServer->socket, &(*server)->writefds);
+    remove_client_from_list(server->list, client);
+    FD_CLR(client->socket, &server->readfds);
+    FD_CLR(client->socket, &server->writefds);
+    free(client);
 }
 
 void destroy_client_list(client_list_t *list)
@@ -37,7 +37,7 @@ void destroy_client_list(client_list_t *list)
 
     while (tmp != NULL) {
         next = tmp->next;
-        close(tmp->client->clientServer->socket);
+        close(tmp->client->socket);
         free(tmp->client);
         free(tmp);
         tmp = next;
