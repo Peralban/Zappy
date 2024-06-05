@@ -34,3 +34,14 @@ void turn(drone_t *drone, side_t side);
  * @param server The server object containing the game state.
  */
 void move(drone_t *drone, server_t *server);
+
+/**
+ * @brief Allows a drone to observe its surroundings.
+ *
+ * This function is used to let a drone look around in the game. It could be used to gather information about the game state,
+ * such as the positions of other drones, obstacles, or points of interest.
+ *
+ * @param drone The drone that is looking around.
+ * @param server The server object containing the game state.
+ */
+void look_around(drone_t *drone, server_t *server);

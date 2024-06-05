@@ -25,3 +25,8 @@ void left(drone_t *drone, server_t *server)
     (void)server;
     turn(drone, LEFT);
 }
+
+void look(drone_t *drone, server_t *server)
+{
+    look_around(drone, server);
+}

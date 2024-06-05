@@ -16,6 +16,8 @@ void right(drone_t *drone, server_t *server);
 
 void left(drone_t *drone, server_t *server);
 
+void look(drone_t *drone, server_t *server);
+
 typedef struct {
     char *name;
     void (*function)(drone_t *drone, server_t *server);
@@ -25,5 +27,5 @@ static const command_t commands[] = {
     {"Forward", &forward},
     {"Right", &right},
     {"Left", &left},
-    {NULL, NULL}
+    {"Look", &look},
 };
