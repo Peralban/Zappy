@@ -19,7 +19,7 @@ static void create_drone_list(tile_t **tile, drone_t *drone)
     (*tile)->drone_list->next = NULL;
 }
 
-void add_drone_at_pos(in_game_t *game, drone_t *drone)
+static void add_drone_at_pos(in_game_t *game, drone_t *drone)
 {
     tile_t *tile = &game->map[drone->x][drone->y];
 

@@ -37,14 +37,6 @@ void turn(drone_t *drone, side_t side);
 void move(drone_t *drone, direction_t dir, server_t *server);
 
 /**
- * @brief Adds a drone at a specific position in the game.
- *
- * @param game The game object.
- * @param drone The drone to add.
- */
-void add_drone_at_pos(in_game_t *game, drone_t *drone);
-
-/**
  * @brief Gets the last node in a linked list of drones.
  *
  * @param list The linked list of drones.
