@@ -8,6 +8,8 @@
 #include "Server/server.h"
 #include "ClientList/client_list.h"
 #include "Game/game_functions.h"
+#include "Game/game_command.h"
+#include "lib/my.h"
 #include <stdio.h>
 
 static void start_communication_with_client(client_t *client,
@@ -46,6 +48,26 @@ static void new_client(server_t *server)
     send(client_socket, "WELCOME\n", 8, 0);
 }
 
+static void parse_command_nam(server_t *server, client_t *client, char *buffer)
+{
+    for (int i = 0; commands[i].name != NULL; i++) {
+        if (strcmp(buffer, commands[i].name) == 0) {
+            commands[i].function(client->drone, server);
+            send(client->socket, "ok\n", 3, 0);
+            return;
+        }
+    }
+    send(client->socket, "ko\n", 3, 0);
+}
+
+static void parse_command(server_t *server, client_t *client, char *buffer)
+{
+    char **commands_arr = my_str_to_word_array(buffer, "\n");
+    for (int i = 0; commands_arr[i] != NULL; i++) {
+        parse_command_nam(server, client, commands_arr[i]);
+    }
+}
+
 // the send is temporary, it will be deplaced in another function.
 // the "quit" command may be temporary.
 static void recv_command(client_t *client, server_t *server)
@@ -63,7 +85,7 @@ static void recv_command(client_t *client, server_t *server)
     else if (client->state == WAITING)
         start_communication_with_client(client, server, buffer);
     else
-        send(client->socket, buffer, buffer_length, 0);
+        parse_command(server, client, buffer);
 }
 
 static void client_already_connected(server_t *server)
@@ -95,13 +117,14 @@ static void set_all_in_fd(server_t *server, int *max_fd)
     }
 }
 
+//debug
 static void print_all_map(server_t *server)
 {
     for (int i = 0; i < server->info_game.width; i++) {
         for (int j = 0; j < server->info_game.height; j++) {
-            printf("Tile %d %d\n", i, j);
             if (server->game->map[i][j].drone_list == NULL)
                 continue;
+            printf("Tile %d %d\n", i, j);
             for (linked_list_drone_t *tmp = server->game->map[i][j].drone_list;
             tmp != NULL; tmp = tmp->next) {
                 printf("Drone %d %d %d %d %d %s\n", tmp->drone->id,

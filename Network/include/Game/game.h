@@ -7,8 +7,6 @@
 
 #pragma once
 
-#include "Server/server.h"
-
 /**
  * @enum axes_e
  * @brief Enumeration representing the axes of the game.
@@ -29,15 +27,6 @@ typedef enum {
     SOUTH,
     WEST
 } orientation_t;
-
-/**
- * @enum  direction_t
- * @brief Enumeration representing the direction of a drone.
- */
-typedef enum {
-    FORWARD,
-    BACKWARD
-} direction_t;
 
 /**
  * @enum crystal_type_e
@@ -84,9 +73,6 @@ typedef struct drone_s {
     int y;
     inventory_t inventory;
     char *team_name;
-    /*----- Function -----*/
-    void (*move)(struct drone_s *drone, direction_t dir, server_t *server);
-    void (*turn)(struct drone_s *drone, side_t side);
 } drone_t;
 
 /**
