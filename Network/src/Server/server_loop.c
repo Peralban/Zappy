@@ -63,6 +63,7 @@ static void parse_command_nam(server_t *server, client_t *client, char *buffer)
 static void parse_command(server_t *server, client_t *client, char *buffer)
 {
     char **commands_arr = my_str_to_word_array(buffer, "\n");
+
     for (int i = 0; commands_arr[i] != NULL; i++) {
         parse_command_nam(server, client, commands_arr[i]);
     }
@@ -140,6 +141,7 @@ int server_loop(server_t *server)
     int max_fd = server->socket;
     int select_status;
     struct timeval timeout = {0, 0};
+
     server->list = create_client_list();
     while (1) {
         if (FD_ISSET(server->socket, &server->readfds))

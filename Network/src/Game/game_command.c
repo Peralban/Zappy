@@ -11,7 +11,7 @@
 
 void forward(drone_t *drone, server_t *server)
 {
-    move(drone, drone->orientation, server);
+    move(drone, server);
 }
 
 void right(drone_t *drone, server_t *server)

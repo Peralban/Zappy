@@ -22,12 +22,13 @@ static void create_drone_list(tile_t *tile, drone_t *drone)
 static void add_drone_at_pos(in_game_t *game, drone_t *drone)
 {
     tile_t *tile = &game->map[drone->x][drone->y];
+    linked_list_drone_t *tmp = NULL;
 
     if (tile->drone_list == NULL) {
         create_drone_list(tile, drone);
         return;
     }
-    linked_list_drone_t *tmp = tile->drone_list;
+    tmp = tile->drone_list;
     while (tmp->next != NULL)
         tmp = tmp->next;
     tmp->next = malloc(sizeof(linked_list_drone_t));
@@ -40,11 +41,12 @@ static void add_drone_at_pos(in_game_t *game, drone_t *drone)
 void create_player(server_t *server, client_t *client, char *team_name)
 {
     drone_t *drone = malloc(sizeof(drone_t));
-    static int id = 0;
+    static int all_id = 0;
 
     if (drone == NULL)
         return;
-    drone->id = id++;
+    drone->id = all_id;
+    all_id++;
     drone->level = 1;
     drone->orientation = rand() % 4;
     drone->x = rand() % server->info_game.width;
@@ -68,7 +70,7 @@ static linked_list_drone_t *found_drone(in_game_t *game, drone_t *drone)
     return NULL;
 }
 
-linked_list_drone_t *get_last_node(linked_list_drone_t *list)
+static linked_list_drone_t *get_last_node(linked_list_drone_t *list)
 {
     linked_list_drone_t *tmp = list;
 
@@ -79,7 +81,7 @@ linked_list_drone_t *get_last_node(linked_list_drone_t *list)
     return tmp;
 }
 
-void remove_drone_from_list(linked_list_drone_t **list, drone_t *drone)
+static void remove_drone_in_list(linked_list_drone_t **list, drone_t *drone)
 {
     linked_list_drone_t *tmp = *list;
 
@@ -96,34 +98,39 @@ void remove_drone_from_list(linked_list_drone_t **list, drone_t *drone)
     free(tmp);
 }
 
-void move(drone_t *drone, orientation_t dir, server_t *server)
+static void exchange_drone(server_t *server, linked_list_drone_t *src,
+    drone_t *drone)
 {
-    int max_coord[MAX_AXES] = {server->info_game.width,
-    server->info_game.height};
-    linked_list_drone_t *src = found_drone(server->game, drone);
-    linked_list_drone_t *dest = NULL;
+    linked_list_drone_t *dest =
+    get_last_node(server->game->map[drone->x][drone->y].drone_list);
 
-    if (src == NULL)
-        return;
-    if (dir == NORTH)
-        drone->y = (drone->y + 1) % max_coord[Y];
-    if (dir == SOUTH)
-        drone->y = (drone->y + max_coord[Y] - 1) % max_coord[Y];
-    if (dir == EAST)
-        drone->x = (drone->x + 1) % max_coord[X];
-    if (dir == WEST)
-        drone->x = (drone->x + max_coord[X] - 1) % max_coord[X];
-    remove_drone_from_list(&src, drone);
-
-
-    dest = get_last_node(server->game->map[drone->x][drone->y].drone_list);
     if (dest == NULL) {
         create_drone_list(&server->game->map[drone->x][drone->y], drone);
         return;
     }
+    if (src->prev != NULL)
+        src->prev->next = NULL;
     dest->next = src;
     src->prev = dest;
-    src->next = NULL;
+}
+
+void move(drone_t *drone, server_t *server)
+{
+    int movement[] = {1, -1, 1, -1};
+    int *coord[] = {&drone->y, &drone->y,
+    &drone->x, &drone->x};
+    int max[] = {server->info_game.height, server->info_game.height,
+    server->info_game.width, server->info_game.width};
+    linked_list_drone_t *src = found_drone(server->game, drone);
+    int old[] = {drone->x, drone->y};
+
+    if (src == NULL)
+        return;
+    *coord[drone->orientation] = (*coord[drone->orientation] +
+    movement[drone->orientation] +
+    max[drone->orientation]) % max[drone->orientation];
+    remove_drone_in_list(&server->game->map[old[X]][old[Y]].drone_list, drone);
+    exchange_drone(server, src, drone);
 }
 
 void turn(drone_t *drone, side_t side)
