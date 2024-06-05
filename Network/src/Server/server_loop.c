@@ -7,6 +7,7 @@
 
 #include "Server/server.h"
 #include "ClientList/client_list.h"
+#include "Game/game_functions.h"
 #include <stdio.h>
 
 static void start_communication_with_client(client_t *client,
@@ -23,6 +24,7 @@ static void start_communication_with_client(client_t *client,
                 server->info_game.width, server->info_game.height);
             send(client->socket, buffer, strlen(buffer), 0);
             client->state = CONNECTED;
+            create_player(server, client, server->info_game.team_names[i]);
             return;
         }
     }
@@ -93,12 +95,28 @@ static void set_all_in_fd(server_t *server, int *max_fd)
     }
 }
 
+static void print_all_map(server_t *server)
+{
+    for (int i = 0; i < server->info_game.width; i++) {
+        for (int j = 0; j < server->info_game.height; j++) {
+            printf("Tile %d %d\n", i, j);
+            if (server->game->map[i][j].drone_list == NULL)
+                continue;
+            for (linked_list_drone_t *tmp = server->game->map[i][j].drone_list;
+            tmp != NULL; tmp = tmp->next) {
+                printf("Drone %d %d %d %d %d %s\n", tmp->drone->id,
+                    tmp->drone->level, tmp->drone->x, tmp->drone->y,
+                    tmp->drone->orientation, tmp->drone->team_name);
+            }
+        }
+    }
+}
+
 int server_loop(server_t *server)
 {
     int max_fd = server->socket;
     int select_status;
     struct timeval timeout = {0, 0};
-
     server->list = create_client_list();
     while (1) {
         if (FD_ISSET(server->socket, &server->readfds))
@@ -111,6 +129,8 @@ int server_loop(server_t *server)
         if (!check_return_value(select_status, SELECT))
             continue;
         client_already_connected(server);
+        print_all_map(server);
+        sleep(2);
     }
 }
 // at each loop, if time is up, do one game tick: TODO

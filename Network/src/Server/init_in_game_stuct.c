@@ -12,14 +12,20 @@
 static tile_t **get_tile(int x, int y)
 {
     tile_t **tile = malloc(sizeof(tile_t) * (x + 1));
+    tile_t *tmp;
 
     if (tile == NULL)
         return NULL;
     for (int i = 0; i < x; i++) {
-        tile[i] = calloc((y + 1), sizeof(tile_t));
+        tile[i] = calloc((y), sizeof(tile_t));
         if (tile[i] == NULL)
             return NULL;
+        for (int j = 0; j < y; j++) {
+            tmp = &tile[i][j];
+            tmp->drone_list = NULL;
+        }
     }
+    tile[x] = NULL;
     return tile;
 }
 
