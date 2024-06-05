@@ -28,5 +28,7 @@ void left(drone_t *drone, server_t *server)
 
 void look(drone_t *drone, server_t *server)
 {
-    look_around(drone, server);
+    char *str = look_around(drone, server);
+
+    free(str);
 }

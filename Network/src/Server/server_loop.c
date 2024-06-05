@@ -118,24 +118,6 @@ static void set_all_in_fd(server_t *server, int *max_fd)
     }
 }
 
-//debug
-static void print_all_map(server_t *server)
-{
-    for (int i = 0; i < server->info_game.width; i++) {
-        for (int j = 0; j < server->info_game.height; j++) {
-            if (server->game->map[i][j].drone_list == NULL)
-                continue;
-            printf("Tile %d %d\n", i, j);
-            for (linked_list_drone_t *tmp = server->game->map[i][j].drone_list;
-            tmp != NULL; tmp = tmp->next) {
-                printf("Drone %d %d %d %d %d %s\n", tmp->drone->id,
-                    tmp->drone->level, tmp->drone->x, tmp->drone->y,
-                    tmp->drone->orientation, tmp->drone->team_name);
-            }
-        }
-    }
-}
-
 int server_loop(server_t *server)
 {
     int max_fd = server->socket;
@@ -154,8 +136,6 @@ int server_loop(server_t *server)
         if (!check_return_value(select_status, SELECT))
             continue;
         client_already_connected(server);
-        print_all_map(server);
-        sleep(2);
     }
 }
 // at each loop, if time is up, do one game tick: TODO
