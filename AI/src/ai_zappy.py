@@ -32,6 +32,8 @@ class Bot:
         res = 0
 
         #function calling for connection
+        if res == "dead":
+            self.alive = False
         if res == "ok":
             if self.direction == 1:
                 self.position['x'] += 1
@@ -57,6 +59,8 @@ class Bot:
         res = 0
 
         #function calling for connection
+        if res == "dead":
+            self.alive = False
         if res == "ok":
             self.direction -= 1
             if self.direction == 0:
@@ -68,6 +72,8 @@ class Bot:
         res = 0
 
         #function calling for connection
+        if res == "dead":
+            self.alive = False
         if res == "ok":
             self.direction += 1
             if self.direction == 4:
@@ -83,6 +89,8 @@ class Bot:
         res = 0
 
         #function calling for connection
+        if res == "dead":
+            self.alive = False
         res = res.split(',')
         for object in res:
             object = object.split()
@@ -94,6 +102,8 @@ class Bot:
         res = 0
 
         #function calling for connection
+        if res == "dead":
+            self.alive = False
         if res > 0:
             self.fork()
         return
@@ -108,6 +118,8 @@ class Bot:
         res = 0
 
         #function calling for connection
+        if res == "dead":
+            self.alive = False
         if res == "ko":
             self.eject()
         return
@@ -117,6 +129,8 @@ class Bot:
         res = 0
 
         #function calling for connection
+        if res == "dead":
+            self.alive = False
         if res == "ok":
             self.inventory[object_name] += 1
         return
@@ -126,6 +140,8 @@ class Bot:
         res = 0
 
         #function calling for connection
+        if res == "dead":
+            self.alive = False
         if res == "ok":
             self.inventory[object_name] -= 1
         return
@@ -135,7 +151,8 @@ class Bot:
         res = 0
 
         #function calling for connection
+        if res == "dead":
+            self.alive = False
         if res != "ko":
             self.level += 1
-            self.update_inventory()
         return
