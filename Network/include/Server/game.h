@@ -21,12 +21,13 @@ typedef enum {
 } orientation_t;
 
 /**
- * @enum  direction
+ * @enum  direction_t
+ * @brief Enumeration representing the direction of a drone.
  */
 typedef enum {
     FORWARD,
     BACKWARD
-};
+} direction_t;
 
 /**
  * @enum crystal_type_e
@@ -42,6 +43,15 @@ typedef enum{
     THYSTAME,
     MAX_ITEMS
 } item_type_t;
+
+/**
+ * @enum side_e
+ * @brief Enumeration representing the side of a drone.
+ */
+typedef enum {
+    LEFT = 1,
+    RIGHT = 3
+} side_t;
 
 /**
  * @struct item_s
@@ -64,6 +74,7 @@ typedef struct drone_s {
     char *team_name;
     /*----- Function -----*/
     void (*move)(struct drone_s *drone, direction dir, info_game_t *info_game);
+    void (*turn)(struct drone_s *drone, side_t side);
 } drone_t;
 
 /**

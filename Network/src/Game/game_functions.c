@@ -6,6 +6,7 @@
 */
 
 #include "game_functions.h"
+#include "game.h"
 #include <stdlib.h>
 
 static void create_drone_list(tile_t **tile, drone_t *drone)
@@ -46,15 +47,15 @@ void create_player(server_t *server, client_t *client, char *team_name)
     drone->id = id++;
     drone->level = 1;
     drone->orientation = rand() % 4;
-    drone->x = rand() % server->game->info_game.width;
-    drone->y = rand() % server->game->info_game.height;
+    drone->x = rand() % server->info_game.width;
+    drone->y = rand() % server->info_game.height;
     drone->team_name = team_name;
     server->game->current_nb_players += 1;
     client->drone = drone;
     add_drone_at_pos(server->game, drone);
 }
 
-void move(drone_t *drone, direction dir, info_game_t *info_game)
+void move(drone_t *drone, direction_t dir, info_game_t *info_game)
 {
     int movement = dir == FORWARD ? 1 : -1;
 
@@ -66,4 +67,9 @@ void move(drone_t *drone, direction dir, info_game_t *info_game)
         drone->x += movement;
     if (drone->orientation == WEST && drone->x - movement >= 0)
         drone->x -= movement;
+}
+
+void turn(drone_t *drone, side_t side)
+{
+    drone->orientation = (drone->orientation + side) % 4;
 }
