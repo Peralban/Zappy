@@ -11,33 +11,30 @@
 
 bool complete_integer_data(server_t *server, char **args)
 {
-    server->port = atoi(args[PORT]);
-    if (server->port <= 0)
-        printf("Port must be a positive number\n");
-    server->info_game.width = atoi(args[WIDTH]);
-    if (server->info_game.width <= 0)
-        printf("Width must be a positive number\n");
-    server->info_game.height = atoi(args[HEIGHT]);
-    if (server->info_game.height <= 0)
-        printf("Height must be a positive number\n");
-    server->info_game.nb_client = atoi(args[CLIENTS_NB]);
-    if (server->info_game.nb_client <= 0)
-        printf("Number of clients must be a positive number\n");
-    server->info_game.freq = atoi(args[FREQ]);
-    if (server->info_game.freq <= 0)
-        printf("Frequency must be a positive number\n");
-    if (server->port <= 0 || server->info_game.width <= 0 ||
-    server->info_game.height <= 0 || server->info_game.nb_client <= 0 ||
-    server->info_game.freq <= 0)
-        return true;
-    return false;
+    int *data[] = {&server->port, &server->info_game.width,
+    &server->info_game.height, &server->info_game.nb_client,
+    &server->info_game.freq};
+    char *messages[] = {"Port", "Width",
+    "Height", "Number of clients", "Frequency"};
+    args_name_t args_index[] = {PORT, WIDTH, HEIGHT, CLIENTS_NB, FREQ};
+    bool is_valid = true;
+
+    for (int i = 0; i < 5; i++) {
+        *data[i] = atoi(args[args_index[i]]);
+        if (*data[i] <= 0) {
+            printf("%s must be a positive number\n", messages[i]);
+            is_valid = false;
+        }
+    }
+    return is_valid;
 }
 
 static server_t *get_server(char **args, server_t *server, bool return_null)
 {
+    if (!complete_integer_data(server, args))
+        return_null = true;
     server->game = init_game(server->info_game);
-    if (return_null || complete_integer_data(server, args) ||
-    server->game == NULL) {
+    if (return_null || server->game == NULL) {
         if (server->info_game.team_names != NULL)
             my_free_array(server->info_game.team_names);
         free(server);

@@ -19,11 +19,11 @@
  */
 
 /**
- * @enum args_name
+ * @enum args_name_t
  * @brief Enumerates the different argument types that can be passed
  * to the program.
  */
-enum args_name {
+typedef enum {
     PORT,
     WIDTH,
     HEIGHT,
@@ -31,7 +31,7 @@ enum args_name {
     CLIENTS_NB,
     FREQ,
     ALL_FLAGS
-};
+} args_name_t;
 
 /**
  * @struct arg_processing_s

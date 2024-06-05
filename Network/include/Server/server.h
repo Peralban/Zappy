@@ -16,7 +16,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#include <Server/game.h>
+#include "Game/game.h"
 
 #define EXIT_FAIL 84
 #define EXIT_SUCC 0
@@ -54,6 +54,7 @@ typedef enum client_state_e {
 typedef struct client_s {
     int socket;
     client_state_t state;
+    drone_t *drone;
 } client_t;
 
 /**
@@ -78,6 +79,8 @@ typedef struct info_game_s {
     int nb_client;
     int freq;
 } info_game_t;
+
+typedef struct in_game_s in_game_t;
 
 /**
  * @struct server_s

@@ -20,6 +20,8 @@ SRC		= 		main.c								\
 				lib/char_is_in_str.c				\
 				lib/my_len_before_char.c			\
 				lib/get_nbr_of_char.c				\
+				Game/game_functions.c				\
+				Game/game_command.c					\
 
 TRUE_SRC 	= 	$(patsubst %,src/%, $(SRC))
 
@@ -33,7 +35,7 @@ INCLUDE		=	-I./include
 
 VALGRIND	= -g3
 
-CFLAGS	=	$(INCLUDE) $(WARNINGS) #$(VALGRIND)
+CFLAGS	=	$(INCLUDE) $(WARNINGS) $(VALGRIND)
 
 #-------------- Tests Variables --------------#
 
@@ -68,7 +70,7 @@ TESTS_FLAGS		= $(TESTS_INCLUDE) $(WARNINGS) $(TESTS_LIBS)
 all:	$(NAME)
 
 $(NAME):	$(OBJ)
-	@gcc -o $(NAME) $(OBJ) $(CFLAGS) $(VALGRIND)
+	@gcc -o $(NAME) $(OBJ) $(CFLAGS)
 	@if [ -f $(NAME) ]; then \
 		printf "\033[1;32mCompilation completed ✅\033[0m\n"; \
 	else \
