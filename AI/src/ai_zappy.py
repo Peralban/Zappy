@@ -82,6 +82,11 @@ class Bot:
     
     def look(self):
         self.command_number += 1
+        res = 0
+
+        #function calling for connection
+        if res == "dead":
+            self.alive = False
         return
     
     def update_inventory(self):
@@ -110,7 +115,11 @@ class Bot:
     
     def fork(self):
         self.command_number += 1
+        res = 0
+
         #function calling for connection
+        if res == "dead":
+            self.alive = False
         return
     
     def eject(self):
