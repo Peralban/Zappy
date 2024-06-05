@@ -20,6 +20,7 @@ SRC		= 		main.c								\
 				lib/char_is_in_str.c				\
 				lib/my_len_before_char.c			\
 				lib/get_nbr_of_char.c				\
+				Game/game_functions.c				\
 
 TRUE_SRC 	= 	$(patsubst %,src/%, $(SRC))
 

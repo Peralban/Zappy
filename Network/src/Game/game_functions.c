@@ -5,8 +5,8 @@
 ** DESCRIPTION
 */
 
-#include "game_functions.h"
-#include "game.h"
+#include "Game/game_functions.h"
+#include "Server/game.h"
 #include <stdlib.h>
 
 static void create_drone_list(tile_t **tile, drone_t *drone)
@@ -55,18 +55,50 @@ void create_player(server_t *server, client_t *client, char *team_name)
     add_drone_at_pos(server->game, drone);
 }
 
-void move(drone_t *drone, direction_t dir, info_game_t *info_game)
+static linked_list_drone_t *found_drone(in_game_t *game, drone_t *drone)
+{
+    int coord[MAX_AXES] = {drone->x, drone->y};
+    linked_list_drone_t *tmp = game->map[coord[X]][coord[Y]].drone_list;
+
+    while (tmp != NULL) {
+        if (tmp->drone == drone)
+            return tmp;
+        tmp = tmp->next;
+    }
+    return NULL;
+}
+
+linked_list_drone_t *get_last_node(linked_list_drone_t *list)
+{
+    linked_list_drone_t *tmp = list;
+
+    while (tmp->next != NULL)
+        tmp = tmp->next;
+    return tmp;
+}
+
+void move(drone_t *drone, direction_t dir, server_t *server)
 {
     int movement = dir == FORWARD ? 1 : -1;
+    int max_coord[MAX_AXES] = {server->info_game.width,
+    server->info_game.height};
+    linked_list_drone_t *src = found_drone(server->game, drone);
+    linked_list_drone_t *dest = NULL;
 
-    if (drone->orientation == NORTH && drone->y + movement < info_game->height)
+    if (src == NULL)
+        return;
+    if (drone->orientation == NORTH && drone->y + movement < max_coord[Y])
         drone->y += movement;
     if (drone->orientation == SOUTH && drone->y - movement >= 0)
         drone->y -= movement;
-    if (drone->orientation == EAST && drone->x + movement < info_game->width)
+    if (drone->orientation == EAST && drone->x + movement < max_coord[X])
         drone->x += movement;
     if (drone->orientation == WEST && drone->x - movement >= 0)
         drone->x -= movement;
+    dest = get_last_node(server->game->map[drone->x][drone->y].drone_list);
+    src->prev->next = NULL;
+    dest->next = src;
+    src->prev = dest;
 }
 
 void turn(drone_t *drone, side_t side)

@@ -10,6 +10,16 @@
 #include "Server/server.h"
 
 /**
+ * @enum axes_e
+ * @brief Enumeration representing the axes of the game.
+ */
+typedef enum {
+    X,
+    Y,
+    MAX_AXES
+} axes_t;
+
+/**
  * @enum orientation_e
  * @brief Enumeration representing the orientation of a drone.
  */
@@ -59,6 +69,8 @@ typedef enum {
  */
 typedef int inventory_t[MAX_ITEMS];
 
+typedef struct server_s server_t;
+
 /**
  * @struct drone_s
  * @brief Structure representing a drone in the game.
@@ -73,7 +85,7 @@ typedef struct drone_s {
     inventory_t inventory;
     char *team_name;
     /*----- Function -----*/
-    void (*move)(struct drone_s *drone, direction dir, info_game_t *info_game);
+    void (*move)(struct drone_s *drone, direction_t dir, server_t *server);
     void (*turn)(struct drone_s *drone, side_t side);
 } drone_t;
 
