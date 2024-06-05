@@ -20,6 +20,7 @@
 
 #define EXIT_FAIL 84
 #define EXIT_SUCC 0
+#define MAX_COMMAND 10
 
 /**
  * @brief Enum for the different types of errors that may occur.
@@ -47,6 +48,8 @@ typedef enum client_state_e {
     CONNECTED
 } client_state_t;
 
+typedef struct drone_s drone_t;
+
 /**
  * @struct client_s
  * @brief Structure representing a client.
@@ -55,6 +58,7 @@ typedef struct client_s {
     int socket;
     client_state_t state;
     drone_t *drone;
+    char *command[MAX_COMMAND];
 } client_t;
 
 /**
@@ -136,10 +140,22 @@ bool check_return_value(int value_to_check, error_type_t error_type);
  */
 int server_loop(server_t *server);
 
-
 /**
  * @brief Initializes the game with the provided game information.
  * @param info_game The game information to initialize the game with.
  * @return A pointer to the initialized game.
  */
 in_game_t *init_game(info_game_t info_game);
+
+/**
+ * @brief Updates the players in the game.
+ * @param server The server containing the players to update.
+ */
+void update_players(server_t *server);
+
+/**
+ * @brief sets the number of ticks to wait for
+ * the client to execute its next command.
+ * @param client The client to set the ticks for.
+ */
+void set_ticks(client_t *client);

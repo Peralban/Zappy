@@ -40,7 +40,7 @@ static void add_drone_at_pos(in_game_t *game, drone_t *drone)
 
 void create_player(server_t *server, client_t *client, char *team_name)
 {
-    drone_t *drone = malloc(sizeof(drone_t));
+    drone_t *drone = calloc(1, sizeof(drone_t));
     static int all_id = 0;
 
     if (drone == NULL)

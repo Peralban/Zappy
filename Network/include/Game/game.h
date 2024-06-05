@@ -73,6 +73,7 @@ typedef struct drone_s {
     int y;
     inventory_t inventory;
     char *team_name;
+    int ticks;
 } drone_t;
 
 /**

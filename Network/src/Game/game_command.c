@@ -8,20 +8,24 @@
 #include "Game/game.h"
 #include "Game/game_command.h"
 #include "Game/game_functions.h"
+#include "Server/server.h"
 
-void forward(drone_t *drone, server_t *server)
+void forward(client_t *client, server_t *server)
 {
-    move(drone, server);
+    move(client->drone, server);
+    send(client->socket, "ok\n", 3, 0);
 }
 
-void right(drone_t *drone, server_t *server)
+void right(client_t *client, server_t *server)
 {
     (void)server;
-    turn(drone, RIGHT);
+    turn(client->drone, RIGHT);
+    send(client->socket, "ok\n", 3, 0);
 }
 
-void left(drone_t *drone, server_t *server)
+void left(client_t *client, server_t *server)
 {
     (void)server;
-    turn(drone, LEFT);
+    turn(client->drone, LEFT);
+    send(client->socket, "ok\n", 3, 0);
 }
