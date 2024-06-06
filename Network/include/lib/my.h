@@ -56,19 +56,6 @@ char **my_str_to_word_array(char *str, char *delim);
 void my_free_array(char **array);
 
 /**
- * @brief Counts the number of words in a string, separated by delimiters.
- *
- * This function takes a string and a string of delimiters.
- * It counts the number of words in the string, where a word
- * is defined as a sequence of characters separated by any of the delimiters.
- *
- * @param str The string to count words in.
- * @param delim A string of delimiter characters.
- * @return The number of words in the string.
- */
-int word_nbr(char *str, char *delim);
-
-/**
  * @brief Counts the number of elements in a null-terminated array of strings.
  * @param array The null-terminated array of strings.
  * @return The number of elements in the array.

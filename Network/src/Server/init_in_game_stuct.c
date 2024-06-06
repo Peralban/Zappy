@@ -6,7 +6,7 @@
 */
 
 #include "Server/server.h"
-#include "Server/game.h"
+#include "Game/game.h"
 #include "lib/my.h"
 
 static tile_t **get_tile(int x, int y)
@@ -16,10 +16,11 @@ static tile_t **get_tile(int x, int y)
     if (tile == NULL)
         return NULL;
     for (int i = 0; i < x; i++) {
-        tile[i] = calloc((y + 1), sizeof(tile_t));
+        tile[i] = calloc((y), sizeof(tile_t));
         if (tile[i] == NULL)
             return NULL;
     }
+    tile[x] = NULL;
     return tile;
 }
 
@@ -54,5 +55,6 @@ in_game_t *init_game(info_game_t info_game)
         free(game);
         return NULL;
     }
+    game->current_nb_players = 0;
     return game;
 }

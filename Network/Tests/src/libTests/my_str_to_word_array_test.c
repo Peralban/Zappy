@@ -8,19 +8,11 @@
 #include "lib/my.h"
 #include <criterion/criterion.h>
 
-Test(word_nbr, should_return_zero_when_str_or_delim_is_null)
+Test(my_str_to_word_array, should_return_array_with_one_word)
 {
-    cr_assert_eq(word_nbr(NULL, " "), 0);
-    cr_assert_eq(word_nbr("Hello World", NULL), 0);
+    char **result = my_str_to_word_array("Hello", " ");
+    cr_assert_str_eq(result[0], "Hello");
 }
-
-Test(word_nbr, should_return_correct_word_count)
-{
-    cr_assert_eq(word_nbr("Hello World", " "), 2);
-    cr_assert_eq(word_nbr("Hello,World", ","), 2);
-    cr_assert_eq(word_nbr("Hello", " "), 1);
-}
-
 Test(my_str_to_word_array, should_return_null_when_str_or_delim_is_null)
 {
     cr_assert_null(my_str_to_word_array(NULL, " "));

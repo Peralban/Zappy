@@ -13,6 +13,7 @@ add_executable(Zappy_Server
     src/Server/server_loop.c
     src/Parsing/parse_args.c
     src/Parsing/move_args_to_struct.c
+        src/lib/my_str_to_word_array.c
 )
 
 # Specify the C standard

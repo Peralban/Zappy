@@ -8,6 +8,16 @@
 #pragma once
 
 /**
+ * @enum axes_e
+ * @brief Enumeration representing the axes of the game.
+ */
+typedef enum {
+    X,
+    Y,
+    MAX_AXES
+} axes_t;
+
+/**
  * @enum orientation_e
  * @brief Enumeration representing the orientation of a drone.
  */
@@ -34,21 +44,36 @@ typedef enum{
 } item_type_t;
 
 /**
+ * @enum side_e
+ * @brief Enumeration representing the side of a drone.
+ */
+typedef enum {
+    LEFT = 1,
+    RIGHT = 3
+} side_t;
+
+/**
  * @struct item_s
  * @brief Structure representing an item in the game.
  */
 typedef int inventory_t[MAX_ITEMS];
+
+typedef struct server_s server_t;
 
 /**
  * @struct drone_s
  * @brief Structure representing a drone in the game.
  */
 typedef struct drone_s {
+    /*----- Data -----*/
     orientation_t orientation;
     int id;
     int level;
+    int x;
+    int y;
     inventory_t inventory;
     char *team_name;
+    int ticks;
 } drone_t;
 
 /**
@@ -67,7 +92,7 @@ typedef struct linked_list_drone_s {
  */
 typedef struct tile_s {
     inventory_t inventory;
-    linked_list_drone_t *drone;
+    linked_list_drone_t *drone_list;
 } tile_t;
 
 /**
@@ -86,4 +111,5 @@ typedef struct team_s {
 typedef struct in_game_s {
     tile_t **map;
     team_t *teams;
+    int current_nb_players;
 } in_game_t;

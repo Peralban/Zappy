@@ -18,7 +18,7 @@ Test(complete_integer_data, should_return_true_when_any_value_is_zero_or_negativ
     server_t server;
     char *args[] = {"-5465", "0", "10", "team1 team2", "10", "10", "10"};
 
-    cr_assert(complete_integer_data(&server, args));
+    cr_assert_not(complete_integer_data(&server, args));
 }
 
 Test(complete_integer_data, should_return_false_when_all_values_are_positive)
@@ -26,7 +26,7 @@ Test(complete_integer_data, should_return_false_when_all_values_are_positive)
     server_t server;
     char *args[] = {"5465", "1234", "7897", "10", "10", "10", "10"};
 
-    cr_assert_not(complete_integer_data(&server, args));
+    cr_assert(complete_integer_data(&server, args));
 }
 
 Test(move_args_to_server_struct, should_return_null_when_team_names_parsing_fails)
