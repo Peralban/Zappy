@@ -50,7 +50,6 @@ void create_player(server_t *server, client_t *client, char *team_name)
     drone->level = 1;
     drone->orientation = rand() % 4;
     drone->team_name = team_name;
-    server->game->current_nb_players += 1;
     client->drone = drone;
     spawn_on_egg(server, drone, team_name);
     add_drone_at_pos(server->game, drone);

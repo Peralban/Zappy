@@ -8,6 +8,8 @@
 #include "Server/server.h"
 #include "ClientList/client_list.h"
 #include "Game/game_functions.h"
+#include "Game/game_command.h"
+#include "Game/game.h"
 #include "lib/my.h"
 #include <stdio.h>
 #include <sys/time.h>
@@ -123,17 +125,38 @@ uint64_t get_time(void)
     return tv.tv_sec * (uint64_t)1000000 + tv.tv_usec;
 }
 
+static void spawn_resources(server_t *server)
+{
+    int x;
+    int y;
+
+    for (int k = 0; k < MAX_ITEMS; k++) {
+        for (int i = 0; i < server->game->picked_up_items[k] &&
+        server->game->picked_up_items[k] > 0; i++) {
+            x = rand() % server->info_game.width;
+            y = rand() % server->info_game.height;
+            server->game->map[x][y].inventory[k]++;
+        }
+        if (server->game->picked_up_items[k] > 0) {
+            server->game->picked_up_items[k] = 0;
+        }
+    }
+}
+
 static void game_tick(server_t *server)
 {
-    static uint64_t last_time = 0;
+    static uint64_t last_tick_time = 0;
     uint64_t current_time = get_time();
 
-    if (last_time == 0)
-        last_time = current_time;
-    if (current_time - last_time >=
+    if (current_time - last_tick_time >=
     (1000000 / (uint64_t)server->info_game.freq)) {
         update_players(server);
-        last_time = current_time;
+        server->game->spawn_tick++;
+        last_tick_time = current_time;
+    }
+    if (server->game->spawn_tick >= 20) {
+        server->game->spawn_tick = 0;
+        spawn_resources(server);
     }
 }
 

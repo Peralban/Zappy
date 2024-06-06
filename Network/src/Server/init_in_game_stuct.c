@@ -11,16 +11,15 @@
 
 static tile_t **get_tile(int x, int y)
 {
-    tile_t **tile = malloc(sizeof(tile_t) * (x + 1));
+    tile_t **tile = calloc(x, sizeof(tile_t *));
 
     if (tile == NULL)
         return NULL;
     for (int i = 0; i < x; i++) {
-        tile[i] = calloc((y), sizeof(tile_t));
+        tile[i] = calloc(y, sizeof(tile_t));
         if (tile[i] == NULL)
             return NULL;
     }
-    tile[x] = NULL;
     return tile;
 }
 
@@ -79,6 +78,26 @@ static team_t *get_team(info_game_t info_game)
     return teams;
 }
 
+static void init_ressources(info_game_t info_game, in_game_t *game)
+{
+    double ressources_quantity[MAX_ITEMS] = {DENSITY_FOOD, DENSITY_LINEMATE,
+        DENSITY_DERAUMERE, DENSITY_SIBUR, DENSITY_MENDIANE, DENSITY_PHIRAS,
+        DENSITY_THYSTAME};
+    int x;
+    int y;
+
+    for (int k = 0; k < MAX_ITEMS; k++) {
+        ressources_quantity[k] *= info_game.width * info_game.height;
+        if (ressources_quantity[k] < 1)
+            ressources_quantity[k] = 1;
+        for (int n = 0; n < ressources_quantity[k]; n++) {
+            x = rand() % info_game.width;
+            y = rand() % info_game.height;
+            game->map[x][y].inventory[k] += 1;
+        }
+    }
+}
+
 in_game_t *init_game(info_game_t info_game)
 {
     in_game_t *game = calloc(1, sizeof(in_game_t));
@@ -96,7 +115,7 @@ in_game_t *init_game(info_game_t info_game)
         free(game);
         return NULL;
     }
-    game->current_nb_players = 0;
+    init_ressources(info_game, game);
     game->egg_list = create_egg_list(info_game);
     return game;
 }
