@@ -11,23 +11,22 @@
 
 static tile_t **get_tile(int x, int y)
 {
-    tile_t **tile = malloc(sizeof(tile_t) * (x + 1));
+    tile_t **tile = calloc(x, sizeof(tile_t *));
 
     if (tile == NULL)
         return NULL;
     for (int i = 0; i < x; i++) {
-        tile[i] = calloc((y), sizeof(tile_t));
+        tile[i] = calloc(y, sizeof(tile_t));
         if (tile[i] == NULL)
             return NULL;
     }
-    tile[x] = NULL;
     return tile;
 }
 
 static team_t *get_team(char **team_names)
 {
     int nb_teams = my_array_len(team_names);
-    team_t *teams = malloc(sizeof(team_t) * (nb_teams + 1));
+    team_t *teams = calloc((nb_teams + 1), sizeof(team_t));
 
     if (teams == NULL)
         return NULL;
@@ -36,6 +35,26 @@ static team_t *get_team(char **team_names)
         teams[i].connected_clients = 0;
     }
     return teams;
+}
+
+static void init_ressources(info_game_t info_game, in_game_t *game)
+{
+    double ressources_quantity[MAX_ITEMS] = {DENSITY_FOOD, DENSITY_LINEMATE,
+        DENSITY_DERAUMERE, DENSITY_SIBUR, DENSITY_MENDIANE, DENSITY_PHIRAS,
+        DENSITY_THYSTAME};
+    int x;
+    int y;
+
+    for (int k = 0; k < MAX_ITEMS; k++) {
+        ressources_quantity[k] *= info_game.width * info_game.height;
+        if (ressources_quantity[k] < 1)
+            ressources_quantity[k] = 1;
+        for (int n = 0; n < ressources_quantity[k]; n++) {
+            x = rand() % info_game.width;
+            y = rand() % info_game.height;
+            game->map[x][y].inventory[k] += 1;
+        }
+    }
 }
 
 in_game_t *init_game(info_game_t info_game)
@@ -55,6 +74,6 @@ in_game_t *init_game(info_game_t info_game)
         free(game);
         return NULL;
     }
-    game->current_nb_players = 0;
+    init_ressources(info_game, game);
     return game;
 }
