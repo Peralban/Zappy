@@ -47,14 +47,12 @@ static void init_ressources(info_game_t info_game, in_game_t *game)
 
     for (int k = 0; k < MAX_ITEMS; k++) {
         ressources_quantity[k] *= info_game.width * info_game.height;
-        printf("ressources_quantity[%d] = %f\n", k, ressources_quantity[k]);
         for (int n = 0; n < ressources_quantity[k]; n++) {
             x = rand() % info_game.width;
             y = rand() % info_game.height;
             game->map[x][y].inventory[k] += 1;
         }
     }
-    sleep(2);
 }
 
 in_game_t *init_game(info_game_t info_game)
