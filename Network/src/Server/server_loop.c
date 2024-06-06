@@ -153,8 +153,12 @@ static void game_tick(server_t *server)
     if (current_time - last_tick_time >=
     (1000000 / (uint64_t)server->info_game.freq)) {
         update_players(server);
-        spawn_resources(server);
+        server->game->spawn_tick++;
         last_tick_time = current_time;
+    }
+    if (server->game->spawn_tick >= 20) {
+        server->game->spawn_tick = 0;
+        spawn_resources(server);
     }
 }
 
