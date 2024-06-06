@@ -47,6 +47,8 @@ static void init_ressources(info_game_t info_game, in_game_t *game)
 
     for (int k = 0; k < MAX_ITEMS; k++) {
         ressources_quantity[k] *= info_game.width * info_game.height;
+        if (ressources_quantity[k] < 1)
+            ressources_quantity[k] = 1;
         for (int n = 0; n < ressources_quantity[k]; n++) {
             x = rand() % info_game.width;
             y = rand() % info_game.height;
