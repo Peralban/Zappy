@@ -84,8 +84,6 @@ typedef struct info_game_s {
     int freq;
 } info_game_t;
 
-typedef struct in_game_s in_game_t;
-
 /**
  * @struct server_s
  * @brief Structure representing a server.
