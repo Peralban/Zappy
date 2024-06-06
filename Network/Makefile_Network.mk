@@ -23,6 +23,7 @@ SRC		= 		main.c								\
 				Game/game_functions.c				\
 				Game/game_command.c					\
 				Game/look_around.c					\
+				Game/inventory_function.c			\
 
 TRUE_SRC 	= 	$(patsubst %,src/%, $(SRC))
 

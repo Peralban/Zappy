@@ -47,3 +47,14 @@ void move(drone_t *drone, server_t *server);
  * @return char * The sentence to send to the client.
  */
 char *look_around(drone_t *drone, server_t *server);
+
+/**
+ * @brief Displays the inventory of a drone.
+ *
+ * This function is used to retrieve and format the inventory of a drone in the game.
+ * It could be used to provide information about the drone's current resources to the client.
+ *
+ * @param drone The drone whose inventory is to be displayed.
+ * @return char* A string representation of the drone's inventory.
+ */
+char *display_inventory(drone_t *drone);

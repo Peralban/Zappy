@@ -32,3 +32,11 @@ void look(drone_t *drone, server_t *server)
 
     free(str);
 }
+
+void inventory(drone_t *drone, server_t *server)
+{
+    char *str = display_inventory(drone);
+
+    (void)server;
+    free(str);
+}

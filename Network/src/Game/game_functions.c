@@ -52,6 +52,8 @@ void create_player(server_t *server, client_t *client, char *team_name)
     drone->x = rand() % server->info_game.width;
     drone->y = rand() % server->info_game.height;
     drone->team_name = team_name;
+    for (int i = 0; i < 7; i++)
+        drone->inventory[i] = 1;
     server->game->current_nb_players += 1;
     client->drone = drone;
     add_drone_at_pos(server->game, drone);
