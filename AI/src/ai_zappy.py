@@ -165,3 +165,12 @@ class Bot:
         if res != "ko":
             self.level += 1
         return
+    
+    def broadcast(self):
+        self.command_number += 1
+        res = 0
+
+        #function calling for connection
+        if res == "dead":
+            self.alive = False 
+        return
