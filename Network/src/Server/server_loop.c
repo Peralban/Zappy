@@ -12,6 +12,7 @@
 #include "Game/game.h"
 #include "lib/my.h"
 #include <stdio.h>
+#include "Game/command_with_args.h"
 #include <stdbool.h>
 #include <time.h>
 #include <sys/time.h>

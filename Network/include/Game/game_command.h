@@ -11,16 +11,21 @@
 #include "game_functions.h"
 #include <stdio.h>
 
-void forward(client_t *client, server_t *server);
-void right(client_t *client, server_t *server);
-void left(client_t *client, server_t *server);
+void forward(drone_t *drone, server_t *server, char *args);
 
-void look(drone_t *drone, server_t *server);
-void inventory(drone_t *drone, server_t *server);
+void right(drone_t *drone, server_t *server, char *args);
+
+void left(drone_t *drone, server_t *server, char *args);
+
+void look(drone_t *drone, server_t *server, char *args);
+
+void inventory(drone_t *drone, server_t *server, char *args);
+
+void broadcast(drone_t *drone, server_t *server, char *args);
 
 typedef struct {
     char *name;
-    void (*function)(client_t *client, server_t *server);
+    void (*function)(drone_t *drone, server_t *server, char *arg);
     int duration;
 } command_t;
 
@@ -30,4 +35,6 @@ static const command_t commands[] = {
     {"Left", &left},
     {"Look", &look},
     {"Inventory", &inventory},
+    {"Broadcast", &broadcast},
+    {NULL, NULL}
 };

@@ -58,3 +58,16 @@ char *look_around(drone_t *drone, server_t *server);
  * @return char* A string representation of the drone's inventory.
  */
 char *display_inventory(drone_t *drone);
+
+/**
+ * @brief Launches the broadcast of a message from a drone.
+ *
+ * This function is used to launch the broadcast of a message from a drone to all other drones in the game.
+ * It could be used to communicate information or commands from one drone to others.
+ *
+ * @param drone The drone that is broadcasting the message.
+ * @param server The server object containing the game state.
+ * @param args The message to be broadcasted.
+ * @return bool if broadcast fail
+ */
+bool launch_broadcast(drone_t *drone, server_t *server, char *args);
