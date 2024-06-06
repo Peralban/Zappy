@@ -32,6 +32,11 @@ class Bot:
         res = 0
 
         #function calling for connection
+        #function calling for reception
+        while "message" in res:
+            self.broadcast_analyse(res)
+            self.command_number += 1
+            #function calling for reception
         if res == "dead":
             self.alive = False
         if res == "ok":
@@ -59,6 +64,11 @@ class Bot:
         res = 0
 
         #function calling for connection
+        #function calling for reception
+        while "message" in res:
+            self.broadcast_analyse(res)
+            self.command_number += 1
+            #function calling for reception
         if res == "dead":
             self.alive = False
         if res == "ok":
@@ -72,6 +82,11 @@ class Bot:
         res = 0
 
         #function calling for connection
+        #function calling for reception
+        while "message" in res:
+            self.broadcast_analyse(res)
+            self.command_number += 1
+            #function calling for reception        
         if res == "dead":
             self.alive = False
         if res == "ok":
@@ -85,6 +100,11 @@ class Bot:
         res = 0
 
         #function calling for connection
+        #function calling for reception
+        while "message" in res:
+            self.broadcast_analyse(res)
+            self.command_number += 1
+            #function calling for reception
         if res == "dead":
             self.alive = False
         return
@@ -94,6 +114,11 @@ class Bot:
         res = 0
 
         #function calling for connection
+        #function calling for reception
+        while "message" in res:
+            self.broadcast_analyse(res)
+            self.command_number += 1
+            #function calling for reception
         if res == "dead":
             self.alive = False
         res = res.split(',')
@@ -107,6 +132,11 @@ class Bot:
         res = 0
 
         #function calling for connection
+        #function calling for reception
+        while "message" in res:
+            self.broadcast_analyse(res)
+            self.command_number += 1
+            #function calling for reception
         if res == "dead":
             self.alive = False
         if res > 0:
@@ -118,6 +148,11 @@ class Bot:
         res = 0
 
         #function calling for connection
+        #function calling for reception
+        while "message" in res:
+            self.broadcast_analyse(res)
+            self.command_number += 1
+            #function calling for reception
         if res == "dead":
             self.alive = False
         return
@@ -127,6 +162,11 @@ class Bot:
         res = 0
 
         #function calling for connection
+        #function calling for reception
+        while "message" in res:
+            self.broadcast_analyse(res)
+            self.command_number += 1
+            #function calling for reception
         if res == "dead":
             self.alive = False
         if res == "ko":
@@ -138,6 +178,11 @@ class Bot:
         res = 0
 
         #function calling for connection
+        #function calling for reception
+        while "message" in res:
+            self.broadcast_analyse(res)
+            self.command_number += 1
+            #function calling for reception
         if res == "dead":
             self.alive = False
         if res == "ok":
@@ -149,6 +194,11 @@ class Bot:
         res = 0
 
         #function calling for connection
+        #function calling for reception
+        while "message" in res:
+            self.broadcast_analyse(res)
+            self.command_number += 1
+            #function calling for reception
         if res == "dead":
             self.alive = False
         if res == "ok":
@@ -160,6 +210,11 @@ class Bot:
         res = 0
 
         #function calling for connection
+        #function calling for reception
+        while "message" in res:
+            self.broadcast_analyse(res)
+            self.command_number += 1
+            #function calling for reception
         if res == "dead":
             self.alive = False
         if res != "ko":
@@ -171,6 +226,14 @@ class Bot:
         res = 0
 
         #function calling for connection
+        #function calling for reception
+        while "message" in res:
+            self.broadcast_analyse(res)
+            self.command_number += 1
+            #function calling for reception
         if res == "dead":
             self.alive = False 
+        return
+    
+    def broadcast_analyse(self, message):
         return
