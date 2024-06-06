@@ -14,6 +14,7 @@ SRC		= 		main.c								\
 				Server/zappy_network.c				\
 				Server/server_loop.c				\
 				Server/init_in_game_stuct.c			\
+				Server/update_players.c				\
 				Parsing/parse_args.c				\
 				Parsing/move_args_to_struct.c		\
 				lib/my_str_to_word_array.c			\

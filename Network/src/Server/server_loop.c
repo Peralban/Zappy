@@ -9,8 +9,12 @@
 #include "ClientList/client_list.h"
 #include "Game/game_functions.h"
 #include "Game/game_command.h"
+#include "Game/game.h"
 #include "lib/my.h"
 #include <stdio.h>
+#include <stdbool.h>
+#include <time.h>
+#include <sys/time.h>
 
 static void start_communication_with_client(client_t *client,
     server_t *server, char *buffer)
@@ -48,25 +52,22 @@ static void new_client(server_t *server)
     send(client_socket, "WELCOME\n", 8, 0);
 }
 
-static void parse_command_nam(server_t *server, client_t *client, char *buffer)
-{
-    for (int i = 0; commands[i].name != NULL; i++) {
-        if (strcmp(buffer, commands[i].name) == 0) {
-            commands[i].function(client->drone, server);
-            send(client->socket, "ok\n", 3, 0);
-            return;
-        }
-    }
-    send(client->socket, "ko\n", 3, 0);
-}
-
-static void parse_command(server_t *server, client_t *client, char *buffer)
+static void push_command(client_t *client, char *buffer)
 {
     char **commands_arr = my_str_to_word_array(buffer, "\n");
+    int j;
 
     for (int i = 0; commands_arr[i] != NULL; i++) {
-        parse_command_nam(server, client, commands_arr[i]);
+        if (client->command[0] == NULL) {
+            client->command[0] = strdup(commands_arr[i]);
+            set_ticks(client);
+            continue;
+        }
+        for (j = 0; j != MAX_COMMAND && client->command[j] != NULL; j++);
+        if (j < MAX_COMMAND)
+            client->command[j] = strdup(commands_arr[i]);
     }
+    my_free_array(commands_arr);
 }
 
 // the send is temporary, it will be deplaced in another function.
@@ -86,7 +87,7 @@ static void recv_command(client_t *client, server_t *server)
     else if (client->state == WAITING)
         start_communication_with_client(client, server, buffer);
     else
-        parse_command(server, client, buffer);
+        push_command(client, buffer);
 }
 
 static void client_already_connected(server_t *server)
@@ -118,6 +119,49 @@ static void set_all_in_fd(server_t *server, int *max_fd)
     }
 }
 
+uint64_t get_time(void)
+{
+    struct timeval tv;
+
+    gettimeofday(&tv, NULL);
+    return tv.tv_sec * (uint64_t)1000000 + tv.tv_usec;
+}
+
+static void spawn_resources(server_t *server)
+{
+    int x;
+    int y;
+
+    for (int k = 0; k < MAX_ITEMS; k++) {
+        for (int i = 0; i < server->game->picked_up_items[k] &&
+        server->game->picked_up_items[k] > 0; i++) {
+            x = rand() % server->info_game.width;
+            y = rand() % server->info_game.height;
+            server->game->map[x][y].inventory[k]++;
+        }
+        if (server->game->picked_up_items[k] > 0) {
+            server->game->picked_up_items[k] = 0;
+        }
+    }
+}
+
+static void game_tick(server_t *server)
+{
+    static uint64_t last_tick_time = 0;
+    uint64_t current_time = get_time();
+
+    if (current_time - last_tick_time >=
+    (1000000 / (uint64_t)server->info_game.freq)) {
+        update_players(server);
+        server->game->spawn_tick++;
+        last_tick_time = current_time;
+    }
+    if (server->game->spawn_tick >= 20) {
+        server->game->spawn_tick = 0;
+        spawn_resources(server);
+    }
+}
+
 int server_loop(server_t *server)
 {
     int max_fd = server->socket;
@@ -125,6 +169,7 @@ int server_loop(server_t *server)
     struct timeval timeout = {0, 0};
 
     server->list = create_client_list();
+    srand(time(NULL));
     while (1) {
         if (FD_ISSET(server->socket, &server->readfds))
             new_client(server);
@@ -136,6 +181,7 @@ int server_loop(server_t *server)
         if (!check_return_value(select_status, SELECT))
             continue;
         client_already_connected(server);
+        game_tick(server);
     }
 }
 // at each loop, if time is up, do one game tick: TODO

@@ -19,7 +19,7 @@ client_list_t *create_client_list(void)
 
 client_t *create_client(int socket)
 {
-    client_t *client = malloc(sizeof(client_t));
+    client_t *client = calloc(1, sizeof(client_t));
 
     client->socket = socket;
     client->state = WAITING;

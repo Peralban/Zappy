@@ -7,7 +7,17 @@
 
 #-------------- Main Variables --------------#
 
-SRC		= 		main.cpp								\
+SRC		=       chessElement/chessBoard.cpp 		\
+				chessElement/chessPiece.cpp 		\
+				event/irrlichtEventHandler.cpp 		\
+				zappyIrrlicht/irrlichtWindow.cpp    \
+				player/playerInventory.cpp  		\
+				player/team.cpp     				\
+				player/player.cpp   				\
+				player/playerPosition.cpp   		\
+				game/ZappyGame.cpp					\
+				main.cpp
+
 
 TRUE_SRC 	= 	$(patsubst %,src/%, $(SRC))
 
@@ -17,11 +27,11 @@ NAME		=	zappy_gui
 
 WARNINGS	=	-Wall -Wextra -Wshadow
 
-INCLUDE		=	-I./src -I.
+INCLUDE		=	-I./src
 
-VALGRIND	=
+VALGRIND	= -g3
 
-LIBS		=
+LIBS		= -lIrrlicht
 
 CXXFLAGS	=	$(INCLUDE) $(WARNINGS) $(LIBS) #$(VALGRIND)
 
@@ -32,7 +42,11 @@ TESTS_SRC		=	mainTests.cpp
 TESTS_TRUE_SRC	=	$(patsubst %,Tests/src/%, $(TEST_SRC))	\
 					$(filter-out src/main.cpp, $(TRUE_SRC))
 
-TESTS_FLAGS		=	--coverage -lcriterion
+TESTS_INCLUDE	=	-I./src -I./Tests/src
+
+TESTS_LIBS		=	-lcriterion -lgcov -lIrrlicht
+
+TESTS_FLAGS		=	--coverage $(TESTS_INCLUDE) $(TESTS_LIBS)
 
 #-------------- Phony & Silent Rules --------------#
 
@@ -51,6 +65,7 @@ $(NAME):	$(OBJ)
 	else \
 		printf "\033[1;31mCompilation failed ❌\033[0m\n"; \
 	fi
+
 
 clean:
 	rm -f $(OBJ)
@@ -79,7 +94,10 @@ tests_compile: fclean
 
 tests_launch:
 	./unit_tests
-	printf "\033[1;35mGUI Tests launched ✅\033[0m\n"
+	printf "\033[1;35mTests launched ✅\033[0m\n"
+	gcovr --exclude tests/
+	gcovr --exclude tests/ --branches
+	printf "\033[1;35mCoverage generated ✅\033[0m\n"
 
 tests_run: tests_compile tests_launch
 	printf "\033[1;32mTests runned ✅\033[0m\n"

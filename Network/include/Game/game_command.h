@@ -8,21 +8,20 @@
 #pragma once
 
 #include "game.h"
+#include "game_functions.h"
 #include <stdio.h>
 
-void forward(drone_t *drone, server_t *server);
-
-void right(drone_t *drone, server_t *server);
-
-void left(drone_t *drone, server_t *server);
+void forward(client_t *client, server_t *server);
+void right(client_t *client, server_t *server);
+void left(client_t *client, server_t *server);
 
 void look(drone_t *drone, server_t *server);
-
 void inventory(drone_t *drone, server_t *server);
 
 typedef struct {
     char *name;
-    void (*function)(drone_t *drone, server_t *server);
+    void (*function)(client_t *client, server_t *server);
+    int duration;
 } command_t;
 
 static const command_t commands[] = {

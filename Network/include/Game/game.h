@@ -7,6 +7,14 @@
 
 #pragma once
 
+#define DENSITY_FOOD 0.5
+#define DENSITY_LINEMATE 0.3
+#define DENSITY_DERAUMERE 0.15
+#define DENSITY_SIBUR 0.1
+#define DENSITY_MENDIANE 0.1
+#define DENSITY_PHIRAS 0.08
+#define DENSITY_THYSTAME 0.05
+
 /**
  * @enum axes_e
  * @brief Enumeration representing the axes of the game.
@@ -73,6 +81,7 @@ typedef struct drone_s {
     int y;
     inventory_t inventory;
     char *team_name;
+    int ticks;
 } drone_t;
 
 /**
@@ -110,5 +119,6 @@ typedef struct team_s {
 typedef struct in_game_s {
     tile_t **map;
     team_t *teams;
-    int current_nb_players;
+    int spawn_tick;
+    inventory_t picked_up_items;
 } in_game_t;
