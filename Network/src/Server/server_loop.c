@@ -8,11 +8,8 @@
 #include "Server/server.h"
 #include "ClientList/client_list.h"
 #include "Game/game_functions.h"
-#include "Game/game_command.h"
 #include "lib/my.h"
 #include <stdio.h>
-#include <stdbool.h>
-#include <time.h>
 #include <sys/time.h>
 
 static void start_communication_with_client(client_t *client,
@@ -147,7 +144,6 @@ int server_loop(server_t *server)
     struct timeval timeout = {0, 0};
 
     server->list = create_client_list();
-    srand(time(NULL));
     while (1) {
         if (FD_ISSET(server->socket, &server->readfds))
             new_client(server);
@@ -162,4 +158,3 @@ int server_loop(server_t *server)
         game_tick(server);
     }
 }
-// at each loop, if time is up, do one game tick: TODO
