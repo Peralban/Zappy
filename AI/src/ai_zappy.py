@@ -7,9 +7,9 @@ def init_map(x, y):
 
             for u in range(x):
                 line.append(tile)
-            
+
             game_map.append(line)
- 
+
         return (game_map)
 
 class Bot:
@@ -58,7 +58,7 @@ class Bot:
             if self.position['x'] < 0:
                 self.position['x'] == self.dimension['x']
         return
-    
+
     def right(self):
         self.command_number += 1
         res = 0
@@ -76,7 +76,7 @@ class Bot:
             if self.direction == 0:
                 self.direction = 4
         return
-    
+
     def left(self):
         self.command_number += 1
         res = 0
@@ -94,7 +94,7 @@ class Bot:
             if self.direction == 4:
                 self.direction = 0
         return
-    
+
     def look(self):
         self.command_number += 1
         res = 0
@@ -108,7 +108,7 @@ class Bot:
         if res == "dead":
             self.alive = False
         return
-    
+
     def update_inventory(self):
         self.command_number += 1
         res = 0
@@ -126,7 +126,7 @@ class Bot:
             object = object.split()
             self.inventory[object[0]] = int(object[1])
         return
-    
+
     def connect_nbr(self):
         self.command_number += 1
         res = 0
@@ -142,7 +142,7 @@ class Bot:
         if res > 0:
             self.fork()
         return
-    
+
     def fork(self):
         self.command_number += 1
         res = 0
@@ -156,7 +156,7 @@ class Bot:
         if res == "dead":
             self.alive = False
         return
-    
+
     def eject(self):
         self.command_number += 1
         res = 0
@@ -172,7 +172,7 @@ class Bot:
         if res == "ko":
             self.eject()
         return
-    
+
     def take(self, object_name):
         self.command_number += 1
         res = 0
@@ -188,7 +188,7 @@ class Bot:
         if res == "ok":
             self.inventory[object_name] += 1
         return
-    
+
     def set(self, object_name):
         self.command_number += 1
         res = 0
@@ -204,7 +204,7 @@ class Bot:
         if res == "ok":
             self.inventory[object_name] -= 1
         return
-    
+
     def incantation(self):
         self.command_number += 1
         res = 0
@@ -220,7 +220,7 @@ class Bot:
         if res != "ko":
             self.level += 1
         return
-    
+
     def broadcast(self):
         self.command_number += 1
         res = 0
@@ -234,6 +234,6 @@ class Bot:
         if res == "dead":
             self.alive = False 
         return
-    
+
     def broadcast_analyse(self, message):
         return
