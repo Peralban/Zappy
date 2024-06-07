@@ -9,14 +9,14 @@
 #include "Game/game.h"
 #include <math.h>
 
-static int *get_distance(drone_t *drone, drone_t *target, info_game_t *info_game)
+static int *get_distance(drone_t *drone, drone_t *target, info_game_t *info)
 {
     int *return_distance = malloc(sizeof(int) * 2);
     int tmp_dist[4][2] = {
-        {target->x - drone->x, target->y - drone->y - info_game->height},
-        {target->x - drone->x, target->y - drone->y + info_game->height},
-        {target->x - drone->x - info_game->width, target->y - drone->y},
-        {target->x - drone->x + info_game->width, target->y - drone->y}
+        {target->x - drone->x, target->y - drone->y - info->height},
+        {target->x - drone->x, target->y - drone->y + info->height},
+        {target->x - drone->x - info->width, target->y - drone->y},
+        {target->x - drone->x + info->width, target->y - drone->y}
     };
 
     if (return_distance == NULL)
@@ -42,10 +42,10 @@ static int get_square(int angle, orientation_t ori)
         angle >= 135 && angle <= 180
     };
     int values[4][10] = {
-        {7, 8, 1, 2, 3, 7, 6, 5, 4, 3}, // NORTH
-        {1, 2, 3, 4, 5, 1, 8, 7, 6, 5}, // EAST
-        {3, 4, 5, 6, 7, 3, 2, 1, 8, 7}, // SOUTH
-        {5, 6, 7, 8, 1, 5, 4, 3, 2, 1}  // WEST
+        {7, 8, 1, 2, 3, 7, 6, 5, 4, 3},
+        {1, 2, 3, 4, 5, 1, 8, 7, 6, 5},
+        {3, 4, 5, 6, 7, 3, 2, 1, 8, 7},
+        {5, 6, 7, 8, 1, 5, 4, 3, 2, 1}
     };
 
     for (int i = 0; i < 10; i++)
@@ -56,7 +56,8 @@ static int get_square(int angle, orientation_t ori)
 
 static char *form_message(char *args, int first_square)
 {
-    char *message = malloc(sizeof(char) * (strlen(args) + strlen("message , ") + 2));
+    char *message =
+    malloc(sizeof(char) * (strlen(args) + strlen("message , ") + 2));
 
     sprintf(message, "message %d, %s\n", first_square, args);
     return message;

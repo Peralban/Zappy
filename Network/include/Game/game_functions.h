@@ -51,8 +51,10 @@ char *look_around(drone_t *drone, server_t *server);
 /**
  * @brief Displays the inventory of a drone.
  *
- * This function is used to retrieve and format the inventory of a drone in the game.
- * It could be used to provide information about the drone's current resources to the client.
+ * This function is used to retrieve and format the inventory of a
+ * drone in the game.
+ * It could be used to provide information about the drone's
+ * current resources to the client.
  *
  * @param drone The drone whose inventory is to be displayed.
  * @return char* A string representation of the drone's inventory.
@@ -62,8 +64,10 @@ char *display_inventory(drone_t *drone);
 /**
  * @brief Launches the broadcast of a message from a drone.
  *
- * This function is used to launch the broadcast of a message from a drone to all other drones in the game.
- * It could be used to communicate information or commands from one drone to others.
+ * This function is used to launch the broadcast of a message
+ * from a drone to all other drones in the game.
+ * It could be used to communicate information or commands
+ * from one drone to others.
  *
  * @param drone The drone that is broadcasting the message.
  * @param server The server object containing the game state.
