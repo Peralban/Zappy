@@ -10,14 +10,14 @@
 #include "Game/game_functions.h"
 #include "Server/server.h"
 
-void forward(drone_t *drone, server_t *server,
+void forward(client_t *client, server_t *server,
     __attribute__((unused))char *args)
 {
     move(client->drone, server);
     send(client->socket, "ok\n", 3, 0);
 }
 
-void right(drone_t *drone, server_t *server,
+void right(client_t *client, server_t *server,
     __attribute__((unused))char *args)
 {
     (void)server;
@@ -25,7 +25,7 @@ void right(drone_t *drone, server_t *server,
     send(client->socket, "ok\n", 3, 0);
 }
 
-void left(drone_t *drone, server_t *server,
+void left(client_t *client, server_t *server,
     __attribute__((unused))char *args)
 {
     (void)server;
@@ -33,24 +33,21 @@ void left(drone_t *drone, server_t *server,
     send(client->socket, "ok\n", 3, 0);
 }
 
-void look(drone_t *drone, server_t *server,
+void look(client_t *client, server_t *server,
     __attribute__((unused))char *args)
 {
-    char *str = look_around(drone, server);
+    char *str = look_around(client->drone, server);
 
+    send(client->socket, str, strlen(str), 0);
     free(str);
 }
 
-void inventory(drone_t *drone, server_t *server,
+void inventory(client_t *client, server_t *server,
     __attribute__((unused))char *args)
 {
-    char *str = display_inventory(drone);
+    char *str = display_inventory(client->drone);
 
     (void)server;
+    send(client->socket, str, strlen(str), 0);
     free(str);
-}
-
-void broadcast(drone_t *drone, server_t *server, char *args)
-{
-    launch_broadcast(drone, server, args);
 }

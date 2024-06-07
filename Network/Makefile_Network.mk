@@ -26,6 +26,7 @@ SRC		= 		main.c								\
 				Game/look_around.c					\
 				Game/inventory_function.c			\
 				Game/launch_broadcast.c				\
+				Game/game_command_bis.c				\
 
 TRUE_SRC 	= 	$(patsubst %,src/%, $(SRC))
 
@@ -37,9 +38,11 @@ WARNINGS	=	-Wall -Wextra -Wshadow
 
 INCLUDE		=	-I./include
 
+LIBS		=	-lm
+
 VALGRIND	=	-g3
 
-CFLAGS	=	$(INCLUDE) $(WARNINGS) $(VALGRIND)
+CFLAGS	=	$(INCLUDE) $(WARNINGS) $(LIBS) $(VALGRIND)
 
 #-------------- Tests Variables --------------#
 
