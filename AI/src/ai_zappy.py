@@ -1,3 +1,5 @@
+import client_module
+
 def init_map(x, y):
         game_map = []
         tile = {'food' : 0, 'linemate' : 0, 'deraumere' : 0, 'sibur' : 0, 'mendiane' : 0, 'phiras' : 0, 'thystame' : 0}
@@ -31,12 +33,12 @@ class Bot:
         self.command_number += 1
         res = 0
 
-        #function calling for connection
-        #function calling for reception
+        client_module.send_instruction("Forward")
+        client_module.get_next_instruction(self.command_number)
         while "message" in res:
             self.broadcast_analyse(res)
             self.command_number += 1
-            #function calling for reception
+            client_module.get_next_instruction(self.command_number)
         if res == "dead":
             self.alive = False
         if res == "ok":
@@ -63,12 +65,12 @@ class Bot:
         self.command_number += 1
         res = 0
 
-        #function calling for connection
-        #function calling for reception
+        client_module.send_instruction("Right")
+        client_module.get_next_instruction(self.command_number)
         while "message" in res:
             self.broadcast_analyse(res)
             self.command_number += 1
-            #function calling for reception
+            client_module.get_next_instruction(self.command_number)
         if res == "dead":
             self.alive = False
         if res == "ok":
@@ -81,12 +83,12 @@ class Bot:
         self.command_number += 1
         res = 0
 
-        #function calling for connection
-        #function calling for reception
+        client_module.send_instruction("Left")
+        client_module.get_next_instruction(self.command_number)
         while "message" in res:
             self.broadcast_analyse(res)
             self.command_number += 1
-            #function calling for reception        
+            client_module.get_next_instruction(self.command_number)        
         if res == "dead":
             self.alive = False
         if res == "ok":
@@ -99,12 +101,12 @@ class Bot:
         self.command_number += 1
         res = 0
 
-        #function calling for connection
-        #function calling for reception
+        client_module.send_instruction("Look")
+        client_module.get_next_instruction(self.command_number)
         while "message" in res:
             self.broadcast_analyse(res)
             self.command_number += 1
-            #function calling for reception
+            client_module.get_next_instruction(self.command_number)
         if res == "dead":
             self.alive = False
         return
@@ -113,12 +115,12 @@ class Bot:
         self.command_number += 1
         res = 0
 
-        #function calling for connection
-        #function calling for reception
+        client_module.send_instruction("Inventory")
+        client_module.get_next_instruction(self.command_number)
         while "message" in res:
             self.broadcast_analyse(res)
             self.command_number += 1
-            #function calling for reception
+            client_module.get_next_instruction(self.command_number)
         if res == "dead":
             self.alive = False
         res = res.split(',')
@@ -131,12 +133,12 @@ class Bot:
         self.command_number += 1
         res = 0
 
-        #function calling for connection
-        #function calling for reception
+        client_module.send_instruction("Connect_nbr")
+        client_module.get_next_instruction(self.command_number)
         while "message" in res:
             self.broadcast_analyse(res)
             self.command_number += 1
-            #function calling for reception
+            client_module.get_next_instruction(self.command_number)
         if res == "dead":
             self.alive = False
         if res > 0:
@@ -147,12 +149,12 @@ class Bot:
         self.command_number += 1
         res = 0
 
-        #function calling for connection
-        #function calling for reception
+        client_module.send_instruction("Fork")
+        client_module.get_next_instruction(self.command_number)
         while "message" in res:
             self.broadcast_analyse(res)
             self.command_number += 1
-            #function calling for reception
+            client_module.get_next_instruction(self.command_number)
         if res == "dead":
             self.alive = False
         return
@@ -161,12 +163,12 @@ class Bot:
         self.command_number += 1
         res = 0
 
-        #function calling for connection
-        #function calling for reception
+        client_module.send_instruction("Eject")
+        client_module.get_next_instruction(self.command_number)
         while "message" in res:
             self.broadcast_analyse(res)
             self.command_number += 1
-            #function calling for reception
+            client_module.get_next_instruction(self.command_number)
         if res == "dead":
             self.alive = False
         if res == "ko":
@@ -177,12 +179,12 @@ class Bot:
         self.command_number += 1
         res = 0
 
-        #function calling for connection
-        #function calling for reception
+        client_module.send_instruction("Take " + object_name)
+        client_module.get_next_instruction(self.command_number)
         while "message" in res:
             self.broadcast_analyse(res)
             self.command_number += 1
-            #function calling for reception
+            client_module.get_next_instruction(self.command_number)
         if res == "dead":
             self.alive = False
         if res == "ok":
@@ -193,12 +195,12 @@ class Bot:
         self.command_number += 1
         res = 0
 
-        #function calling for connection
-        #function calling for reception
+        client_module.send_instruction("Set "+ object_name)
+        client_module.get_next_instruction(self.command_number)
         while "message" in res:
             self.broadcast_analyse(res)
             self.command_number += 1
-            #function calling for reception
+            client_module.get_next_instruction(self.command_number)
         if res == "dead":
             self.alive = False
         if res == "ok":
@@ -209,28 +211,28 @@ class Bot:
         self.command_number += 1
         res = 0
 
-        #function calling for connection
-        #function calling for reception
+        client_module.send_instruction("Incantation")
+        client_module.get_next_instruction(self.command_number)
         while "message" in res:
             self.broadcast_analyse(res)
             self.command_number += 1
-            #function calling for reception
+            client_module.get_next_instruction(self.command_number)
         if res == "dead":
             self.alive = False
         if res != "ko":
             self.level += 1
         return
 
-    def broadcast(self):
+    def broadcast(self, message):
         self.command_number += 1
         res = 0
 
-        #function calling for connection
-        #function calling for reception
+        client_module.send_instruction("broadcast " + message)
+        client_module.get_next_instruction(self.command_number)
         while "message" in res:
             self.broadcast_analyse(res)
             self.command_number += 1
-            #function calling for reception
+            client_module.get_next_instruction(self.command_number)
         if res == "dead":
             self.alive = False 
         return
