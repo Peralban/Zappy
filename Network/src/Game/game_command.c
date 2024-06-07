@@ -45,5 +45,9 @@ void fork_player(client_t *client, server_t *server)
     tmp->next = server->game->egg_list;
     server->game->egg_list->prev = tmp;
     server->game->egg_list = tmp;
+    for (int i = 0; i < server->info_game.nb_teams; i++) {
+        if (server->game->teams[i].name == client->drone->team_name)
+            server->game->teams[i].nb_egg++;
+    }
     send(client->socket, "ok\n", 3, 0);
 }

@@ -67,8 +67,8 @@ static linked_list_egg_t *create_egg_list(info_game_t info_game)
         return NULL;
     egg_list->next = NULL;
     egg_list->prev = NULL;
-    egg_list->egg = create_egg(info_game.team_names[0], rand() % info_game.width,
-        rand() % info_game.height);
+    egg_list->egg = create_egg(info_game.team_names[0],
+        rand() % info_game.width, rand() % info_game.height);
     if (egg_list->egg == NULL)
         return NULL;
     return get_all_eggs(info_game, egg_list);
