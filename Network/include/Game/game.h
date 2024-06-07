@@ -106,6 +106,7 @@ typedef struct drone_s {
     inventory_t inventory;
     char *team_name;
     int ticks;
+    int life_ticks;
 } drone_t;
 
 /**
@@ -133,7 +134,7 @@ typedef struct tile_s {
  */
 typedef struct team_s {
     char *name;
-    int connected_clients;
+    int nb_egg;
 } team_t;
 
 /**

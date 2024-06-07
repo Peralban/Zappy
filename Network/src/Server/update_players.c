@@ -42,11 +42,39 @@ void set_ticks(client_t *client)
     }
 }
 
+static void reset_client(client_t *client)
+{
+    free(client->drone);
+    client->drone = NULL;
+    for (int i = 0; i < MAX_COMMAND; i++) {
+        free(client->command[i]);
+        client->command[i] = NULL;
+    }
+    client->state = WAITING;
+}
+
+static void update_life(client_t *client)
+{
+    drone_t *drone = client->drone;
+
+    if (drone->life_ticks == 0) {
+        if (drone->inventory[FOOD] > 0) {
+            drone->life_ticks = 126;
+            drone->inventory[FOOD]--;
+        } else {
+            send(client->socket, "dead\n", 5, 0);
+            reset_client(client);
+        }
+    } else
+        drone->life_ticks--;
+}
+
 void update_players(server_t *server)
 {
     for (client_list_t *tmp = server->list; tmp != NULL; tmp = tmp->next) {
         if (tmp->client == NULL || tmp->client->drone == NULL)
             continue;
+        update_life(tmp->client);
         if (tmp->client->command[0] == NULL)
             continue;
         if (tmp->client->drone->ticks == 0) {
