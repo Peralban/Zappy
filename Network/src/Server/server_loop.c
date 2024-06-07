@@ -19,15 +19,13 @@ static void start_communication_with_client(client_t *client,
 {
     for (int i = 0; server->info_game.team_names[i] != NULL; i++) {
         if (strcmp(buffer, server->info_game.team_names[i]) == 0 &&
-            server->game->teams[i].connected_clients <
-            server->info_game.nb_client) {
-            server->game->teams[i].connected_clients++;
+            server->game->teams[i].nb_egg > 0) {
+            server->game->teams[i].nb_egg--;
             sprintf(buffer, "%d\n%d %d\n",
-                server->info_game.nb_client -
-                server->game->teams[i].connected_clients,
+                server->game->teams[i].nb_egg,
                 server->info_game.width, server->info_game.height);
             send(client->socket, buffer, strlen(buffer), 0);
-            client->state = CONNECTED;
+            client->state = PLAYING;
             create_player(server, client, server->info_game.team_names[i]);
             return;
         }

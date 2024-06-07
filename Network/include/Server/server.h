@@ -45,7 +45,7 @@ typedef enum error_type_e {
 
 typedef enum client_state_e {
     WAITING,
-    CONNECTED
+    PLAYING,
 } client_state_t;
 
 typedef struct drone_s drone_t;
