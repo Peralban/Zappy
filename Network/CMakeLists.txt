@@ -15,6 +15,11 @@ add_executable(Zappy_Server
     src/Parsing/parse_args.c
     src/Parsing/move_args_to_struct.c
     src/lib/my_str_to_word_array.c
+        src/Game/game_command_bis.c
+        src/Game/game_command.c
+        src/Game/egg_hatching.c
+        src/Game/game_functions.c
+        src/Server/update_players.c
 )
 
 # Specify the C standard

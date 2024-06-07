@@ -9,7 +9,7 @@
 #include "Game/game.h"
 #include <stdlib.h>
 
-static void remove_egg_elem(linked_list_egg_t *egg, linked_list_egg_t **list)
+void remove_egg_elem(linked_list_egg_t *egg, linked_list_egg_t **list)
 {
     linked_list_egg_t *tmp = *list;
 
