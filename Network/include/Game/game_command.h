@@ -19,9 +19,6 @@
  * @param args The arguments for the command.
  */
 void forward(client_t *client, server_t *server, char *args);
-void fork_player(client_t *client, server_t *server);
-void connect_nbr(client_t *client, server_t *server);
-void eject(client_t *client, server_t *server);
 
 /**
  * @brief Turns the client's character to the right in the game.
@@ -69,6 +66,33 @@ void inventory(client_t *client, server_t *server, char *args);
 void broadcast(client_t *client, server_t *server, char *args);
 
 /**
+ * @brief Allows the client's character to fork a new player in the game.
+ *
+ * @param client The client who is playing the game.
+ * @param server The server where the game is hosted.
+ * @param args The arguments for the command.
+ */
+void fork_player(client_t *client, server_t *server, char *args);
+
+/**
+ * @brief Allows the client's character to check the number of unused connections in the game.
+ *
+ * @param client The client who is playing the game.
+ * @param server The server where the game is hosted.
+ * @param args The arguments for the command.
+ */
+void connect_nbr(client_t *client, server_t *server, char *args);
+
+/**
+ * @brief Allows the client's character to eject other players from their tile in the game.
+ *
+ * @param client The client who is playing the game.
+ * @param server The server where the game is hosted.
+ * @param args The arguments for the command.
+ */
+void eject(client_t *client, server_t *server, char *args);
+
+/**
  * @brief A structure to represent a game command.
  *
  * @param name The name of the command.
@@ -96,8 +120,8 @@ static const command_t commands_opt[] = {
     {"Look", &look, 7, 0},
     {"Inventory", &inventory, 1, 0},
     {"Broadcast", &broadcast, 7, 1},
-    {"Fork", &fork_player, 42},
-    {"Connect_nbr", &connect_nbr, 7},
-    {"Eject", &eject, 7},
+    {"Fork", &fork_player, 42, 0},
+    {"Connect_nbr", &connect_nbr, 7, 0},
+    {"Eject", &eject, 7, 0},
     {NULL, NULL, 0, 0}
 };

@@ -33,26 +33,8 @@ void left(client_t *client, server_t *server,
     send(client->socket, "ok\n", 3, 0);
 }
 
-void look(client_t *client, server_t *server,
+void fork_player(client_t *client, server_t *server,
     __attribute__((unused))char *args)
-{
-    char *str = look_around(client->drone, server);
-
-    send(client->socket, str, strlen(str), 0);
-    free(str);
-}
-
-void inventory(client_t *client, server_t *server,
-    __attribute__((unused))char *args)
-{
-    char *str = display_inventory(client->drone);
-
-    (void)server;
-    send(client->socket, str, strlen(str), 0);
-    free(str);
-}
-
-void fork_player(client_t *client, server_t *server)
 {
     linked_list_egg_t *tmp = calloc(1, sizeof(linked_list_egg_t));
 
@@ -74,7 +56,8 @@ void fork_player(client_t *client, server_t *server)
     send(client->socket, "ok\n", 3, 0);
 }
 
-void connect_nbr(client_t *client, server_t *server)
+void connect_nbr(client_t *client, server_t *server,
+    __attribute__((unused))char *args)
 {
     char buffer[1024];
 

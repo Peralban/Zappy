@@ -10,7 +10,27 @@
 #include "Game/game_functions.h"
 #include "Server/server.h"
 
-void broadcast(client_t *client, server_t *server, char *args)
+void look(client_t *client, server_t *server,
+    __attribute__((unused))char *args)
+{
+    char *str = look_around(client->drone, server);
+
+    send(client->socket, str, strlen(str), 0);
+    free(str);
+}
+
+void inventory(client_t *client, server_t *server,
+    __attribute__((unused))char *args)
+{
+    char *str = display_inventory(client->drone);
+
+    (void)server;
+    send(client->socket, str, strlen(str), 0);
+    free(str);
+}
+
+void broadcast(client_t *client, server_t *server,
+    __attribute__((unused))char *args)
 {
     bool is_ok = launch_broadcast(client->drone, server, args);
 
@@ -82,7 +102,8 @@ static bool hit_eggs(const client_t *client, server_t *server)
     return hit;
 }
 
-void eject(client_t *client, server_t *server)
+void eject(client_t *client, server_t *server,
+    __attribute__((unused))char *args)
 {
     bool player_hit = hit_players(client, server);
     bool egg_hit = hit_eggs(client, server);
