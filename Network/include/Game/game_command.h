@@ -75,7 +75,8 @@ void broadcast(client_t *client, server_t *server, char *args);
 void fork_player(client_t *client, server_t *server, char *args);
 
 /**
- * @brief Allows the client's character to check the number of unused connections in the game.
+ * @brief Allows the client's character to check the number of unused
+ * connections in the game.
  *
  * @param client The client who is playing the game.
  * @param server The server where the game is hosted.
@@ -84,7 +85,8 @@ void fork_player(client_t *client, server_t *server, char *args);
 void connect_nbr(client_t *client, server_t *server, char *args);
 
 /**
- * @brief Allows the client's character to eject other players from their tile in the game.
+ * @brief Allows the client's character to eject other players from
+ * their tile in the game.
  *
  * @param client The client who is playing the game.
  * @param server The server where the game is hosted.
