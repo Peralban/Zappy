@@ -51,3 +51,16 @@ void fork_player(client_t *client, server_t *server)
     }
     send(client->socket, "ok\n", 3, 0);
 }
+
+void connect_nbr(client_t *client, server_t *server)
+{
+    char buffer[1024];
+
+    for (int i = 0; i < server->info_game.nb_teams; i++) {
+        if (server->game->teams[i].name == client->drone->team_name) {
+            sprintf(buffer, "%d\n", server->game->teams[i].nb_egg);
+            break;
+        }
+    }
+    send(client->socket, buffer, strlen(buffer), 0);
+}
