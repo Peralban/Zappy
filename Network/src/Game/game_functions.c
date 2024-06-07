@@ -31,7 +31,7 @@ static void add_drone_at_pos(in_game_t *game, drone_t *drone)
     tmp = tile->drone_list;
     while (tmp->next != NULL)
         tmp = tmp->next;
-    tmp->next = malloc(sizeof(linked_list_drone_t));
+    tmp->next = calloc(1, sizeof(linked_list_drone_t));
     if (tmp->next == NULL)
         return;
     tmp->next->prev = tmp;
