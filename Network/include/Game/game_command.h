@@ -11,18 +11,68 @@
 #include "game_functions.h"
 #include <stdio.h>
 
+/**
+ * @brief Moves the client's character forward in the game.
+ *
+ * @param client The client who is playing the game.
+ * @param server The server where the game is hosted.
+ * @param args The arguments for the command.
+ */
 void forward(client_t *client, server_t *server, char *args);
 
+/**
+ * @brief Turns the client's character to the right in the game.
+ *
+ * @param client The client who is playing the game.
+ * @param server The server where the game is hosted.
+ * @param args The arguments for the command.
+ */
 void right(client_t *client, server_t *server, char *args);
 
+/**
+ * @brief Turns the client's character to the left in the game.
+ *
+ * @param client The client who is playing the game.
+ * @param server The server where the game is hosted.
+ * @param args The arguments for the command.
+ */
 void left(client_t *client, server_t *server, char *args);
 
+/**
+ * @brief Allows the client's character to look around in the game.
+ *
+ * @param client The client who is playing the game.
+ * @param server The server where the game is hosted.
+ * @param args The arguments for the command.
+ */
 void look(client_t *client, server_t *server, char *args);
 
+/**
+ * @brief Allows the client's character to check their inventory in the game.
+ *
+ * @param client The client who is playing the game.
+ * @param server The server where the game is hosted.
+ * @param args The arguments for the command.
+ */
 void inventory(client_t *client, server_t *server, char *args);
 
+/**
+ * @brief Allows the client's character to broadcast a message in the game.
+ *
+ * @param client The client who is playing the game.
+ * @param server The server where the game is hosted.
+ * @param args The arguments for the command.
+ */
 void broadcast(client_t *client, server_t *server, char *args);
 
+/**
+ * @brief A structure to represent a game command.
+ *
+ * @param name The name of the command.
+ * @param function The function to execute the command.
+ * @param duration The duration of the command.
+ * @param nb_args The number of arguments for the command.
+ */
 typedef struct {
     char *name;
     void (*function)(client_t *client, server_t *server, char *arg);
@@ -30,6 +80,12 @@ typedef struct {
     int nb_args;
 } command_t;
 
+/**
+ * @brief An array of game commands.
+ *
+ * This array includes the commands
+ * "Forward", "Right", "Left", "Look", "Inventory", and "Broadcast".
+ */
 static const command_t commands_opt[] = {
     {"Forward", &forward, 7, 0},
     {"Right", &right, 7, 0},
