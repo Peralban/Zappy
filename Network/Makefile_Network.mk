@@ -23,6 +23,7 @@ SRC		= 		main.c								\
 				lib/get_nbr_of_char.c				\
 				Game/game_functions.c				\
 				Game/game_command.c					\
+				Game/egg_hatching.c					\
 
 TRUE_SRC 	= 	$(patsubst %,src/%, $(SRC))
 

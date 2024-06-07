@@ -8,6 +8,7 @@
 #include "Server/server.h"
 #include "Parsing/parse_args.h"
 #include <stdio.h>
+#include <time.h>
 
 static int print_help(void)
 {
@@ -32,5 +33,6 @@ int main(int ac, char **av)
     args = get_array_from_args(ac, av);
     if (args == NULL)
         return 84;
+    srand(time(NULL));
     return zappy_network(args);
 }

@@ -66,6 +66,30 @@ typedef enum {
  */
 typedef int inventory_t[MAX_ITEMS];
 
+/**
+ * @struct egg_s
+ * @brief Structure representing an egg in the game.
+ * the egg is represented by an array of integers.
+ * The first two integers are the x and y coordinates of the egg.
+ * The third integer is the id of the drone that laid the egg.
+ */
+typedef struct egg_s {
+    int x;
+    int y;
+    int id;
+    char *team_name;
+} egg_t;
+
+/**
+ * @struct linked_list_egg_s
+ * @brief Structure representing a linked list of eggs.
+ */
+typedef struct linked_list_egg_s {
+    egg_t *egg;
+    struct linked_list_egg_s *next;
+    struct linked_list_egg_s *prev;
+} linked_list_egg_t;
+
 typedef struct server_s server_t;
 
 /**
@@ -121,4 +145,5 @@ typedef struct in_game_s {
     team_t *teams;
     int spawn_tick;
     inventory_t picked_up_items;
+    linked_list_egg_t *egg_list;
 } in_game_t;

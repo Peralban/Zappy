@@ -34,3 +34,12 @@ void turn(drone_t *drone, side_t side);
  * @param server The server object containing the game state.
  */
 void move(drone_t *drone, server_t *server);
+
+/**
+ * @brief Spawns a drone on an egg.
+ *
+ * @param server The server object containing the game state.
+ * @param drone The drone to spawn.
+ * @param team_name The name of the team the drone is joining.
+ */
+void spawn_on_egg(server_t *server, drone_t *drone, char *team_name);
