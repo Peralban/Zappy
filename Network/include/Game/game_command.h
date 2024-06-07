@@ -14,6 +14,7 @@
 void forward(client_t *client, server_t *server);
 void right(client_t *client, server_t *server);
 void left(client_t *client, server_t *server);
+void fork_player(client_t *client, server_t *server);
 
 typedef struct {
     char *name;
@@ -25,5 +26,6 @@ static const command_t commands_opt[] = {
     {"Forward", &forward, 7},
     {"Right", &right, 7},
     {"Left", &left, 7},
+    {"Fork", &fork_player, 42},
     {NULL, NULL, 0}
 };

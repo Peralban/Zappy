@@ -23,6 +23,21 @@ static tile_t **get_tile(int x, int y)
     return tile;
 }
 
+egg_t *create_egg(char *team_name, int x, int y)
+{
+    egg_t *egg = calloc(1, sizeof(egg_t));
+    static int id = 0;
+
+    if (egg == NULL)
+        return NULL;
+    egg->id = id;
+    id++;
+    egg->x = x;
+    egg->y = y;
+    egg->team_name = team_name;
+    return egg;
+}
+
 static linked_list_egg_t *get_all_eggs(info_game_t info_game,
     linked_list_egg_t *egg_list)
 {
@@ -32,13 +47,10 @@ static linked_list_egg_t *get_all_eggs(info_game_t info_game,
         tmp = calloc(1, sizeof(linked_list_egg_t));
         if (tmp == NULL)
             return NULL;
-        tmp->egg = calloc(1, sizeof(egg_t));
+        tmp->egg = create_egg(info_game.team_names[i % info_game.nb_teams],
+            rand() % info_game.width, rand() % info_game.height);
         if (tmp->egg == NULL)
             return NULL;
-        tmp->egg->id = i;
-        tmp->egg->x = rand() % info_game.width;
-        tmp->egg->y = rand() % info_game.height;
-        tmp->egg->team_name = info_game.team_names[i % info_game.nb_teams];
         tmp->next = egg_list;
         egg_list->prev = tmp;
         egg_list = tmp;
@@ -53,15 +65,12 @@ static linked_list_egg_t *create_egg_list(info_game_t info_game)
     egg_list = calloc(1, sizeof(linked_list_egg_t));
     if (egg_list == NULL)
         return NULL;
-    egg_list->egg = calloc(1, sizeof(egg_t));
-    if (egg_list->egg == NULL)
-        return NULL;
     egg_list->next = NULL;
     egg_list->prev = NULL;
-    egg_list->egg->id = 0;
-    egg_list->egg->x = rand() % info_game.width;
-    egg_list->egg->y = rand() % info_game.height;
-    egg_list->egg->team_name = info_game.team_names[0];
+    egg_list->egg = create_egg(info_game.team_names[0], rand() % info_game.width,
+        rand() % info_game.height);
+    if (egg_list->egg == NULL)
+        return NULL;
     return get_all_eggs(info_game, egg_list);
 }
 
