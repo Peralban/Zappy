@@ -9,11 +9,17 @@ add_executable(Zappy_Server
     src/ClientList/client_list.c
     src/ClientList/client_list_bis.c
     src/ErrorHandling/check_return_value.c
+    src/Server/init_in_game_stuct.c
     src/Server/zappy_network.c
     src/Server/server_loop.c
     src/Parsing/parse_args.c
     src/Parsing/move_args_to_struct.c
-        src/lib/my_str_to_word_array.c
+    src/lib/my_str_to_word_array.c
+        src/Game/game_command_bis.c
+        src/Game/game_command.c
+        src/Game/egg_hatching.c
+        src/Game/game_functions.c
+        src/Server/update_players.c
 )
 
 # Specify the C standard

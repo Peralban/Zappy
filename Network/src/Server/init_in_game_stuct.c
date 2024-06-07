@@ -23,16 +23,66 @@ static tile_t **get_tile(int x, int y)
     return tile;
 }
 
-static team_t *get_team(char **team_names)
+egg_t *create_egg(char *team_name, int x, int y)
 {
-    int nb_teams = my_array_len(team_names);
-    team_t *teams = calloc((nb_teams + 1), sizeof(team_t));
+    egg_t *egg = calloc(1, sizeof(egg_t));
+    static int id = 0;
+
+    if (egg == NULL)
+        return NULL;
+    egg->id = id;
+    id++;
+    egg->x = x;
+    egg->y = y;
+    egg->team_name = team_name;
+    return egg;
+}
+
+static linked_list_egg_t *get_all_eggs(info_game_t info_game,
+    linked_list_egg_t *egg_list)
+{
+    linked_list_egg_t *tmp;
+
+    for (int i = 1; i < info_game.nb_client * info_game.nb_teams; i++) {
+        tmp = calloc(1, sizeof(linked_list_egg_t));
+        if (tmp == NULL)
+            return NULL;
+        tmp->egg = create_egg(info_game.team_names[i % info_game.nb_teams],
+            rand() % info_game.width, rand() % info_game.height);
+        if (tmp->egg == NULL)
+            return NULL;
+        tmp->next = egg_list;
+        egg_list->prev = tmp;
+        egg_list = tmp;
+    }
+    return egg_list;
+}
+
+static linked_list_egg_t *create_egg_list(info_game_t info_game)
+{
+    linked_list_egg_t *egg_list;
+
+    egg_list = calloc(1, sizeof(linked_list_egg_t));
+    if (egg_list == NULL)
+        return NULL;
+    egg_list->next = NULL;
+    egg_list->prev = NULL;
+    egg_list->egg = create_egg(info_game.team_names[0],
+        rand() % info_game.width, rand() % info_game.height);
+    if (egg_list->egg == NULL)
+        return NULL;
+    return get_all_eggs(info_game, egg_list);
+}
+
+static team_t *get_team(info_game_t info_game)
+{
+    team_t *teams = malloc(sizeof(team_t) * info_game.nb_teams);
 
     if (teams == NULL)
         return NULL;
-    for (int i = 0; i < nb_teams; i++) {
-        teams[i].name = team_names[i];
-        teams[i].connected_clients = 0;
+    for (int i = 0; i < info_game.nb_teams; i++) {
+        teams[i].name = info_game.team_names[i];
+        teams[i].nb_egg = info_game.nb_client;
     }
     return teams;
 }
@@ -68,12 +118,13 @@ in_game_t *init_game(info_game_t info_game)
         free(game);
         return NULL;
     }
-    game->teams = get_team(info_game.team_names);
+    game->teams = get_team(info_game);
     if (game->teams == NULL) {
         free(game->map);
         free(game);
         return NULL;
     }
     init_ressources(info_game, game);
+    game->egg_list = create_egg_list(info_game);
     return game;
 }

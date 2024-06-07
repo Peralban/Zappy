@@ -12,8 +12,6 @@
 #include "Game/game.h"
 #include "lib/my.h"
 #include <stdio.h>
-#include <stdbool.h>
-#include <time.h>
 #include <sys/time.h>
 
 static void start_communication_with_client(client_t *client,
@@ -21,15 +19,13 @@ static void start_communication_with_client(client_t *client,
 {
     for (int i = 0; server->info_game.team_names[i] != NULL; i++) {
         if (strcmp(buffer, server->info_game.team_names[i]) == 0 &&
-            server->game->teams[i].connected_clients <
-            server->info_game.nb_client) {
-            server->game->teams[i].connected_clients++;
+            server->game->teams[i].nb_egg > 0) {
+            server->game->teams[i].nb_egg--;
             sprintf(buffer, "%d\n%d %d\n",
-                server->info_game.nb_client -
-                server->game->teams[i].connected_clients,
+                server->game->teams[i].nb_egg,
                 server->info_game.width, server->info_game.height);
             send(client->socket, buffer, strlen(buffer), 0);
-            client->state = CONNECTED;
+            client->state = PLAYING;
             create_player(server, client, server->info_game.team_names[i]);
             return;
         }
@@ -169,7 +165,6 @@ int server_loop(server_t *server)
     struct timeval timeout = {0, 0};
 
     server->list = create_client_list();
-    srand(time(NULL));
     while (1) {
         if (FD_ISSET(server->socket, &server->readfds))
             new_client(server);
@@ -184,4 +179,3 @@ int server_loop(server_t *server)
         game_tick(server);
     }
 }
-// at each loop, if time is up, do one game tick: TODO

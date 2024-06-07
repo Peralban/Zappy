@@ -31,7 +31,7 @@ static void add_drone_at_pos(in_game_t *game, drone_t *drone)
     tmp = tile->drone_list;
     while (tmp->next != NULL)
         tmp = tmp->next;
-    tmp->next = malloc(sizeof(linked_list_drone_t));
+    tmp->next = calloc(1, sizeof(linked_list_drone_t));
     if (tmp->next == NULL)
         return;
     tmp->next->prev = tmp;
@@ -49,12 +49,12 @@ void create_player(server_t *server, client_t *client, char *team_name)
     all_id++;
     drone->level = 1;
     drone->orientation = rand() % 4;
-    drone->x = rand() % server->info_game.width;
-    drone->y = rand() % server->info_game.height;
     drone->team_name = team_name;
+    drone->life_ticks = 1260;
     for (int i = 0; i < 7; i++)
         drone->inventory[i] = 0;
     client->drone = drone;
+    spawn_on_egg(server, drone, team_name);
     add_drone_at_pos(server->game, drone);
 }
 
@@ -115,7 +115,7 @@ static void exchange_drone(server_t *server, linked_list_drone_t *src,
     src->prev = dest;
 }
 
-void move(drone_t *drone, server_t *server)
+void move(drone_t *drone, server_t *server, orientation_t orientation)
 {
     int movement[] = {1, -1, 1, -1};
     int *coord[] = {&drone->y, &drone->y,
@@ -127,9 +127,9 @@ void move(drone_t *drone, server_t *server)
 
     if (src == NULL)
         return;
-    *coord[drone->orientation] = (*coord[drone->orientation] +
-    movement[drone->orientation] +
-    max[drone->orientation]) % max[drone->orientation];
+    *coord[orientation] = (*coord[orientation] +
+    movement[orientation] +
+    max[orientation]) % max[orientation];
     remove_drone_in_list(&server->game->map[old[X]][old[Y]].drone_list, drone);
     exchange_drone(server, src, drone);
 }

@@ -32,8 +32,26 @@ void turn(drone_t *drone, side_t side);
  *
  * @param drone The drone to move.
  * @param server The server object containing the game state.
+ * @param orientation The direction to move the drone in.
  */
-void move(drone_t *drone, server_t *server);
+void move(drone_t *drone, server_t *server, orientation_t orientation);
+
+/**
+ * @brief Spawns a drone on an egg.
+ *
+ * @param server The server object containing the game state.
+ * @param drone The drone to spawn.
+ * @param team_name The name of the team the drone is joining.
+ */
+void spawn_on_egg(server_t *server, drone_t *drone, char *team_name);
+
+/**
+ * @brief Removes an egg from the egg list.
+ *
+ * @param egg The egg to remove.
+ * @param list The list of eggs to remove the egg from.
+ */
+void remove_egg_elem(linked_list_egg_t *egg, linked_list_egg_t **list);
 
 /**
  * @brief Allows a drone to observe its surroundings.

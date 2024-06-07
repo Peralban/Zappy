@@ -19,6 +19,9 @@
  * @param args The arguments for the command.
  */
 void forward(client_t *client, server_t *server, char *args);
+void fork_player(client_t *client, server_t *server);
+void connect_nbr(client_t *client, server_t *server);
+void eject(client_t *client, server_t *server);
 
 /**
  * @brief Turns the client's character to the right in the game.
@@ -93,5 +96,8 @@ static const command_t commands_opt[] = {
     {"Look", &look, 7, 0},
     {"Inventory", &inventory, 1, 0},
     {"Broadcast", &broadcast, 7, 1},
+    {"Fork", &fork_player, 42},
+    {"Connect_nbr", &connect_nbr, 7},
+    {"Eject", &eject, 7},
     {NULL, NULL, 0, 0}
 };

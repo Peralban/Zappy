@@ -45,7 +45,7 @@ typedef enum error_type_e {
 
 typedef enum client_state_e {
     WAITING,
-    CONNECTED
+    PLAYING,
 } client_state_t;
 
 typedef struct drone_s drone_t;
@@ -157,3 +157,12 @@ void update_players(server_t *server);
  * @param client The client to set the ticks for.
  */
 void set_ticks(client_t *client);
+
+/**
+ * @brief Creates a new egg in the game.
+ * @param team_name The name of the team that the egg belongs to.
+ * @param x The x-coordinate of the egg.
+ * @param y The y-coordinate of the egg.
+ * @return A pointer to the created egg.
+ */
+egg_t *create_egg(char *team_name, int x, int y);
