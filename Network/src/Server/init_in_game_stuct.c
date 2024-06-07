@@ -73,7 +73,7 @@ static team_t *get_team(info_game_t info_game)
         return NULL;
     for (int i = 0; i < info_game.nb_teams; i++) {
         teams[i].name = info_game.team_names[i];
-        teams[i].connected_clients = 0;
+        teams[i].nb_egg = info_game.nb_client;
     }
     return teams;
 }
