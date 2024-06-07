@@ -16,6 +16,7 @@ void right(client_t *client, server_t *server);
 void left(client_t *client, server_t *server);
 void fork_player(client_t *client, server_t *server);
 void connect_nbr(client_t *client, server_t *server);
+void eject(client_t *client, server_t *server);
 
 typedef struct {
     char *name;
@@ -29,5 +30,6 @@ static const command_t commands_opt[] = {
     {"Left", &left, 7},
     {"Fork", &fork_player, 42},
     {"Connect_nbr", &connect_nbr, 7},
+    {"Eject", &eject, 7},
     {NULL, NULL, 0}
 };
