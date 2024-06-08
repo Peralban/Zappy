@@ -10,7 +10,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-static int word_nbr(char *str, char *delim)
+int word_nbr(char *str, char *delim)
 {
     int nbr_word = 0;
     bool is_word = false;
