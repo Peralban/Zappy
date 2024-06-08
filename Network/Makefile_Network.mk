@@ -61,7 +61,7 @@ TESTS_SRC		=	mainTest.c									\
 TESTS_TRUE_SRC	=	$(patsubst %,Tests/src/%, $(TESTS_SRC)) \
 					$(filter-out src/main.c, $(TRUE_SRC))
 
-TESTS_LIBS		=	--coverage -lcriterion
+TESTS_LIBS		=	--coverage -lcriterion -lm
 
 TESTS_INCLUDE	=	$(INCLUDE) -I./Tests/src
 
