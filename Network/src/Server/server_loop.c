@@ -1,6 +1,6 @@
 /*
-** EPITECH PROJECT, 2023
-** FTPEW
+** EPITECH PROJECT, 2024
+** zappy
 ** File description:
 ** server_loop.c
 */

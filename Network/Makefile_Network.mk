@@ -25,6 +25,9 @@ SRC		= 		main.c								\
 				Game/game_command.c					\
 				Game/game_command_bis.c				\
 				Game/egg_hatching.c					\
+				Game/look_around.c					\
+				Game/inventory_function.c			\
+				Game/launch_broadcast.c				\
 
 TRUE_SRC 	= 	$(patsubst %,src/%, $(SRC))
 
@@ -36,9 +39,11 @@ WARNINGS	=	-Wall -Wextra -Wshadow
 
 INCLUDE		=	-I./include
 
-VALGRIND	= -g3
+LIBS		=	-lm
 
-CFLAGS	=	$(INCLUDE) $(WARNINGS) $(VALGRIND)
+VALGRIND	=	-g3
+
+CFLAGS	=	$(INCLUDE) $(WARNINGS) $(LIBS) $(VALGRIND)
 
 #-------------- Tests Variables --------------#
 
@@ -56,7 +61,7 @@ TESTS_SRC		=	mainTest.c									\
 TESTS_TRUE_SRC	=	$(patsubst %,Tests/src/%, $(TESTS_SRC)) \
 					$(filter-out src/main.c, $(TRUE_SRC))
 
-TESTS_LIBS		=	--coverage -lcriterion
+TESTS_LIBS		=	--coverage -lcriterion -lm
 
 TESTS_INCLUDE	=	$(INCLUDE) -I./Tests/src
 

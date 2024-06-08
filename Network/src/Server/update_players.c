@@ -8,16 +8,25 @@
 #include "Server/server.h"
 #include "Game/game.h"
 #include "Game/game_command.h"
+#include "lib/my.h"
 
 
 static void exec_command(char *command, client_t *client, server_t *server)
 {
+    char **command_array = my_str_to_word_array(command, " \n");
+    int len = word_nbr(command, " \n");
+
+    if (command_array == NULL)
+        return;
     for (int i = 0; commands_opt[i].name != NULL; i++) {
-        if (strcmp(command, commands_opt[i].name) == 0) {
-            commands_opt[i].function(client, server);
+        if (strcmp(command_array[0], commands_opt[i].name) == 0 &&
+        len == 1 + commands_opt[i].nb_args) {
+            commands_opt[i].function(client, server, command_array[1]);
+            my_free_array(command_array);
             return;
         }
     }
+    my_free_array(command_array);
     send(client->socket, "ko\n", 3, 0);
 }
 
@@ -32,10 +41,13 @@ static void shift_commands(char **commands)
 
 void set_ticks(client_t *client)
 {
+    int len = word_nbr(client->command[0], " \n");
+
     for (int i = 0; commands_opt[i].name != NULL; i++) {
         if (client->command[0] == NULL)
             return;
-        if (strcmp(client->command[0], commands_opt[i].name) == 0) {
+        if (strcmp(client->command[0], commands_opt[i].name) == 0 &&
+        len == 1 + commands_opt[i].nb_args) {
             client->drone->ticks = commands_opt[i].duration;
             return;
         }
