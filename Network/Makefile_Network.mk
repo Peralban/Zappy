@@ -25,6 +25,7 @@ SRC		= 		main.c								\
 				Game/game_command.c					\
 				Game/game_command_bis.c				\
 				Game/egg_hatching.c					\
+				Game/incantation.c					\
 
 TRUE_SRC 	= 	$(patsubst %,src/%, $(SRC))
 
