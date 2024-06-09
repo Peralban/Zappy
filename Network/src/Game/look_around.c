@@ -10,9 +10,9 @@
 
 static char *scan_tile(tile_t *tile)
 {
-    char *return_str = calloc(1, sizeof(char) * 100);
-    char *type_str[] = {"linemate", "deraumere",
-    "sibur", "mendiane", "phiras", "thystame", "food"};
+    char *return_str = calloc(1, sizeof(char) * 1024);
+    char *type_str[] = {"food", "linemate", "deraumere",
+    "sibur", "mendiane", "phiras", "thystame"};
     char *str_tmp[] = {" ", "player"};
 
     for (int i = 0; i < 7; i++) {
@@ -21,6 +21,8 @@ static char *scan_tile(tile_t *tile)
         if (i != 6 && tile->inventory[i] != 0)
             strcat(return_str, str_tmp[0]);
     }
+    if (tile->drone_list != NULL && strlen(return_str) != 0)
+        strcat(return_str, str_tmp[0]);
     for (linked_list_drone_t *tmp = tile->drone_list;
     tmp != NULL; tmp = tmp->next) {
         strcat(return_str, str_tmp[1]);
@@ -38,7 +40,7 @@ static char *look_at(drone_t *drone, server_t *server, int nb_observable,
     int ref[] = {drone->x, drone->y};
     int new[] = {0, 0};
     int max[] = {server->info_game.width, server->info_game.height};
-    char *return_str = calloc(1, sizeof(char) * 100);
+    char *return_str = calloc(1, sizeof(char) * 1024);
     axes_t link[4][2] = {{X, Y}, {Y, X}, {X, Y}, {Y, X}};
     char *tmp;
 
@@ -57,7 +59,7 @@ static char *look_at(drone_t *drone, server_t *server, int nb_observable,
 char *look_around(drone_t *drone, server_t *server)
 {
     int nb_observable;
-    char *return_str = calloc(1, sizeof(char) * 1000);
+    char *return_str = calloc(1, sizeof(char) * 1024);
     char *tmp[] = {"[", "]\n", ","};
     char *tmp2;
 

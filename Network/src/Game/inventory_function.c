@@ -10,7 +10,7 @@
 
 static char *my_itoa(int nb)
 {
-    char *str = calloc(1, sizeof(char) * 100);
+    char *str = calloc(1, sizeof(char) * 128);
 
     sprintf(str, "%d", nb);
     return str;
@@ -34,9 +34,9 @@ static char *finish_str(char *return_str)
 
 char *display_inventory(drone_t *drone)
 {
-    char *return_str = calloc(1, sizeof(char) * 100);
-    char *type_str[] = {"linemate", "deraumere",
-    "sibur", "mendiane", "phiras", "thystame", "food"};
+    char *return_str = calloc(1, sizeof(char) * 1024);
+    char *type_str[] = {"food", "linemate", "deraumere",
+    "sibur", "mendiane", "phiras", "thystame"};
     int nbr_item = count_item(drone);
     char *tmp;
 

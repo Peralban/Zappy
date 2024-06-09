@@ -10,9 +10,9 @@
 
 bool drop_object(client_t *client, server_t *server, char *args)
 {
-    char *item[7] = {"linemate", "deraumere", "sibur", "mendiane",
-    "phiras", "thystame", "food"};
-    tile_t *tile = &server->game->map[client->drone->y][client->drone->x];
+    char *item[7] = {"food", "linemate", "deraumere", "sibur", "mendiane",
+    "phiras", "thystame"};
+    tile_t *tile = &server->game->map[client->drone->x][client->drone->y];
     int i = 0;
 
     while(i < 7) {
@@ -31,9 +31,9 @@ bool drop_object(client_t *client, server_t *server, char *args)
 
 bool take_object(client_t *client, server_t *server, char *args)
 {
-    char *item[7] = {"linemate", "deraumere", "sibur", "mendiane",
-    "phiras", "thystame", "food"};
-    tile_t *tile = &server->game->map[client->drone->y][client->drone->x];
+    char *item[7] = {"food", "linemate", "deraumere", "sibur", "mendiane",
+    "phiras", "thystame"};
+    tile_t *tile = &server->game->map[client->drone->x][client->drone->y];
     int i = 0;
 
     while(i < 7) {

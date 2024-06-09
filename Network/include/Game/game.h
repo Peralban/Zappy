@@ -41,13 +41,13 @@ typedef enum {
  * @brief Enumeration representing the type of a crystal.
  */
 typedef enum{
+    FOOD,
     LINEMATE,
     DERAUMERE,
     SIBUR,
     MENDIANE,
     PHIRAS,
     THYSTAME,
-    FOOD,
     MAX_ITEMS
 } item_type_t;
 
