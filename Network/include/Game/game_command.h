@@ -100,7 +100,8 @@ void eject(client_t *client, server_t *server, char *args);
  * @param client The client who is playing the game.
  * @param server The server where the game is hosted.
  * @param args The arguments for the command.
- * @return Returns true if the object was successfully set down, false otherwise.
+ * @return Returns true if the object was successfully set down, false
+ * otherwise.
  */
 void set_object_down(client_t *client, server_t *server, char *args);
 
@@ -110,7 +111,8 @@ void set_object_down(client_t *client, server_t *server, char *args);
  * @param client The client who is playing the game.
  * @param server The server where the game is hosted.
  * @param args The arguments for the command.
- * @return Returns true if the object was successfully taken, false otherwise.
+ * @return Returns true if the object was successfully taken, false
+ * otherwise.
  */
 void take_object_up(client_t *client, server_t *server, char *args);
 

@@ -15,7 +15,7 @@ bool drop_object(client_t *client, server_t *server, char *args)
     tile_t *tile = &server->game->map[client->drone->x][client->drone->y];
     int i = 0;
 
-    while(i < 7) {
+    while (i < 7) {
         if (strcmp(args, item[i]) == 0)
             break;
         if (i == 6)
@@ -36,7 +36,7 @@ bool take_object(client_t *client, server_t *server, char *args)
     tile_t *tile = &server->game->map[client->drone->x][client->drone->y];
     int i = 0;
 
-    while(i < 7) {
+    while (i < 7) {
         if (strcmp(args, item[i]) == 0)
             break;
         if (i == 6)
