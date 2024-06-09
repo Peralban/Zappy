@@ -21,14 +21,16 @@ static void exec_command(char *command, client_t *client, server_t *server)
     send(client->socket, "ko\n", 3, 0);
 }
 
-static void shift_commands(char **commands)
+static void shift_commands(client_t *client)
 {
-    free(commands[0]);
+    free(client->command[0]);
     for (int i = 0; i < MAX_COMMAND - 1; i++) {
-        commands[i] = commands[i + 1];
+        client->command[i] = client->command[i + 1];
     }
-    commands[MAX_COMMAND - 1] = NULL;
+    client->command[MAX_COMMAND - 1] = NULL;
+    set_ticks(client);
 }
+
 
 void set_ticks(client_t *client)
 {
@@ -69,6 +71,18 @@ static void update_life(client_t *client)
         drone->life_ticks--;
 }
 
+static bool check_conditions(char *command, client_t *client, server_t *server)
+{
+    bool (*condition)(client_t *client, server_t *server) = NULL;
+
+    for (int i = 0; commands_opt[i].name != NULL; i++)
+        if (strcmp(command, commands_opt[i].name) == 0)
+            condition = commands_opt[i].condition;
+    if (condition == NULL)
+        return true;
+    return condition(client, server);
+}
+
 void update_players(server_t *server)
 {
     for (client_list_t *tmp = server->list; tmp != NULL; tmp = tmp->next) {
@@ -77,10 +91,13 @@ void update_players(server_t *server)
         update_life(tmp->client);
         if (tmp->client->command[0] == NULL)
             continue;
+        if (!check_conditions(tmp->client->command[0], tmp->client, server)) {
+            shift_commands(tmp->client);
+            continue;
+        }
         if (tmp->client->drone->ticks == 0) {
             exec_command(tmp->client->command[0], tmp->client, server);
-            shift_commands(tmp->client->command);
-            set_ticks(tmp->client);
+            shift_commands(tmp->client);
         } else
             tmp->client->drone->ticks--;
     }
