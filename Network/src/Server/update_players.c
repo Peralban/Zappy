@@ -30,7 +30,7 @@ static void exec_command(char *command, client_t *client, server_t *server)
     send(client->socket, "ko\n", 3, 0);
 }
 
-void shift_commands(client_t *client)
+static void shift_commands(client_t *client)
 {
     free(client->command[0]);
     for (int i = 0; i < MAX_COMMAND - 1; i++) {
@@ -38,8 +38,8 @@ void shift_commands(client_t *client)
     }
     client->command[MAX_COMMAND - 1] = NULL;
     set_ticks(client);
+    client->drone->condition = false;
 }
-
 
 void set_ticks(client_t *client)
 {
@@ -80,12 +80,12 @@ static bool update_life(client_t *client)
             reset_client(client);
             return false;
         }
-    } //else
-        //drone->life_ticks--;
+    } else
+        drone->life_ticks--;
     return true;
 }
 
-bool check_conditions(char *command, client_t *client, server_t *server)
+static bool check_conditions(char *command, client_t *client, server_t *server)
 {
     bool (*condition)(client_t *client, server_t *server, char *args) = NULL;
 
@@ -134,6 +134,15 @@ static bool update_incantation(client_t *client, server_t *server)
     return true;
 }
 
+static void update_drone_action(client_t *client, server_t *server)
+{
+    if (client->drone->ticks == 0) {
+        exec_command(client->command[0], client, server);
+        shift_commands(client);
+    } else
+        client->drone->ticks--;
+}
+
 void update_players(server_t *server)
 {
     for (client_list_t *tmp = server->list; tmp != NULL; tmp = tmp->next) {
@@ -145,10 +154,12 @@ void update_players(server_t *server)
             continue;
         if (tmp->client->command[0] == NULL)
             continue;
-        if (tmp->client->drone->ticks == 0) {
-            exec_command(tmp->client->command[0], tmp->client, server);
+        if (!tmp->client->drone->condition &&
+        !check_conditions(tmp->client->command[0], tmp->client, server)) {
             shift_commands(tmp->client);
+            continue;
         } else
-            tmp->client->drone->ticks--;
+            tmp->client->drone->condition = true;
+        update_drone_action(tmp->client, server);
     }
 }

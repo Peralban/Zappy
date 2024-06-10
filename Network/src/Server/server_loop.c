@@ -57,8 +57,6 @@ static void push_command(client_t *client, char *buffer, server_t *server)
         if (client->command[0] == NULL) {
             client->command[0] = strdup(commands_arr[i]);
             set_ticks(client);
-            if (!check_conditions(client->command[0], client, server))
-                shift_commands(client);
             continue;
         }
         for (j = 0; j != MAX_COMMAND && client->command[j] != NULL; j++);

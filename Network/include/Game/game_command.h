@@ -97,13 +97,13 @@ void eject(client_t *client, server_t *server, char *args);
 void incantation(client_t *client, server_t *server, char *args);
 
 static const inventory_t incantation_level_prerequisites[7] = {
-        {1, 1, 0, 0, 0, 0, 0},
-        {2, 1, 1, 1, 0, 0, 0},
-        {2, 2, 0, 1, 0, 2, 0},
-        {4, 1, 1, 2, 0, 1, 0},
-        {4, 1, 2, 1, 3, 0, 0},
-        {6, 1, 2, 3, 0, 1, 0},
-        {6, 2, 2, 2, 2, 2, 1},
+    {1, 1, 0, 0, 0, 0, 0},
+    {2, 1, 1, 1, 0, 0, 0},
+    {2, 2, 0, 1, 0, 2, 0},
+    {4, 1, 1, 2, 0, 1, 0},
+    {4, 1, 2, 1, 3, 0, 0},
+    {6, 1, 2, 3, 0, 1, 0},
+    {6, 2, 2, 2, 2, 2, 1},
 };
 
 bool check_incantation_condition(client_t *client, server_t *server,

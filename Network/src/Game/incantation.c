@@ -10,7 +10,8 @@
 #include "Game/game_functions.h"
 #include "Server/server.h"
 
-static int count_players_on_tile_at_lvl(int x, int y, int lvl, server_t *server)
+static int count_players_on_tile_at_lvl(int x, int y, int lvl,
+    server_t *server)
 {
     int count = 0;
     linked_list_drone_t *tmp = server->game->map[x][y].drone_list;
@@ -25,6 +26,8 @@ static int count_players_on_tile_at_lvl(int x, int y, int lvl, server_t *server)
 
 bool check_incantation_prerequisites(client_t *client, server_t *server)
 {
+    int count;
+
     if (client->drone->level > 7)
         return false;
     for (int i = 1; i < 7; i++) {
@@ -32,14 +35,15 @@ bool check_incantation_prerequisites(client_t *client, server_t *server)
         < incantation_level_prerequisites[client->drone->level - 1][i])
             return false;
     }
-    int count = count_players_on_tile_at_lvl(client->drone->x, client->drone->y,
-        client->drone->level, server);
+    count = count_players_on_tile_at_lvl(client->drone->x,
+        client->drone->y, client->drone->level, server);
     if (count < incantation_level_prerequisites[client->drone->level - 1][0])
         return false;
     return true;
 }
 
-static void put_everyone_on_tile_to_incantation_lvl(int x, int y, int lvl, server_t *server)
+static void put_everyone_on_tile_to_incantation_lvl(int x, int y, int lvl,
+    server_t *server)
 {
     client_list_t *tmp = server->list;
 

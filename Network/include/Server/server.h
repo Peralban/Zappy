@@ -157,22 +157,6 @@ void update_players(server_t *server);
  * @param client The client to set the ticks for.
  */
 void set_ticks(client_t *client);
-
-/**
- * @brief pops the first command from the client's command queue.
- * @param client The client to pop the command from.
- */
-void shift_commands(client_t *client);
-
-/**
- * @brief Checks the conditions for a command to be executed.
- * @param command The command to check the conditions for.
- * @param client The client to check the conditions for.
- * @param server The server to check the conditions for.
- * @return Returns true if the conditions are met, false otherwise.
- */
-bool check_conditions(char *command, client_t *client, server_t *server);
-
 /**
  * @brief Creates a new egg in the game.
  * @param team_name The name of the team that the egg belongs to.
