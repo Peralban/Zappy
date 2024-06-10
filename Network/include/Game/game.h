@@ -7,6 +7,8 @@
 
 #pragma once
 
+#include <stdbool.h>
+
 #define DENSITY_FOOD 0.5
 #define DENSITY_LINEMATE 0.3
 #define DENSITY_DERAUMERE 0.15
@@ -107,6 +109,8 @@ typedef struct drone_s {
     char *team_name;
     int ticks;
     int life_ticks;
+    int incantation_ticks;
+    bool condition;
 } drone_t;
 
 /**

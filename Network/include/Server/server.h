@@ -157,7 +157,6 @@ void update_players(server_t *server);
  * @param client The client to set the ticks for.
  */
 void set_ticks(client_t *client);
-
 /**
  * @brief Creates a new egg in the game.
  * @param team_name The name of the team that the egg belongs to.
