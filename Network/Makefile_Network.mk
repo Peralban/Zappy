@@ -24,10 +24,12 @@ SRC		= 		main.c								\
 				Game/game_functions.c				\
 				Game/game_command.c					\
 				Game/game_command_bis.c				\
+				Game/game_command_ter.c				\
 				Game/egg_hatching.c					\
 				Game/look_around.c					\
 				Game/inventory_function.c			\
 				Game/launch_broadcast.c				\
+				Game/object_manipulation.c			\
 
 TRUE_SRC 	= 	$(patsubst %,src/%, $(SRC))
 

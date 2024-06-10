@@ -34,10 +34,7 @@ void broadcast(client_t *client, server_t *server,
 {
     bool is_ok = launch_broadcast(client->drone, server, args);
 
-    if (is_ok)
-        send(client->socket, "ok\n", 3, 0);
-    else
-        send(client->socket, "ko\n", 3, 0);
+    send(client->socket, is_ok ? "ok\n" : "ko\n", 3, 0);
 }
 
 static void eject_other(drone_t *other, drone_t *drone, server_t *server)

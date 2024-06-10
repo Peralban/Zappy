@@ -10,7 +10,7 @@
 
 static char *my_itoa(int nb)
 {
-    char *str = calloc(1, sizeof(char) * 100);
+    char *str = calloc(1, sizeof(char) * 128);
 
     sprintf(str, "%d", nb);
     return str;
@@ -26,40 +26,32 @@ static int count_item(drone_t *drone)
     return nbr_item;
 }
 
-static char *finish_str(drone_t *drone, char *return_str)
+static char *finish_str(char *return_str)
 {
-    char *tmp;
-
-    if (drone->inventory[FOOD] != 0) {
-        strcat(return_str, ", food ");
-        tmp = my_itoa(drone->inventory[0]);
-        strcat(return_str, tmp);
-        free(tmp);
-    }
     strcat(return_str, "]\n");
     return return_str;
 }
 
 char *display_inventory(drone_t *drone)
 {
-    char *return_str = calloc(1, sizeof(char) * 100);
+    char *return_str = calloc(1, sizeof(char) * 1024);
     char *type_str[] = {"food", "linemate", "deraumere",
     "sibur", "mendiane", "phiras", "thystame"};
     int nbr_item = count_item(drone);
     char *tmp;
 
     strcat(return_str, "[");
-    for (int i = 1; i < 7; i++) {
+    for (int i = 0; i < 7; i++) {
         if (drone->inventory[i] != 0) {
-            strcat(return_str, type_str[i - 1]);
+            strcat(return_str, type_str[i]);
             strcat(return_str, " ");
             tmp = my_itoa(drone->inventory[i]);
             strcat(return_str, tmp);
             free(tmp);
-            nbr_item --;
+            nbr_item--;
         }
-        if (nbr_item > 1 && drone->inventory[i] != 0)
+        if (nbr_item > 0 && drone->inventory[i] != 0)
             strcat(return_str, ", ");
     }
-    return finish_str(drone, return_str);
+    return finish_str(return_str);
 }
