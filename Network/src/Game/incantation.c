@@ -10,7 +10,7 @@
 #include "Game/game_functions.h"
 #include "Server/server.h"
 
-static bool count_players_on_tile_at_lvl(int x, int y, int lvl, server_t *server)
+static int count_players_on_tile_at_lvl(int x, int y, int lvl, server_t *server)
 {
     int count = 0;
     linked_list_drone_t *tmp = server->game->map[x][y].drone_list;
@@ -23,7 +23,7 @@ static bool count_players_on_tile_at_lvl(int x, int y, int lvl, server_t *server
     return count;
 }
 
-static bool check_incantation_prerequisites(client_t *client, server_t *server)
+bool check_incantation_prerequisites(client_t *client, server_t *server)
 {
     if (client->drone->level > 7)
         return false;
@@ -46,13 +46,15 @@ static void put_everyone_on_tile_to_incantation_lvl(int x, int y, int lvl, serve
     while (tmp != NULL) {
         if (tmp->client->drone->x == x && tmp->client->drone->y == y
         && tmp->client->drone->level == lvl) {
-            //TODO: send to everyone on tile
+            tmp->client->drone->incantation_ticks = 300;
+            send(tmp->client->socket, "Elevation underway\n", 19, 0);
         }
         tmp = tmp->next;
     }
 }
 
-bool check_incantation_condition(client_t *client, server_t *server)
+bool check_incantation_condition(client_t *client, server_t *server,
+    __attribute__((unused))char *args)
 {
     bool ret = check_incantation_prerequisites(client, server);
 
@@ -60,14 +62,14 @@ bool check_incantation_condition(client_t *client, server_t *server)
         send(client->socket, "ko\n", 3, 0);
         return false;
     } else {
-        put_everyone_on_tile_to_incantation_lvl(client->drone->x, client->drone->y,
-            client->drone->level, server);
+        put_everyone_on_tile_to_incantation_lvl(client->drone->x,
+            client->drone->y, client->drone->level, server);
         return true;
     }
 }
 
-void incantation(client_t *client, server_t *server)
+void incantation(__attribute__((unused))client_t *client,
+    __attribute__((unused))server_t *server,
+    __attribute__((unused))char *args)
 {
-    (void)server;
-    send(client->socket, "ok\n", 3, 0);
 }

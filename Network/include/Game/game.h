@@ -107,6 +107,7 @@ typedef struct drone_s {
     char *team_name;
     int ticks;
     int life_ticks;
+    int incantation_ticks;
 } drone_t;
 
 /**

@@ -48,7 +48,7 @@ static void new_client(server_t *server)
     send(client_socket, "WELCOME\n", 8, 0);
 }
 
-static void push_command(client_t *client, char *buffer)
+static void push_command(client_t *client, char *buffer, server_t *server)
 {
     char **commands_arr = my_str_to_word_array(buffer, "\n");
     int j;
@@ -57,6 +57,8 @@ static void push_command(client_t *client, char *buffer)
         if (client->command[0] == NULL) {
             client->command[0] = strdup(commands_arr[i]);
             set_ticks(client);
+            if (!check_conditions(client->command[0], client, server))
+                shift_commands(client);
             continue;
         }
         for (j = 0; j != MAX_COMMAND && client->command[j] != NULL; j++);
@@ -83,7 +85,7 @@ static void recv_command(client_t *client, server_t *server)
     else if (client->state == WAITING)
         start_communication_with_client(client, server, buffer);
     else
-        push_command(client, buffer);
+        push_command(client, buffer, server);
 }
 
 static void client_already_connected(server_t *server)

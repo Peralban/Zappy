@@ -19,7 +19,6 @@
  * @param args The arguments for the command.
  */
 void forward(client_t *client, server_t *server, char *args);
-void incantation(client_t *client, server_t *server);
 
 /**
  * @brief Turns the client's character to the right in the game.
@@ -95,6 +94,8 @@ void connect_nbr(client_t *client, server_t *server, char *args);
  */
 void eject(client_t *client, server_t *server, char *args);
 
+void incantation(client_t *client, server_t *server, char *args);
+
 static const inventory_t incantation_level_prerequisites[7] = {
         {1, 1, 0, 0, 0, 0, 0},
         {2, 1, 1, 1, 0, 0, 0},
@@ -105,7 +106,8 @@ static const inventory_t incantation_level_prerequisites[7] = {
         {6, 2, 2, 2, 2, 2, 1},
 };
 
-bool check_incantation_condition(client_t *client, server_t *server);
+bool check_incantation_condition(client_t *client, server_t *server,
+    char *args);
 
 /**
  * @brief A structure to represent a game command.
@@ -118,7 +120,7 @@ bool check_incantation_condition(client_t *client, server_t *server);
 typedef struct {
     char *name;
     void (*function)(client_t *client, server_t *server, char *arg);
-    bool (*condition)(client_t *client, server_t *server);
+    bool (*condition)(client_t *client, server_t *server, char *arg);
     int duration;
     int nb_args;
 } command_t;
@@ -130,15 +132,15 @@ typedef struct {
  * "Forward", "Right", "Left", "Look", "Inventory", and "Broadcast".
  */
 static const command_t commands_opt[] = {
-    {"Forward", &forward, 7, 0},
-    {"Right", &right, 7, 0},
-    {"Left", &left, 7, 0},
-    {"Look", &look, 7, 0},
-    {"Inventory", &inventory, 1, 0},
-    {"Broadcast", &broadcast, 7, 1},
-    {"Fork", &fork_player, 42, 0},
-    {"Connect_nbr", &connect_nbr, 7, 0},
-    {"Eject", &eject, 7, 0},
-    {"Incantation", &incantation, &check_incantation_condition, 300},
-    {NULL, NULL, 0, 0}
+    {"Forward", &forward, NULL, 7, 0},
+    {"Right", &right, NULL, 7, 0},
+    {"Left", &left, NULL, 7, 0},
+    {"Look", &look, NULL, 7, 0},
+    {"Inventory", &inventory, NULL, 1, 0},
+    {"Broadcast", &broadcast, NULL, 7, 1},
+    {"Fork", &fork_player, NULL, 42, 0},
+    {"Connect_nbr", &connect_nbr, NULL, 7, 0},
+    {"Eject", &eject, NULL, 7, 0},
+    {"Incantation", &incantation, &check_incantation_condition, 0, 0},
+    {NULL, NULL, NULL, 0, 0}
 };

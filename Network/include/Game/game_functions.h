@@ -93,3 +93,16 @@ char *display_inventory(drone_t *drone);
  * @return bool if broadcast fail
  */
 bool launch_broadcast(drone_t *drone, server_t *server, char *args);
+
+/**
+ * @brief Check if the incantation prerequisites are met.
+ *
+ * It could be used to verify if the players on the tile are at the right level
+ * and if the inventory of the tile is sufficient.
+ *
+ * @param client The client who is playing the game.
+ * @param server The server where the game is hosted.
+ * @return bool if the incantation prerequisites are met
+ */
+
+bool check_incantation_prerequisites(client_t *client, server_t *server);
