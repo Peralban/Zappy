@@ -21,8 +21,8 @@ static char *scan_tile(tile_t *tile)
         if (!first)
             strcat(return_str, " ");
         first = false;
-        for (int y = 0; y < tile->inventory[y]; y++)
-            strcat(return_str, type_str[tile->inventory[y]]);
+        for (int y = 0; y < tile->inventory[i]; y++)
+            strcat(return_str, type_str[i]);
     }
     //if (tile->drone_list != NULL && strlen(return_str) != 0)
     //    strcat(return_str, " ");
