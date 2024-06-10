@@ -94,6 +94,21 @@ void connect_nbr(client_t *client, server_t *server, char *args);
  */
 void eject(client_t *client, server_t *server, char *args);
 
+void incantation(client_t *client, server_t *server, char *args);
+
+static const inventory_t incantation_level_prerequisites[7] = {
+    {1, 1, 0, 0, 0, 0, 0},
+    {2, 1, 1, 1, 0, 0, 0},
+    {2, 2, 0, 1, 0, 2, 0},
+    {4, 1, 1, 2, 0, 1, 0},
+    {4, 1, 2, 1, 3, 0, 0},
+    {6, 1, 2, 3, 0, 1, 0},
+    {6, 2, 2, 2, 2, 2, 1},
+};
+
+bool check_incantation_condition(client_t *client, server_t *server,
+    char *args);
+
 /**
  * @brief Allows the client's character to set down an object in the game.
  *
@@ -127,6 +142,7 @@ void take_object_up(client_t *client, server_t *server, char *args);
 typedef struct {
     char *name;
     void (*function)(client_t *client, server_t *server, char *arg);
+    bool (*condition)(client_t *client, server_t *server, char *arg);
     int duration;
     int nb_args;
 } command_t;
@@ -138,16 +154,17 @@ typedef struct {
  * "Forward", "Right", "Left", "Look", "Inventory", and "Broadcast".
  */
 static const command_t commands_opt[] = {
-    {"Forward", &forward, 7, 0},
-    {"Right", &right, 7, 0},
-    {"Left", &left, 7, 0},
-    {"Look", &look, 7, 0},
-    {"Inventory", &inventory, 1, 0},
-    {"Broadcast", &broadcast, 7, 1},
-    {"Fork", &fork_player, 42, 0},
-    {"Connect_nbr", &connect_nbr, 7, 0},
-    {"Eject", &eject, 7, 0},
-    {"Set", &set_object_down, 7, 1},
-    {"Take", &take_object_up, 7, 1},
-    {NULL, NULL, 0, 0}
+    {"Forward", &forward, NULL, 7, 0},
+    {"Right", &right, NULL, 7, 0},
+    {"Left", &left, NULL, 7, 0},
+    {"Look", &look, NULL, 7, 0},
+    {"Inventory", &inventory, NULL, 1, 0},
+    {"Broadcast", &broadcast, NULL, 7, 1},
+    {"Fork", &fork_player, NULL, 42, 0},
+    {"Connect_nbr", &connect_nbr, NULL, 7, 0},
+    {"Eject", &eject, NULL, 7, 0},
+    {"Set", &set_object_down, NULL, 7, 1},
+    {"Take", &take_object_up, NULL, 7, 1},
+    {"Incantation", &incantation, &check_incantation_condition, 0, 0},
+    {NULL, NULL, NULL, 0, 0}
 };

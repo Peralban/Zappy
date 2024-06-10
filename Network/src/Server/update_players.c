@@ -30,13 +30,15 @@ static void exec_command(char *command, client_t *client, server_t *server)
     send(client->socket, "ko\n", 3, 0);
 }
 
-static void shift_commands(char **commands)
+static void shift_commands(client_t *client)
 {
-    free(commands[0]);
+    free(client->command[0]);
     for (int i = 0; i < MAX_COMMAND - 1; i++) {
-        commands[i] = commands[i + 1];
+        client->command[i] = client->command[i + 1];
     }
-    commands[MAX_COMMAND - 1] = NULL;
+    client->command[MAX_COMMAND - 1] = NULL;
+    set_ticks(client);
+    client->drone->condition = false;
 }
 
 void set_ticks(client_t *client)
@@ -65,7 +67,7 @@ static void reset_client(client_t *client)
     client->state = WAITING;
 }
 
-static void update_life(client_t *client)
+static bool update_life(client_t *client)
 {
     drone_t *drone = client->drone;
 
@@ -76,9 +78,69 @@ static void update_life(client_t *client)
         } else {
             send(client->socket, "dead\n", 5, 0);
             reset_client(client);
+            return false;
         }
     } else
         drone->life_ticks--;
+    return true;
+}
+
+static bool check_conditions(char *command, client_t *client, server_t *server)
+{
+    bool (*condition)(client_t *client, server_t *server, char *args) = NULL;
+
+    for (int i = 0; commands_opt[i].name != NULL; i++)
+        if (strcmp(command, commands_opt[i].name) == 0)
+            condition = commands_opt[i].condition;
+    if (condition == NULL)
+        return true;
+    return condition(client, server, NULL);
+} //the NULL is supposed to be args, but it is not used in the function atm.
+
+static void update_incantation_tile(int x, int y, int lvl, server_t *server)
+{
+    char buffer[1024];
+
+    sprintf(buffer, "Current level: %d\n", lvl + 1);
+    for (client_list_t *tmp = server->list; tmp != NULL; tmp = tmp->next) {
+        if (tmp->client->drone->x == x && tmp->client->drone->y == y &&
+        tmp->client->drone->level == lvl) {
+            tmp->client->drone->level++;
+            tmp->client->drone->incantation_ticks = 0;
+            send(tmp->client->socket, buffer, strlen(buffer), 0);
+        }
+    }
+    for (int i = 1; i < 7; i++)
+        server->game->map[x][y].inventory[i] -=
+            incantation_level_prerequisites[lvl - 1][i];
+}
+
+static bool update_incantation(client_t *client, server_t *server)
+{
+    char buffer[1024];
+
+    if (client->drone->incantation_ticks == 0)
+        return false;
+    client->drone->incantation_ticks--;
+    if (client->drone->incantation_ticks == 0) {
+        if (check_incantation_prerequisites(client, server)) {
+            update_incantation_tile(client->drone->x, client->drone->y,
+                client->drone->level, server);
+        } else {
+            sprintf(buffer, "Current level: %d\n", client->drone->level);
+            send(client->socket, buffer, strlen(buffer), 0);
+        }
+    }
+    return true;
+}
+
+static void update_drone_action(client_t *client, server_t *server)
+{
+    if (client->drone->ticks == 0) {
+        exec_command(client->command[0], client, server);
+        shift_commands(client);
+    } else
+        client->drone->ticks--;
 }
 
 void update_players(server_t *server)
@@ -86,14 +148,18 @@ void update_players(server_t *server)
     for (client_list_t *tmp = server->list; tmp != NULL; tmp = tmp->next) {
         if (tmp->client == NULL || tmp->client->drone == NULL)
             continue;
-        update_life(tmp->client);
+        if (!update_life(tmp->client))
+            continue;
+        if (update_incantation(tmp->client, server))
+            continue;
         if (tmp->client->command[0] == NULL)
             continue;
-        if (tmp->client->drone->ticks == 0) {
-            exec_command(tmp->client->command[0], tmp->client, server);
-            shift_commands(tmp->client->command);
-            set_ticks(tmp->client);
+        if (!tmp->client->drone->condition &&
+        !check_conditions(tmp->client->command[0], tmp->client, server)) {
+            shift_commands(tmp->client);
+            continue;
         } else
-            tmp->client->drone->ticks--;
+            tmp->client->drone->condition = true;
+        update_drone_action(tmp->client, server);
     }
 }
