@@ -164,7 +164,7 @@ static const command_t commands_opt[] = {
     {"Connect_nbr", &connect_nbr, NULL, 7, 0},
     {"Eject", &eject, NULL, 7, 0},
     {"Set", &set_object_down, NULL, 7, 1},
-    {"Take", &take_object_up,  NULL, 7, 1},
+    {"Take", &take_object_up, NULL, 7, 1},
     {"Incantation", &incantation, &check_incantation_condition, 0, 0},
     {NULL, NULL, NULL, 0, 0}
 };
