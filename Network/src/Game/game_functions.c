@@ -47,7 +47,7 @@ void create_player(server_t *server, client_t *client, char *team_name)
         return;
     drone->id = all_id;
     all_id++;
-    drone->level = 1;
+    drone->level = 4;
     drone->orientation = rand() % 4;
     drone->team_name = team_name;
     drone->life_ticks = 1260;
