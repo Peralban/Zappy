@@ -25,30 +25,34 @@ static char *scan_tile(tile_t *tile)
         strcat(return_str, "player");
         strcat(return_str, " ");
     }
-    return_str[strlen(return_str) - 1] = '\0';
     return return_str;
+}
+
+static void look_at_bis(char **return_str, char *tmp, int j)
+{
+    strcat(*return_str, tmp);
+    if (j != 0)
+        strcat(*return_str, ",");
 }
 
 static char *look_at(drone_t *drone, server_t *server, int nb_observable,
     int level)
 {
-    orientation_t or = drone->orientation;
-    int mo[] = {-level, level, -level, level};
-    int re[] = {drone->x, drone->y};
-    int ne[] = {0, 0};
-    int ma[] = {server->info_game.width, server->info_game.height};
-    char *return_str = calloc(1, sizeof(char) * 2048);
-    axes_t lk[4][2] = {{X, Y}, {Y, X}, {X, Y}, {Y, X}};
+    orientation_t ori = drone->orientation;
+    int mov[] = {-level, level, -level, level};
+    int ref[2][2] = {{drone->x, drone->y}, {0, 0}};
+    int max[] = {server->info_game.width, server->info_game.height};
+    char *return_str = calloc(1, sizeof(char) * 1024);
+    axes_t link[4][2] = {{X, Y}, {Y, X}, {X, Y}, {Y, X}};
     char *tmp;
 
-    ne[lk[or][0]] = (re[lk[or][0]] + mo[or] + ma[lk[or][0]]) % ma[lk[or][0]];
+    ref[1][link[ori][0]] =
+    (ref[0][link[ori][0]] + mov[ori] + max[link[ori][0]]) % max[link[ori][0]];
     for (int j = 0; j < nb_observable; j++) {
-        ne[lk[or][1]] =
-        (re[lk[or][1]] + j + ma[lk[or][1]]) % ma[lk[or][1]];
-        tmp = scan_tile(&(server->game->map[ne[X]][ne[Y]]));
-        strcat(return_str, tmp);
-        if (j != 0)
-        strcat(return_str, ",");
+        ref[1][link[ori][1]] =
+        (ref[0][link[ori][1]] + j + max[link[ori][1]]) % max[link[ori][1]];
+        tmp = scan_tile(&(server->game->map[ref[1][X]][ref[1][Y]]));
+        look_at_bis(&return_str, tmp, j);
         free(tmp);
     }
     return return_str;
