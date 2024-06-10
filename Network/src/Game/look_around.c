@@ -10,7 +10,7 @@
 
 static char *scan_tile(tile_t *tile)
 {
-    char *return_str = calloc(1, sizeof(char) * 100);
+    char *return_str = calloc(1, sizeof(char) * 1024);
     char *type_str[] = {"food", "linemate", "deraumere",
     "sibur", "mendiane", "phiras", "thystame"};
     char *str_tmp[] = {" ", "player"};
@@ -40,7 +40,7 @@ static char *look_at(drone_t *drone, server_t *server, int nb_observable,
     int ref[] = {drone->x, drone->y};
     int new[] = {0, 0};
     int max[] = {server->info_game.width, server->info_game.height};
-    char *return_str = calloc(1, sizeof(char) * 100);
+    char *return_str = calloc(1, sizeof(char) * 1024);
     axes_t link[4][2] = {{X, Y}, {Y, X}, {X, Y}, {Y, X}};
     char *tmp;
 
@@ -59,8 +59,8 @@ static char *look_at(drone_t *drone, server_t *server, int nb_observable,
 char *look_around(drone_t *drone, server_t *server)
 {
     int nb_observable;
-    char *return_str = calloc(1, sizeof(char) * 1000);
-    char *tmp[] = {"[", "]", ","};
+    char *return_str = calloc(1, sizeof(char) * 1024);
+    char *tmp[] = {"[", "]\n", ","};
     char *tmp2;
 
     if (return_str == NULL)

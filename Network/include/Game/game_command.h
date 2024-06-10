@@ -110,6 +110,28 @@ bool check_incantation_condition(client_t *client, server_t *server,
     char *args);
 
 /**
+ * @brief Allows the client's character to set down an object in the game.
+ *
+ * @param client The client who is playing the game.
+ * @param server The server where the game is hosted.
+ * @param args The arguments for the command.
+ * @return Returns true if the object was successfully set down, false
+ * otherwise.
+ */
+void set_object_down(client_t *client, server_t *server, char *args);
+
+/**
+ * @brief Allows the client's character to take an object in the game.
+ *
+ * @param client The client who is playing the game.
+ * @param server The server where the game is hosted.
+ * @param args The arguments for the command.
+ * @return Returns true if the object was successfully taken, false
+ * otherwise.
+ */
+void take_object_up(client_t *client, server_t *server, char *args);
+
+/**
  * @brief A structure to represent a game command.
  *
  * @param name The name of the command.
@@ -141,6 +163,8 @@ static const command_t commands_opt[] = {
     {"Fork", &fork_player, NULL, 42, 0},
     {"Connect_nbr", &connect_nbr, NULL, 7, 0},
     {"Eject", &eject, NULL, 7, 0},
+    {"Set", &set_object_down, NULL, 7, 1},
+    {"Take", &take_object_up,  NULL, 7, 1},
     {"Incantation", &incantation, &check_incantation_condition, 0, 0},
     {NULL, NULL, NULL, 0, 0}
 };

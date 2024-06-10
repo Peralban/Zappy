@@ -95,6 +95,42 @@ char *display_inventory(drone_t *drone);
 bool launch_broadcast(drone_t *drone, server_t *server, char *args);
 
 /**
+ * @brief Allows the client's character to drop an object in the game.
+ *
+ * This function is used to drop an object from the client's character's
+ * inventory.
+ * It could be used when the character needs to free up inventory space
+ * or leave an
+ * object for another character.
+ *
+ * @param client The client who is playing the game.
+ * @param server The server where the game is hosted.
+ * @param args The arguments for the command, which
+ * should include the name of the
+ * object to drop.
+ * @return Returns true if the object was successfully dropped,
+ * false otherwise.
+ */
+bool drop_object(client_t *client, server_t *server, char *args);
+
+/**
+ * @brief Allows the client's character to take an object in the game.
+ *
+ * This function is used to pick up an object from the game world and
+ * add it to the client's character's inventory.
+ * It could be used when the character finds a useful object
+ * during their exploration.
+ *
+ * @param client The client who is playing the game.
+ * @param server The server where the game is hosted.
+ * @param args The arguments for the command, which should include
+ * the name of the object to take.
+ * @return Returns true if the object was successfully taken,
+ * false otherwise.
+ */
+bool take_object(client_t *client, server_t *server, char *args);
+
+/**
  * @brief Check if the incantation prerequisites are met.
  *
  * It could be used to verify if the players on the tile are at the right level
