@@ -48,7 +48,8 @@ static void new_client(server_t *server)
     send(client_socket, "WELCOME\n", 8, 0);
 }
 
-static void push_command(client_t *client, char *buffer, server_t *server)
+static void push_command(client_t *client, char *buffer,
+    __attribute__((unused))server_t *server)
 {
     char **commands_arr = my_str_to_word_array(buffer, "\n");
     int j;
