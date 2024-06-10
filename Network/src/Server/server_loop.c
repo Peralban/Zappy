@@ -18,6 +18,10 @@ static void start_communication_with_client(client_t *client,
     server_t *server, char *buffer)
 {
     for (int i = 0; server->info_game.team_names[i] != NULL; i++) {
+        if (strcmp(buffer, "GRAPHIC") == 0) {
+            client->state = GRAPHIC;
+            return;
+        }
         if (strcmp(buffer, server->info_game.team_names[i]) == 0 &&
             server->game->teams[i].nb_egg > 0) {
             server->game->teams[i].nb_egg--;
@@ -80,10 +84,12 @@ static void recv_command(client_t *client, server_t *server)
     printf("Received: %s\n", buffer);
     if (strcmp(buffer, "quit") == 0)
         eject_client_from_server(client, server);
-    else if (client->state == WAITING)
+    if (client->state == WAITING)
         start_communication_with_client(client, server, buffer);
-    else
+    if (client->state == PLAYING)
         push_command(client, buffer);
+    if (client->state == GRAPHIC)
+        return;
 }
 
 static void client_already_connected(server_t *server)
