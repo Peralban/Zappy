@@ -8,6 +8,8 @@
 #pragma once
 
 #include <irrlicht/irrlicht.h>
+#include <vector>
+#include <string>
 
 class irrlichtWindow;
 
@@ -40,13 +42,18 @@ class chessPiece {
         chessPiece(irrlichtWindow *window);
         ~chessPiece();
 
-        void loadPiece(quality choosedQuality);
+        void loadPiece(quality choosedQuality = LOW);
         void initTextures();
-        void setCurrentQuality(quality newQuality);
+        void setCurrentQuality(quality newQuality = LOW);
         irr::scene::IAnimatedMeshSceneNode *placePiece(irr::scene::IAnimatedMesh *pieceToPlace, irr::core::vector3df position, irr::core::vector3df rotation, teamColor color);
-		irr::scene::IAnimatedMesh* getPiece(pieceType type);
+		irr::scene::IAnimatedMesh* getPiece(pieceType type = PAWN);
 
 private:
+    irrlichtWindow *_ParentWindow;
+
+    const std::vector<std::string> _PiecePaths = {"/Pawn.obj", "/King.obj", "/Queen.obj" , "/Rook.obj", "/Bishop.obj", "/Knight.obj"};
+
+
     irr::scene::ISceneManager *_SceneManager;
     irr::video::IVideoDriver *_Driver;
     irr::IrrlichtDevice *_Device;

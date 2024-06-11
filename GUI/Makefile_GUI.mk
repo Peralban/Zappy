@@ -9,9 +9,11 @@
 
 SRC		=       chessElement/chessBoard.cpp 		\
 				chessElement/chessPiece.cpp 		\
+				loader/objLoader.cpp 				\
+				loader/textureLoader.cpp 			\
 				event/irrlichtEventHandler.cpp 		\
 				zappyIrrlicht/irrlichtWindow.cpp    \
-				player/playerInventory.cpp  		\
+				networkGui/guiClient.cpp			\
 				player/team.cpp     				\
 				player/player.cpp   				\
 				player/playerPosition.cpp   		\
@@ -25,7 +27,7 @@ OBJ			=	$(TRUE_SRC:.cpp=.o)
 
 NAME		=	zappy_gui
 
-WARNINGS	=	-Wall -Wextra -Wshadow
+WARNINGS	=	-Wall -Wextra -Wshadow -Werror
 
 INCLUDE		=	-I./src
 

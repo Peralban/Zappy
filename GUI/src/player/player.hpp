@@ -9,7 +9,6 @@
 
 #include <irrlicht/irrlicht.h>
 #include "team.hpp"
-#include "playerInventory.hpp"
 #include "playerPosition.hpp"
 #include "chessElement/chessPiece.hpp"
 #include <string>
@@ -25,11 +24,11 @@ class Player {
 
         void setParentGame(ZappyGame *parentGame);
         void playerInit();
-        void setTeam(Team *team);
-        void setName(std::string name);
+        void setTeam(Team *team = nullptr);
+        void setName(std::string name = "undefined");
         void updatePlayerPos();
-        void setLevel(int level);
-        void setPlayerPosition(PlayerPos *pos);
+        void setLevel(int level = 0);
+        void setPlayerPosition(PlayerPos *pos = nullptr);
         void updateLevel();
 
         std::string getName();
@@ -44,7 +43,6 @@ class Player {
         pieceType _PieceType;
         PlayerPos _PlayerPosition;
         Team *_PlayerTeam;
-        playerInventoy _Inventory;
         irr::scene::IAnimatedMeshSceneNode *_chessPieceNode;
         ZappyGame *_ParentGame;
 };

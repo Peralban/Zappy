@@ -14,6 +14,12 @@ class Team {
     public:
         Team();
         ~Team();
+
+        void setColor(teamColor color);
+        void setTeamName(std::string name);
+
+        teamColor getColor();
+        std::string getTeamName();
     private:
         teamColor _Color;
         std::string _TeamName;

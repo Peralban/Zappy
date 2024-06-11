@@ -17,3 +17,23 @@ Team::Team()
 Team::~Team()
 {
 };
+
+void Team::setColor(teamColor color)
+{
+    this->_Color = color;
+}
+
+void Team::setTeamName(std::string name)
+{
+    this->_TeamName = name;
+}
+
+teamColor Team::getColor()
+{
+    return this->_Color;
+}
+
+std::string Team::getTeamName()
+{
+    return this->_TeamName;
+}
