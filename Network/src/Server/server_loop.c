@@ -69,6 +69,20 @@ static void push_command(client_t *client, char *buffer)
     my_free_array(commands_arr);
 }
 
+static void exec_gui_command(client_t *client, server_t *server, char *buffer)
+{
+    char **commands_arr = my_str_to_word_array(buffer, "\n");
+
+    for (int i = 0; commands_arr[i] != NULL; i++) {
+        for (int j = 0; commands_opt[j].name != NULL; j++) {
+            if (strcmp(commands_arr[i], commands_opt[j].name) == 0) {
+                commands_opt[j].function(client, server, commands_arr[i]);
+                break;
+            }
+        }
+    }
+}
+
 // the send is temporary, it will be deplaced in another function.
 // the "quit" command may be temporary.
 static void recv_command(client_t *client, server_t *server)
@@ -88,7 +102,7 @@ static void recv_command(client_t *client, server_t *server)
     if (client->state == PLAYING)
         push_command(client, buffer);
     if (client->state == GRAPHIC)
-        return;
+        exec_gui_command(client, server, buffer);
 }
 
 static void client_already_connected(server_t *server)
