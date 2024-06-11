@@ -54,7 +54,11 @@ class Bot:
         for result in results:
             if "dead" in result:
                 self.alive = False
-                return
+            elif "message" in result:
+                self.broadcast_analyse(result)
+            else:
+                print("command")
+        return
 
     def forward(self):
         if self.direction == 1:
