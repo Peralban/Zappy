@@ -67,3 +67,8 @@ Player *ZappyGame::getPlayer(std::string name)
     return nullptr;
 }
 
+void ZappyGame::printServerMessage(std::string message)
+{
+    std::cout << "server said : " << message << std::endl;
+}
+

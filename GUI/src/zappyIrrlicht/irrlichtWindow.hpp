@@ -11,6 +11,9 @@
 #include "game/ZappyGame.hpp"
 #include "chessElement/chessBoard.hpp"
 #include "event/irrlichtEventHandler.hpp"
+#include "networkGui/guiClient.hpp"
+
+class guiNetworkClient;
 
 class irrlichtWindow {
     public:
@@ -27,6 +30,9 @@ class irrlichtWindow {
         void initEventReceiver();
         void initCamera();
         void linkZappyGame(ZappyGame *ZappyGameToLink);
+        void linkGuiClient(guiNetworkClient *GuiClientToLink);
+        void updateNetwork();
+
         int runWindow();
 
         irr::IrrlichtDevice *getDevice();
@@ -34,6 +40,7 @@ class irrlichtWindow {
         irr::scene::ISceneManager *getSceneManager();
         quality getQuality();
         ZappyGame *getLinkedZappyGame();
+        guiNetworkClient *getGuiClient();
 
         int getWidth();
         int getHeight();
@@ -51,6 +58,8 @@ class irrlichtWindow {
         int _PlatformY;
         float _TileSize;
 
+        int _socket;
+
         bool _Debug;
 
         quality _Quality;
@@ -61,4 +70,5 @@ class irrlichtWindow {
         chessBoard *_chessBoard;
         myEventReceiver *_EventReceiver;
         ZappyGame *_LinkedZappyGame;
+        guiNetworkClient *_LinkedGuiClient;
 };

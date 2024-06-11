@@ -11,6 +11,7 @@ SRC		=       chessElement/chessBoard.cpp 		\
 				chessElement/chessPiece.cpp 		\
 				event/irrlichtEventHandler.cpp 		\
 				zappyIrrlicht/irrlichtWindow.cpp    \
+				networkGui/guiClient.cpp			\
 				player/playerInventory.cpp  		\
 				player/team.cpp     				\
 				player/player.cpp   				\
