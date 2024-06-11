@@ -10,12 +10,12 @@
 
 static char *scan_tile(tile_t *tile)
 {
-    char *return_str = calloc(1, sizeof(char) * 1024);
+    char *return_str = calloc(1024, sizeof(char));
     char *type_str[] = {"food", "linemate", "deraumere",
     "sibur", "mendiane", "phiras", "thystame"};
 
     for (int i = 0; i < 7; i++) {
-        for (int y = 0; y < tile->inventory[i]; y++) {
+        for (int k = 0; k < tile->inventory[i]; k++) {
             strcat(return_str, type_str[i]);
             strcat(return_str, " ");
         }
@@ -25,14 +25,8 @@ static char *scan_tile(tile_t *tile)
         strcat(return_str, "player");
         strcat(return_str, " ");
     }
+    return_str[strlen(return_str) > 0 ? strlen(return_str) - 1 : 0] = '\0';
     return return_str;
-}
-
-static void look_at_bis(char **return_str, char *tmp, int j)
-{
-    strcat(*return_str, tmp);
-    if (j != 0)
-        strcat(*return_str, ",");
 }
 
 static char *look_at(drone_t *drone, server_t *server, int nb_observable,
@@ -42,7 +36,7 @@ static char *look_at(drone_t *drone, server_t *server, int nb_observable,
     int mov[] = {-level, level, -level, level};
     int ref[2][2] = {{drone->x, drone->y}, {0, 0}};
     int max[] = {server->info_game.width, server->info_game.height};
-    char *return_str = calloc(1, sizeof(char) * 1024);
+    char *return_str = calloc(1024, sizeof(char));
     axes_t link[4][2] = {{X, Y}, {Y, X}, {X, Y}, {Y, X}};
     char *tmp;
 
@@ -52,7 +46,8 @@ static char *look_at(drone_t *drone, server_t *server, int nb_observable,
         ref[1][link[ori][1]] =
         (ref[0][link[ori][1]] + j + max[link[ori][1]]) % max[link[ori][1]];
         tmp = scan_tile(&(server->game->map[ref[1][X]][ref[1][Y]]));
-        look_at_bis(&return_str, tmp, j);
+        strcat(return_str, tmp);
+        strcat(return_str, ", ");
         free(tmp);
     }
     return return_str;
@@ -61,8 +56,7 @@ static char *look_at(drone_t *drone, server_t *server, int nb_observable,
 char *look_around(drone_t *drone, server_t *server)
 {
     int nb_observable;
-    char *return_str = calloc(1, sizeof(char) * 1024);
-    char *tmp[] = {"[", "]\n", ","};
+    char *return_str = calloc(1024, sizeof(char));
     char *tmp2;
 
     if (return_str == NULL)
@@ -73,9 +67,8 @@ char *look_around(drone_t *drone, server_t *server)
         tmp2 = look_at(drone, server, nb_observable, i);
         strcat(return_str, tmp2);
         free(tmp2);
-        if (i != drone->level - 1)
-            strcat(return_str, ",");
     }
-    strcat(return_str, tmp[1]);
+    return_str[strlen(return_str) - 2] = '\0';
+    strcat(return_str, "]\n");
     return return_str;
 }
