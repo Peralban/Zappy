@@ -10,6 +10,7 @@
 #include "Game/game_functions.h"
 #include "Game/game_command.h"
 #include "Game/game.h"
+#include "GuiProtocol/gui.h"
 #include "lib/my.h"
 #include <stdio.h>
 
@@ -69,18 +70,30 @@ static void push_command(client_t *client, char *buffer)
     my_free_array(commands_arr);
 }
 
-static void exec_gui_command(client_t *client, server_t *server, char *buffer)
+static void exec_one_gui_command(client_t *client, server_t *server,
+    char *command)
+{
+    char **command_args = my_str_to_word_array(command, " ");
+    int len = my_array_len(command_args);
+
+    for (int j = 0; commands_gui[j].name != NULL; j++) {
+        if (strcmp(command, commands_gui[j].name) == 0 &&
+        len == 1 + commands_gui[j].nb_args) {
+            commands_gui[j].function(client, server, command_args + 1);
+            my_free_array(command_args);
+            break;
+        }
+    }
+    send(client->socket, "ko\n", 3, 0);
+    my_free_array(command_args);
+}
+
+static void exec_gui_commands(client_t *client, server_t *server, char *buffer)
 {
     char **commands_arr = my_str_to_word_array(buffer, "\n");
 
-    for (int i = 0; commands_arr[i] != NULL; i++) {
-        for (int j = 0; commands_opt[j].name != NULL; j++) {
-            if (strcmp(commands_arr[i], commands_opt[j].name) == 0) {
-                commands_opt[j].function(client, server, commands_arr[i]);
-                break;
-            }
-        }
-    }
+    for (int i = 0; commands_arr[i] != NULL; i++)
+        exec_one_gui_command(client, server, commands_arr[i]);
 }
 
 // the send is temporary, it will be deplaced in another function.
@@ -102,7 +115,7 @@ static void recv_command(client_t *client, server_t *server)
     if (client->state == PLAYING)
         push_command(client, buffer);
     if (client->state == GRAPHIC)
-        exec_gui_command(client, server, buffer);
+        exec_gui_commands(client, server, buffer);
 }
 
 static void client_already_connected(server_t *server)

@@ -11,7 +11,7 @@
 
 typedef struct {
     char *name;
-    void (*function)(client_t *client, server_t *server, char *arg);
+    void (*function)(client_t *client, server_t *server, char **args);
     int nb_args;
 } command_gui_t;
 
