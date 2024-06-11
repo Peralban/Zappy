@@ -41,6 +41,11 @@ irrlichtWindow *ZappyGame::getParentDevice()
     return this->_ParentDevice;
 }
 
+int ZappyGame::getTimeUnit()
+{
+    return this->_TimeUnit;
+}
+
 void ZappyGame::addPlayer(std::string name)
 {    
     if (this->getPlayer(name) != nullptr)
@@ -50,7 +55,10 @@ void ZappyGame::addPlayer(std::string name)
     this->_playerList.push_back(std::make_pair(name, player));
 }
 
-
+void ZappyGame::setTimeUnit(int timeUnit)
+{
+    this->_TimeUnit = timeUnit;
+}
 
 std::vector<std::pair<std::string, Player*>> *ZappyGame::getPlayerList()
 {

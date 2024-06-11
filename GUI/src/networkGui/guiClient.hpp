@@ -25,16 +25,20 @@ public:
     guiNetworkClient();
     ~guiNetworkClient();
 
+    void setLinkedGame(irrlichtWindow *linkedWindow);
     void parseArgs(int ac, char **av);
     void createSocket();
+
     void handleRead();
     void handleWrite(std::string message);
-    void setLinkedGame(irrlichtWindow *linkedWindow);
-    void initIdentification();
+
     void makeNonBlocking();
+
+    void initIdentification();
 
     std::string getServerResponse();
     std::string getMapSize();
+    std::string getTimeUnit();
     int getSocketFd();
 
 private:

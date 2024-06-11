@@ -52,6 +52,12 @@ void irrlichtWindow::initDrivers()
     this->_SceneManager = this->_Device->getSceneManager();
 }
 
+void irrlichtWindow::initLoader()
+{
+    this->_ObjLoader = new ObjLoader(this->_SceneManager);
+    this->_TextureLoader = new TextureLoader(this->_Driver);
+}
+
 void irrlichtWindow::initCamera()
 {
     int height = (this->_PlatformX + this->_PlatformY) * 3 + 25;
@@ -81,7 +87,7 @@ void irrlichtWindow::initEventReceiver()
 
 void irrlichtWindow::initChessBoard()
 {
-    this->_chessBoard = new chessBoard(this->_SceneManager, this->_Driver, this->_PlatformX, this->_PlatformY, this->_TileSize);
+    this->_chessBoard = new chessBoard(this, this->_PlatformX, this->_PlatformY, this->_TileSize);
     this->_chessBoard->createBoard();
     if (this->_Debug)
 	    std::cout << "chessBoard created" << std::endl;
@@ -142,6 +148,16 @@ ZappyGame *irrlichtWindow::getLinkedZappyGame()
 guiNetworkClient *irrlichtWindow::getGuiClient()
 {
     return this->_LinkedGuiClient;
+}
+
+ObjLoader *irrlichtWindow::getObjLoader()
+{
+    return this->_ObjLoader;
+}
+
+TextureLoader *irrlichtWindow::getTextureLoader()
+{
+    return this->_TextureLoader;
 }
 
 int irrlichtWindow::getWidth()

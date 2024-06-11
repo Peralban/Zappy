@@ -9,26 +9,14 @@
 #include "../zappyIrrlicht/irrlichtWindow.hpp"
 #include <iostream>
 
-chessPiece::chessPiece(irr::scene::ISceneManager *sceneManager, irr::video::IVideoDriver *driver, irr::IrrlichtDevice *device)
-{
-    _SceneManager = sceneManager;
-    _Device = device;
-    _Driver = driver;
-    _WhiteTexture = _Driver->getTexture("./GUI/assets/White.png");
-    _BlackTexture = _Driver->getTexture("./GUI/assets/Black.png");
-    if (!_WhiteTexture || !_BlackTexture) {
-        std::cerr << "Error: Could not load textures" << std::endl;
-        exit(84);
-    }
-}
-
 chessPiece::chessPiece(irrlichtWindow *window)
 {
+    _ParentWindow = window;
     _SceneManager = window->getSceneManager();
     _Device = window->getDevice();
     _Driver = window->getDriver();
-    _WhiteTexture = _Driver->getTexture("./GUI/assets/White.png");
-    _BlackTexture = _Driver->getTexture("./GUI/assets/Black.png");
+    _WhiteTexture = window->getTextureLoader()->loadTexture("./GUI/assets/White.png");
+    _BlackTexture = window->getTextureLoader()->loadTexture("./GUI/assets/Black.png");
     if (!_WhiteTexture || !_BlackTexture) {
         std::cerr << "Error: Could not load textures" << std::endl;
         exit(84);
@@ -44,32 +32,28 @@ void chessPiece::loadPiece(quality choosedQuality)
     std::string qualityStr = (choosedQuality == LOW) ? "LowPoly" : (choosedQuality == MID) ? "MidPoly" : "HighPoly";
     std::string path = ("./GUI/assets/obj/obj" + qualityStr).c_str();
 
-    std::string pawnPath = std::string(path) + "/Pawn.obj";
-    std::string kingPath = std::string(path) + "/King.obj";
-    std::string queenPath = std::string(path) + "/Queen.obj";
-    std::string rookPath = std::string(path) + "/Rook.obj";
-    std::string bishopPath = std::string(path) + "/Bishop.obj";
-    std::string knightPath = std::string(path) + "/Knight.obj";
+    std::vector<irr::scene::IAnimatedMesh*> meshes;
+    for (const std::string& piecePath : _PiecePaths) {
+        std::string fullPath = path + piecePath;
+        irr::scene::IAnimatedMesh* mesh = _ParentWindow->getObjLoader()->loadObj(fullPath.c_str());
+        if (!mesh) {
+            std::cerr << "Error: Could not load chess piece: " << fullPath << std::endl;
+            exit(84);
+        }
+        meshes.push_back(mesh);
+    }
 
-    irr::scene::IAnimatedMesh* pawnMesh = _SceneManager->getMesh(pawnPath.c_str());
-    irr::scene::IAnimatedMesh* kingMesh = _SceneManager->getMesh(kingPath.c_str());
-    irr::scene::IAnimatedMesh* queenMesh = _SceneManager->getMesh(queenPath.c_str());
-    irr::scene::IAnimatedMesh* rookMesh = _SceneManager->getMesh(rookPath.c_str());
-    irr::scene::IAnimatedMesh* bishopMesh = _SceneManager->getMesh(bishopPath.c_str());
-    irr::scene::IAnimatedMesh* knightMesh = _SceneManager->getMesh(knightPath.c_str());
-
-
-    if (!pawnMesh || !kingMesh || !queenMesh || !rookMesh || !bishopMesh || !knightMesh) {
+    if (meshes.size() != _PiecePaths.size()) {
         std::cerr << "Error: Could not load chess piece" << std::endl;
         exit(84);
     }
 
-    _Pawn = pawnMesh;
-    _King = kingMesh;
-    _Queen = queenMesh;
-    _Rook = rookMesh;
-    _Bishop = bishopMesh;
-    _Knight = knightMesh;
+    _Pawn = meshes[0];
+    _King = meshes[1];
+    _Queen = meshes[2];
+    _Rook = meshes[3];
+    _Bishop = meshes[4];
+    _Knight = meshes[5];
     
     std::cout << "Chess piece loaded" << std::endl;
 }
