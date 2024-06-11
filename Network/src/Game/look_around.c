@@ -25,30 +25,54 @@ static char *scan_tile(tile_t *tile)
         strcat(return_str, "player");
         strcat(return_str, " ");
     }
-    return_str[strlen(return_str) > 0 ? strlen(return_str) - 1 : 0] = '\0';
+    if (strlen(return_str) > 0)
+        return_str[strlen(return_str) - 1] = '\0';
     return return_str;
+}
+
+static int for_s(orientation_t orientation, int value)
+{
+    if (orientation == 0 || orientation == 3)
+        return 0;
+    return value - 1;
+}
+
+static bool for_c(orientation_t orientation, int i, int value)
+{
+    if (orientation == 0 || orientation == 3)
+        return (i < value);
+    return i >= 0;
+}
+
+static void for_i(orientation_t orientation, int *i)
+{
+    if (orientation == 0 || orientation == 3) {
+        (*i)++;
+    } else
+        (*i)--;
 }
 
 static char *look_at(drone_t *drone, server_t *server, int nb_observable,
     int level)
 {
     orientation_t ori = drone->orientation;
-    int mov[] = {-level, level, -level, level};
+    int mov[] = {-level, -level, level, level};
     int ref[2][2] = {{drone->x, drone->y}, {0, 0}};
     int max[] = {server->info_game.width, server->info_game.height};
     char *return_str = calloc(1024, sizeof(char));
-    axes_t link[4][2] = {{X, Y}, {Y, X}, {X, Y}, {Y, X}};
+    axes_t link[4][2] = {{Y, X}, {X, Y}, {Y, X}, {X, Y}};
     char *tmp;
 
     ref[1][link[ori][0]] =
     (ref[0][link[ori][0]] + mov[ori] + max[link[ori][0]]) % max[link[ori][0]];
-    for (int j = 0; j < nb_observable; j++) {
+    for (int j = for_s(ori, nb_observable); for_c(ori, j, nb_observable);) {
         ref[1][link[ori][1]] =
-        (ref[0][link[ori][1]] + j + max[link[ori][1]]) % max[link[ori][1]];
+        (ref[0][link[ori][1]] + (j - nb_observable / 2) + max[link[ori][1]]) %
+        max[link[ori][1]];
         tmp = scan_tile(&(server->game->map[ref[1][X]][ref[1][Y]]));
-        strcat(return_str, tmp);
-        strcat(return_str, ", ");
+        strcat(return_str, strcat(tmp, ", "));
         free(tmp);
+        for_i(ori, &j);
     }
     return return_str;
 }
