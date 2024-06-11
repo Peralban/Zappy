@@ -42,16 +42,28 @@ bool check_incantation_prerequisites(client_t *client, server_t *server)
     return true;
 }
 
-static void put_everyone_on_tile_to_incantation_lvl(int x, int y, int lvl,
-    server_t *server)
+static client_t *get_client_by_drone_id(int id, server_t *server)
 {
     client_list_t *tmp = server->list;
 
     while (tmp != NULL) {
-        if (tmp->client->drone->x == x && tmp->client->drone->y == y
-        && tmp->client->drone->level == lvl) {
-            tmp->client->drone->incantation_ticks = 300;
-            send(tmp->client->socket, "Elevation underway\n", 19, 0);
+        if (tmp->client->drone->id == id)
+            return tmp->client;
+        tmp = tmp->next;
+    }
+    return NULL;
+}
+
+static void put_everyone_on_tile_to_incantation_lvl(int x, int y, int lvl,
+    server_t *server)
+{
+    linked_list_drone_t *tmp = server->game->map[x][y].drone_list;
+
+    while (tmp != NULL) {
+        if (tmp->drone->level == lvl) {
+            tmp->drone->incantation_ticks = 300;
+            send(get_client_by_drone_id(tmp->drone->id, server)->socket,
+                "Elevation underway\n", 19, 0);
         }
         tmp = tmp->next;
     }

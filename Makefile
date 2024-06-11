@@ -58,6 +58,17 @@ fclean:
 	rm -f zappy_ai
 	rm -f zappy_gui
 
+fclean:
+	@$(MAKE) -f $(NETWORK_MAKEFILE) -C Network fclean
+	@$(MAKE) -f $(GUI_MAKEFILE) -C GUI fclean
+	@$(MAKE) -f $(AI_MAKEFILE) -C AI fclean
+	rm -f unit_tests*
+	rm -f *.gc*
+	rm -f vgcore*
+	rm -f zappy_server
+	rm -f zappy_ai
+	rm -f zappy_gui
+
 re: fclean zappy_ai zappy_server zappy_gui
 
 tests_run:

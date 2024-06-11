@@ -61,20 +61,21 @@ static char *look_at(drone_t *drone, server_t *server, int nb_observable,
 char *look_around(drone_t *drone, server_t *server)
 {
     int nb_observable;
-    char *return_str = calloc(1, sizeof(char) * 4096);
-    char *tmp;
+    char *return_str = calloc(1, sizeof(char) * 1024);
+    char *tmp[] = {"[", "]\n", ","};
+    char *tmp2;
 
     if (return_str == NULL)
         return NULL;
     strcat(return_str, "[");
     for (int i = 0; i < drone->level + 1; i++) {
         nb_observable = (i * 2) + 1;
-        tmp = look_at(drone, server, nb_observable, i);
-        strcat(return_str, tmp);
-        free(tmp);
+        tmp2 = look_at(drone, server, nb_observable, i);
+        strcat(return_str, tmp2);
+        free(tmp2);
         if (i != drone->level - 1)
             strcat(return_str, ",");
     }
-    strcat(return_str, "]\n");
+    strcat(return_str, tmp[1]);
     return return_str;
 }
