@@ -97,6 +97,12 @@ std::string guiNetworkClient::getMapSize()
     return getServerResponse();
 }
 
+std::string guiNetworkClient::getTimeUnit()
+{
+    handleWrite("sgt\n");
+    return getServerResponse();
+}
+
 std::string guiNetworkClient::getServerResponse()
 {
         _Buffer[0] = '\0';

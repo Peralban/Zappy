@@ -6,17 +6,19 @@
 */
 
 #include "chessBoard.hpp"
+#include "../zappyIrrlicht/irrlichtWindow.hpp"
 #include <iostream>
 
-chessBoard::chessBoard(irr::scene::ISceneManager *smgr, irr::video::IVideoDriver *driver, int width, int height, float tileSize)
+chessBoard::chessBoard(irrlichtWindow *parentWindow, int width, int height, float tileSize)
 {
-    this->_SceneManager = smgr;
-    this->_Driver = driver;
+    this->_ParentWindow = parentWindow;
+    this->_SceneManager = parentWindow->getSceneManager();
+    this->_Driver = parentWindow->getDriver();
     this->_Width = width;
     this->_Height = height;
     this->_TileSize = tileSize;	
-    _WhiteTexture = driver->getTexture("./GUI/assets/White.png");
-    _BlackTexture = driver->getTexture("./GUI/assets/Black.png");
+    _WhiteTexture = parentWindow->getTextureLoader()->loadTexture("./GUI/assets/White.png");
+    _BlackTexture = parentWindow->getTextureLoader()->loadTexture("./GUI/assets/Black.png");
     if (!_WhiteTexture || !_BlackTexture) {
         std::cerr << "Error: Could not load textures" << std::endl;
         exit(84);

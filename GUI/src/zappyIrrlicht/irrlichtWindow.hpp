@@ -12,6 +12,8 @@
 #include "chessElement/chessBoard.hpp"
 #include "event/irrlichtEventHandler.hpp"
 #include "networkGui/guiClient.hpp"
+#include "loader/objLoader.hpp"
+#include "loader/textureLoader.hpp"
 
 class guiNetworkClient;
 
@@ -26,6 +28,7 @@ class irrlichtWindow {
 
         void windowCreateDevice();
         void initDrivers();
+        void initLoader();
         void initChessBoard();
         void initEventReceiver();
         void initCamera();
@@ -41,6 +44,8 @@ class irrlichtWindow {
         quality getQuality();
         ZappyGame *getLinkedZappyGame();
         guiNetworkClient *getGuiClient();
+        ObjLoader *getObjLoader();
+        TextureLoader *getTextureLoader();
 
         int getWidth();
         int getHeight();
@@ -71,4 +76,8 @@ class irrlichtWindow {
         myEventReceiver *_EventReceiver;
         ZappyGame *_LinkedZappyGame;
         guiNetworkClient *_LinkedGuiClient;
+
+        ObjLoader *_ObjLoader;
+        TextureLoader *_TextureLoader;
+        
 };
