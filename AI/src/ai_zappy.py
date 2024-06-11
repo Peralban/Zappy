@@ -40,7 +40,7 @@ class Bot:
             self.send_instruction("Forward")
             self.get_result()
         return
-    
+
     def send_instruction(self, instruction):
         if len(self.waiting_command < 10):
             self.waiting_command.append(instruction)
