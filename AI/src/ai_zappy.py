@@ -36,7 +36,7 @@ class Bot:
         self.waiting_command = []
 
     def run(self):
-        while self.alive:
+        while self.alive == True:
             self.send_instruction("Forward")
             self.get_result()
         return
