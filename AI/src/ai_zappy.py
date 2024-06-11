@@ -1,4 +1,12 @@
-import client_module
+# -*- coding: utf-8 -*-
+"""
+EPITECH PROJECT, 2024
+ai_zappy.py
+Description:
+AI algorithm for the Zappy project.
+"""
+
+import AI.src.client_module as client_module
 
 def init_map(x, y):
         game_map = []
@@ -27,6 +35,8 @@ class Bot:
         self.command_number = 0
 
     def run(self):
+        while self.alive:
+            self.forward()
         return
 
     def forward(self):
@@ -34,11 +44,11 @@ class Bot:
         res = 0
 
         client_module.send_instruction("Forward")
-        client_module.get_next_instruction(self.command_number)
+        res = client_module.get_next_instruction(self.command_number)
         while "message" in res:
             self.broadcast_analyse(res)
             self.command_number += 1
-            client_module.get_next_instruction(self.command_number)
+            res = client_module.get_next_instruction(self.command_number)
         if res == "dead":
             self.alive = False
         if res == "ok":
@@ -66,11 +76,11 @@ class Bot:
         res = 0
 
         client_module.send_instruction("Right")
-        client_module.get_next_instruction(self.command_number)
+        res = client_module.get_next_instruction(self.command_number)
         while "message" in res:
             self.broadcast_analyse(res)
             self.command_number += 1
-            client_module.get_next_instruction(self.command_number)
+            res = client_module.get_next_instruction(self.command_number)
         if res == "dead":
             self.alive = False
         if res == "ok":
@@ -84,11 +94,11 @@ class Bot:
         res = 0
 
         client_module.send_instruction("Left")
-        client_module.get_next_instruction(self.command_number)
+        res = client_module.get_next_instruction(self.command_number)
         while "message" in res:
             self.broadcast_analyse(res)
             self.command_number += 1
-            client_module.get_next_instruction(self.command_number)        
+            res = client_module.get_next_instruction(self.command_number)
         if res == "dead":
             self.alive = False
         if res == "ok":
@@ -102,11 +112,11 @@ class Bot:
         res = 0
 
         client_module.send_instruction("Look")
-        client_module.get_next_instruction(self.command_number)
+        res = client_module.get_next_instruction(self.command_number)
         while "message" in res:
             self.broadcast_analyse(res)
             self.command_number += 1
-            client_module.get_next_instruction(self.command_number)
+            res = client_module.get_next_instruction(self.command_number)
         if res == "dead":
             self.alive = False
         return
@@ -116,11 +126,11 @@ class Bot:
         res = 0
 
         client_module.send_instruction("Inventory")
-        client_module.get_next_instruction(self.command_number)
+        res = client_module.get_next_instruction(self.command_number)
         while "message" in res:
             self.broadcast_analyse(res)
             self.command_number += 1
-            client_module.get_next_instruction(self.command_number)
+            res = client_module.get_next_instruction(self.command_number)
         if res == "dead":
             self.alive = False
         res = res.split(',')
@@ -134,11 +144,11 @@ class Bot:
         res = 0
 
         client_module.send_instruction("Connect_nbr")
-        client_module.get_next_instruction(self.command_number)
+        res = client_module.get_next_instruction(self.command_number)
         while "message" in res:
             self.broadcast_analyse(res)
             self.command_number += 1
-            client_module.get_next_instruction(self.command_number)
+            res = client_module.get_next_instruction(self.command_number)
         if res == "dead":
             self.alive = False
         if res > 0:
@@ -150,11 +160,11 @@ class Bot:
         res = 0
 
         client_module.send_instruction("Fork")
-        client_module.get_next_instruction(self.command_number)
+        res = client_module.get_next_instruction(self.command_number)
         while "message" in res:
             self.broadcast_analyse(res)
             self.command_number += 1
-            client_module.get_next_instruction(self.command_number)
+            res = client_module.get_next_instruction(self.command_number)
         if res == "dead":
             self.alive = False
         return
@@ -164,11 +174,11 @@ class Bot:
         res = 0
 
         client_module.send_instruction("Eject")
-        client_module.get_next_instruction(self.command_number)
+        res = client_module.get_next_instruction(self.command_number)
         while "message" in res:
             self.broadcast_analyse(res)
             self.command_number += 1
-            client_module.get_next_instruction(self.command_number)
+            res = client_module.get_next_instruction(self.command_number)
         if res == "dead":
             self.alive = False
         if res == "ko":
@@ -180,11 +190,11 @@ class Bot:
         res = 0
 
         client_module.send_instruction("Take " + object_name)
-        client_module.get_next_instruction(self.command_number)
+        res = client_module.get_next_instruction(self.command_number)
         while "message" in res:
             self.broadcast_analyse(res)
             self.command_number += 1
-            client_module.get_next_instruction(self.command_number)
+            res = client_module.get_next_instruction(self.command_number)
         if res == "dead":
             self.alive = False
         if res == "ok":
@@ -196,11 +206,11 @@ class Bot:
         res = 0
 
         client_module.send_instruction("Set "+ object_name)
-        client_module.get_next_instruction(self.command_number)
+        res = client_module.get_next_instruction(self.command_number)
         while "message" in res:
             self.broadcast_analyse(res)
             self.command_number += 1
-            client_module.get_next_instruction(self.command_number)
+            res = client_module.get_next_instruction(self.command_number)
         if res == "dead":
             self.alive = False
         if res == "ok":
@@ -212,11 +222,11 @@ class Bot:
         res = 0
 
         client_module.send_instruction("Incantation")
-        client_module.get_next_instruction(self.command_number)
+        res = client_module.get_next_instruction(self.command_number)
         while "message" in res:
             self.broadcast_analyse(res)
             self.command_number += 1
-            client_module.get_next_instruction(self.command_number)
+            res = client_module.get_next_instruction(self.command_number)
         if res == "dead":
             self.alive = False
         if res != "ko":
@@ -228,11 +238,11 @@ class Bot:
         res = 0
 
         client_module.send_instruction("broadcast " + message)
-        client_module.get_next_instruction(self.command_number)
+        res = client_module.get_next_instruction(self.command_number)
         while "message" in res:
             self.broadcast_analyse(res)
             self.command_number += 1
-            client_module.get_next_instruction(self.command_number)
+            res = client_module.get_next_instruction(self.command_number)
         if res == "dead":
             self.alive = False 
         return
