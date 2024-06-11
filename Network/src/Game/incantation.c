@@ -70,7 +70,7 @@ static void put_everyone_on_tile_to_incantation_lvl(int x, int y, int lvl,
 }
 
 bool check_incantation_condition(client_t *client, server_t *server,
-    __attribute__((unused))char *args)
+    __attribute__((unused))char **args)
 {
     bool ret = check_incantation_prerequisites(client, server);
 
@@ -86,6 +86,6 @@ bool check_incantation_condition(client_t *client, server_t *server,
 
 void incantation(__attribute__((unused))client_t *client,
     __attribute__((unused))server_t *server,
-    __attribute__((unused))char *args)
+    __attribute__((unused))char **args)
 {
 }

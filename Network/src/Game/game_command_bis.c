@@ -11,7 +11,7 @@
 #include "Server/server.h"
 
 void look(client_t *client, server_t *server,
-    __attribute__((unused))char *args)
+    __attribute__((unused))char **args)
 {
     char *str = look_around(client->drone, server);
 
@@ -20,7 +20,7 @@ void look(client_t *client, server_t *server,
 }
 
 void inventory(client_t *client, server_t *server,
-    __attribute__((unused))char *args)
+    __attribute__((unused))char **args)
 {
     char *str = display_inventory(client->drone);
 
@@ -29,10 +29,9 @@ void inventory(client_t *client, server_t *server,
     free(str);
 }
 
-void broadcast(client_t *client, server_t *server,
-    __attribute__((unused))char *args)
+void broadcast(client_t *client, server_t *server, char **args)
 {
-    bool is_ok = launch_broadcast(client->drone, server, args);
+    bool is_ok = launch_broadcast(client->drone, server, args[0]);
 
     send(client->socket, is_ok ? "ok\n" : "ko\n", 3, 0);
 }
@@ -100,7 +99,7 @@ static bool hit_eggs(const client_t *client, server_t *server)
 }
 
 void eject(client_t *client, server_t *server,
-    __attribute__((unused))char *args)
+    __attribute__((unused))char **args)
 {
     bool player_hit = hit_players(client, server);
     bool egg_hit = hit_eggs(client, server);

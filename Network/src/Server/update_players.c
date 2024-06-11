@@ -13,20 +13,20 @@
 
 static void exec_command(char *command, client_t *client, server_t *server)
 {
-    char **command_array = my_str_to_word_array(command, " \n");
-    int len = word_nbr(command, " \n");
+    char **command_args = my_str_to_word_array(command, " ");
+    int len = word_nbr(command, " ");
 
-    if (command_array == NULL)
+    if (command_args == NULL)
         return;
     for (int i = 0; commands_opt[i].name != NULL; i++) {
-        if (strcmp(command_array[0], commands_opt[i].name) == 0 &&
+        if (strcmp(command_args[0], commands_opt[i].name) == 0 &&
         len == 1 + commands_opt[i].nb_args) {
-            commands_opt[i].function(client, server, command_array[1]);
-            my_free_array(command_array);
+            commands_opt[i].function(client, server, command_args + 1);
+            my_free_array(command_args);
             return;
         }
     }
-    my_free_array(command_array);
+    my_free_array(command_args);
     send(client->socket, "ko\n", 3, 0);
 }
 
@@ -43,7 +43,7 @@ static void shift_commands(client_t *client)
 
 void set_ticks(client_t *client)
 {
-    int len = word_nbr(client->command[0], " \n");
+    int len = word_nbr(client->command[0], " ");
 
     for (int i = 0; commands_opt[i].name != NULL; i++) {
         if (client->command[0] == NULL)
@@ -87,7 +87,7 @@ static bool update_life(client_t *client)
 
 static bool check_conditions(char *command, client_t *client, server_t *server)
 {
-    bool (*condition)(client_t *client, server_t *server, char *args) = NULL;
+    bool (*condition)(client_t *client, server_t *server, char **args) = NULL;
 
     for (int i = 0; commands_opt[i].name != NULL; i++)
         if (strcmp(command, commands_opt[i].name) == 0)
