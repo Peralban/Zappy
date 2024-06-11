@@ -9,18 +9,23 @@ Socket connection to the server.
 import socket
 import select
 import sys
-import ai_zappy
+import AI.src.ai_zappy as ai_zappy
 
 current_line = 0
-sock_file = None
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+sock_file = None
 
 def get_next_instruction(current_command):
+    sock_file = sock.makefile('r')
+    inputs = [sock_file]
     nbr_line = current_line + current_command
-    if nbr_line.strip():
-        for line in sock_file:
-            if line.strip():
-                return line.strip()
+    while True:
+        readable, _, _ = select.select(inputs, [], [])
+        for s in readable:
+            if s is sock_file:
+                for i, message in enumerate(s):
+                    print(message.strip())
+                    return message.strip()
     return None
 
 def send_instruction(instruction):
