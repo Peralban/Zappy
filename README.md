@@ -4,7 +4,7 @@ A server, created in C, that generates the inhabitants’ world.
 
 ## Usage
 
-```sh
+```
 USAGE: ./zappy_server -p port -x width -y height -n name1 name2 ... -c clientsNb -f freq --auto-start on|off --display-eggs true|false [-v | --verbose]
 	port		is the port number
 	width		is the width of the world
@@ -174,7 +174,7 @@ During the incantation, the participants can not make any action until the end o
 
 At the end of the incantation, the exact quantity of resources needed by the rite are consumed.
 
-
+<!-- 
 ## Bonus
 
 
@@ -206,4 +206,4 @@ The server accepts command in its standard input.
 | /setFreq freq | set the frequency of the server |
 | /noRefill true or false | deactivate the map refill |
 | /fork team x y | simulate a fork for the given team at the given position |
-| /incantate x y | simulate an incantation of the given level at the given position |
+| /incantate x y | simulate an incantation of the given level at the given position | -->
