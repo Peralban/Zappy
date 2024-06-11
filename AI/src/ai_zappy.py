@@ -42,7 +42,7 @@ class Bot:
         return
 
     def send_instruction(self, instruction):
-        if len(self.waiting_command < 10):
+        if len(self.waiting_command) < 10:
             self.waiting_command.append(instruction)
             client_module.send_instruction(instruction)
             return True
