@@ -16,10 +16,9 @@ sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 sock_file = None
 data = []
 
-def get_next_instruction(current_command):
+def get_next_instruction():
     sock_file = sock.makefile('r')
     inputs = [sock_file]
-    nbr_line = current_line + current_command
     readable, _, _ = select.select(inputs, [], [])
     for s in readable:
         if s is sock_file:
