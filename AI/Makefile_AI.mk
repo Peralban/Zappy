@@ -29,5 +29,6 @@ test_compile:
 tests_launch:
 
 tests_run:
+	python3 -m unittest Tests/test.py
 
 .PHONY: all clean fclean re tests_run tests_launch test_compile
