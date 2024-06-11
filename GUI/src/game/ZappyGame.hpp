@@ -10,6 +10,7 @@
 #include <irrlicht/irrlicht.h>
 #include "chessElement/chessPiece.hpp"
 #include "player/player.hpp"
+#include <iostream>
 #include <vector>
 
 class irrlichtWindow;
@@ -29,6 +30,8 @@ class ZappyGame {
 
         std::vector<std::pair<std::string, Player*>> *getPlayerList();
         Player *getPlayer(std::string name);
+
+        void printServerMessage(std::string message);
     private:
         irrlichtWindow *_ParentDevice;
         chessPiece *_chessPieces;

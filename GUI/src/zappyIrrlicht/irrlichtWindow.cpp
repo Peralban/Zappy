@@ -6,6 +6,7 @@
 */
 
 #include "irrlichtWindow.hpp"
+#include "networkGui/guiClient.hpp"
 #include <iostream>
 
 irrlichtWindow::irrlichtWindow(
@@ -89,13 +90,14 @@ void irrlichtWindow::initChessBoard()
 int irrlichtWindow::runWindow()
 {
     while(this->_Device->run()) {
+        this->updateNetwork();
         if (this->_Device->isWindowActive()) {
         	this->_Driver->beginScene(true, true, irr::video::SColor(255, 100, 101, 140));
             this->_SceneManager->drawAll();
             this->_Driver->endScene();
-        }
-        else
+        } else
             this->_Device->yield();
+
     }
     return 0;
 }
@@ -126,9 +128,20 @@ void irrlichtWindow::linkZappyGame(ZappyGame *gameToLink)
     gameToLink->linkWithDevice(this);
 }
 
+void irrlichtWindow::linkGuiClient(guiNetworkClient *clientToLink)
+{
+    this->_LinkedGuiClient = clientToLink;
+    clientToLink->setLinkedGame(this);
+}
+
 ZappyGame *irrlichtWindow::getLinkedZappyGame()
 {
     return this->_LinkedZappyGame;
+}
+
+guiNetworkClient *irrlichtWindow::getGuiClient()
+{
+    return this->_LinkedGuiClient;
 }
 
 int irrlichtWindow::getWidth()
@@ -159,4 +172,15 @@ float irrlichtWindow::getTileSize()
 bool irrlichtWindow::getDebugState()
 {
     return this->_Debug;
+}
+
+void irrlichtWindow::updateNetwork()
+{
+    this->_socket = this->_LinkedGuiClient->getSocketFd();
+    fd_set read_fds;
+    FD_ZERO(&read_fds);
+    FD_SET(this->_socket, &read_fds);
+    if (FD_ISSET(this->_socket, &read_fds)) {
+        this->_LinkedGuiClient->handleRead();
+    }
 }
