@@ -62,6 +62,7 @@ def connect_to_server(host, port, name):
                                 LatLng = (int(parts[0]), int(parts[1]))
                                 Bot = ai_zappy.Bot(name, LatLng[0], LatLng[1])
                                 Bot.run()
+                                return
                 else:
                     message = sys.stdin.readline()
                     sock.sendall(message.encode())
