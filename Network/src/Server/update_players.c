@@ -86,6 +86,7 @@ static bool update_life(client_t *client, server_t *server)
             drone->inventory[FOOD]--;
         } else {
             send(client->socket, "dead\n", 5, 0);
+            gui_pdi(server, drone->id);
             reset_client(client, server);
             return false;
         }

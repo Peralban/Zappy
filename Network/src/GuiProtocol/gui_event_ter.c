@@ -30,3 +30,11 @@ void gui_pgt(server_t *server, int id, int item)
     sprintf(buffer, "pgt %d %d\n", id, item);
     send_all_graphics(server, buffer);
 }
+
+void gui_pdi(server_t *server, int id)
+{
+    char buffer[1024] = {0};
+
+    sprintf(buffer, "pdi %d\n", id);
+    send_all_graphics(server, buffer);
+}
