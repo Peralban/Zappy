@@ -58,6 +58,12 @@ class Bot:
             else:
                 print("command")
         return
+    
+    def manage_result(self, result):
+        if self.waiting_command[0] == "Forward" and "ok" in result:
+            self.forward()
+            self.waiting_command.pop(0)
+
 
     def forward(self):
         if self.direction == 1:
