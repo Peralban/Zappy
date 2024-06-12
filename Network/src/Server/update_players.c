@@ -103,8 +103,8 @@ static void update_incantation_tile(int x, int y, int lvl, server_t *server)
 
     sprintf(buffer, "Current level: %d\n", lvl + 1);
     for (client_list_t *tmp = server->list; tmp != NULL; tmp = tmp->next) {
-        if (tmp->client->drone->x == x && tmp->client->drone->y == y &&
-        tmp->client->drone->level == lvl) {
+        if (tmp->client->drone != NULL && tmp->client->drone->x == x &&
+        tmp->client->drone->y == y && tmp->client->drone->level == lvl) {
             tmp->client->drone->level++;
             tmp->client->drone->incantation_ticks = 0;
             send(tmp->client->socket, buffer, strlen(buffer), 0);

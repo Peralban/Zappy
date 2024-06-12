@@ -39,7 +39,7 @@ void suc(__attribute__((unused))server_t *server, void *data)
 void pnw(server_t *server, void *data)
 {
     client_t *client = (client_t *)data;
-    char buffer[1024];
+    char buffer[1024] = {0};
 
     sprintf(buffer, "pnw %d %d %d %d %d %s\n", client->drone->id,
     client->drone->x, client->drone->y, client->drone->orientation,
