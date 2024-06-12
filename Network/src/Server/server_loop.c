@@ -79,7 +79,7 @@ static void exec_one_gui_command(client_t *client, server_t *server,
     int len = my_array_len(command_args);
 
     for (int j = 0; commands_gui[j].name != NULL; j++) {
-        if (strcmp(command, commands_gui[j].name) == 0 &&
+        if (strcmp(command_args[0], commands_gui[j].name) == 0 &&
         len == 1 + commands_gui[j].nb_args) {
             commands_gui[j].function(client, server, command_args + 1);
             my_free_array(command_args);
@@ -131,7 +131,7 @@ static void recv_command(client_t *client, server_t *server)
     buffer_length = (int)recv(client->socket, buffer, 1024, 0);
     if (!check_return_value(buffer_length, RECV))
         return;
-    buffer[buffer_length - 1] = '\0';
+    buffer[buffer_length - 2] = '\0';
     printf("Received: %s\n", buffer);
     if (strcmp(buffer, "quit") == 0) {
         reset_client(client, server);
