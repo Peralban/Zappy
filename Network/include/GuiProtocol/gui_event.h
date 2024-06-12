@@ -27,3 +27,4 @@ void gui_seg(server_t *server, char *team_name);
 void gui_smg(server_t *server, char *msg);
 void gui_suc(int socket);
 void gui_sbp(int socket);
+void gui_sst(server_t *server);

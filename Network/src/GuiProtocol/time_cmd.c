@@ -7,23 +7,39 @@
 
 #include "Game/game.h"
 #include "Server/server.h"
+#include "GuiProtocol/gui_event.h"
+
+static bool is_number(char *str)
+{
+    for (int i = 0; str[i] != '\0'; i++)
+        if (str[i] < '0' || str[i] > '9')
+            return false;
+    return true;
+}
+
+void gui_sst(server_t *server)
+{
+    char buffer[1024] = {0};
+
+    sprintf(buffer, "sst %d\n", server->info_game.freq);
+    send_all_graphics(server, buffer);
+}
 
 void time_request(client_t *client, server_t *server, char **args)
 {
-    char *reponse = calloc(128, sizeof(char));
+    char response[1024] = {0};
 
     (void)args;
-    sprintf(reponse, "sgt %d\n", server->info_game.freq);
-    send(client->socket, reponse, strlen(reponse), 0);
-    free(reponse);
+    sprintf(response, "sgt %d\n", server->info_game.freq);
+    send(client->socket, response, strlen(response), 0);
 }
 
 void time_modification(client_t *client, server_t *server, char **args)
 {
-    char *reponse = calloc(128, sizeof(char));
-
     server->info_game.freq = atoi(args[0]);
-    sprintf(reponse, "sgt %d\n", server->info_game.freq);
-    send(client->socket, reponse, strlen(reponse), 0);
-    free(reponse);
+    if (server->info_game.freq < 1 || !is_number(args[0])) {
+        send(client->socket, "sbp\n", 4, 0);
+        return;
+    }
+    gui_sst(server);
 }
