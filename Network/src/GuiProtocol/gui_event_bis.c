@@ -9,20 +9,20 @@
 
 void pex(server_t *server, void *data)
 {
-    client_t *client = (client_t *)data;
+    drone_t *drone = (drone_t *)data;
     char buffer[1024] = {0};
 
-    sprintf(buffer, "pex %d\n", client->drone->id);
+    sprintf(buffer, "pex %d\n", drone->id);
     send_all_graphics(server, buffer);
 }
 
 void pbc(server_t *server, void *data)
 {
-    client_t *client = ((client_t **)data)[0];
+    drone_t *drone = ((drone_t **)data)[0];
     char *msg = ((char **)data)[1];
     char buffer[1024] = {0};
 
-    sprintf(buffer, "pbc %d %s\n", client->drone->id, msg);
+    sprintf(buffer, "pbc %d %s\n", drone->id, msg);
     send_all_graphics(server, buffer);
 }
 
