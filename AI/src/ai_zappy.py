@@ -32,7 +32,6 @@ class Bot:
         self.direction = 1
         self.level = 1
         self.alive = True
-        self.command_number = 0
         self.waiting_command = []
 
     def run(self):
