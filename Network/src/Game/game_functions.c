@@ -82,7 +82,7 @@ static linked_list_drone_t *get_last_node(linked_list_drone_t *list)
     return tmp;
 }
 
-static void remove_drone_in_list(linked_list_drone_t **list, drone_t *drone)
+void remove_drone_in_list(linked_list_drone_t **list, drone_t *drone)
 {
     linked_list_drone_t *tmp = *list;
 

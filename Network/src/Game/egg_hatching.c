@@ -8,6 +8,7 @@
 #include "Game/game_functions.h"
 #include "Game/game.h"
 #include <stdlib.h>
+#include "GuiProtocol/gui_event.h"
 
 void remove_egg_elem(linked_list_egg_t *egg, linked_list_egg_t **list)
 {
@@ -64,6 +65,7 @@ void spawn_on_egg(server_t *server, drone_t *drone, char *team_name)
 {
     egg_t *egg = pick_random_egg(server->game->egg_list, team_name);
 
+    gui_ebo(server, egg);
     drone->x = egg->x;
     drone->y = egg->y;
     free(egg);

@@ -74,7 +74,7 @@ bool launch_broadcast(drone_t *drone, server_t *server, char *args)
     if (args == NULL)
         return false;
     for (client_list_t *tmp = server->list; tmp; tmp = tmp->next) {
-        if (tmp->client->drone->id == drone->id)
+        if (tmp->client->drone == NULL || tmp->client->drone->id == drone->id)
             continue;
         distance = get_distance(drone, tmp->client->drone, &server->info_game);
         angle_from_launcher = atan2(distance[1], distance[0]) * 180 / M_PI;

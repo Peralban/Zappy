@@ -11,6 +11,7 @@
 #include "Game/game_command.h"
 #include "Game/game.h"
 #include "GuiProtocol/gui.h"
+#include "GuiProtocol/gui_event.h"
 #include "lib/my.h"
 #include <stdio.h>
 
@@ -31,6 +32,7 @@ static void start_communication_with_client(client_t *client,
             send(client->socket, buffer, strlen(buffer), 0);
             client->state = PLAYING;
             create_player(server, client, server->info_game.team_names[i]);
+            gui_pnw(server, client->drone);
             return;
         }
     }
@@ -83,8 +85,14 @@ static void exec_one_gui_command(client_t *client, server_t *server,
             my_free_array(command_args);
             return;
         }
+        if (strcmp(command, commands_gui[j].name) == 0 &&
+        len != 1 + commands_gui[j].nb_args) {
+            gui_sbp(client->socket);
+            my_free_array(command_args);
+            return;
+        }
     }
-    send(client->socket, "ko\n", 3, 0);
+    gui_suc(client->socket);
     my_free_array(command_args);
 }
 
@@ -110,9 +118,6 @@ static void client_state_switch(client_t *client, server_t *server,
         case GRAPHIC:
             exec_gui_commands(client, server, buffer);
             break;
-        default:
-            printf("error unknown state");
-            break;
     }
 }
 
@@ -126,11 +131,12 @@ static void recv_command(client_t *client, server_t *server)
     buffer_length = (int)recv(client->socket, buffer, 1024, 0);
     if (!check_return_value(buffer_length, RECV))
         return;
-    buffer[buffer_length - 2] = '\0';
+    buffer[buffer_length - 1] = '\0';
     printf("Received: %s\n", buffer);
-    if (strcmp(buffer, "quit") == 0)
+    if (strcmp(buffer, "quit") == 0) {
+        reset_client(client, server);
         eject_client_from_server(client, server);
-    else
+    } else
         client_state_switch(client, server, buffer);
 }
 
