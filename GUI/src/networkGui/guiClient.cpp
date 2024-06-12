@@ -11,6 +11,12 @@ guiNetworkClient::guiNetworkClient()
 {
 }
 
+guiNetworkClient::guiNetworkClient(irrlichtWindow *linkedWindow)
+{
+    _LinkedWindow = linkedWindow;
+    _printServerMessage = std::bind(&ZappyGame::printServerMessage, linkedWindow->getLinkedZappyGame(), std::placeholders::_1);
+}
+
 guiNetworkClient::~guiNetworkClient()
 {
     close(_Sockfd);
