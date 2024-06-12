@@ -30,6 +30,8 @@ typedef enum {
 
 void gui_event(event_type_e event, server_t *server, void *data);
 
+void send_all_graphics(server_t *server, char *str);
+
 typedef struct {
     event_type_e event_type;
     void (*function)(server_t *server, void *data);

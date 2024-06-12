@@ -39,11 +39,10 @@ void suc(__attribute__((unused))server_t *server, void *data)
 void pnw(server_t *server, void *data)
 {
     client_t *client = (client_t *)data;
-    char *str = malloc(sizeof(char) * 1024);
+    char buffer[1024];
 
-    sprintf(str, "pnw %d %d %d %d %d %s\n", client->drone->id,
+    sprintf(buffer, "pnw %d %d %d %d %d %s\n", client->drone->id,
     client->drone->x, client->drone->y, client->drone->orientation,
     client->drone->level, client->drone->team_name);
-    send_all_graphics(server, str);
-    free(str);
+    send_all_graphics(server, buffer);
 }

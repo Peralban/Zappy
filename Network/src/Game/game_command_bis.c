@@ -9,6 +9,7 @@
 #include "Game/game_command.h"
 #include "Game/game_functions.h"
 #include "Server/server.h"
+#include "GuiProtocol/gui_event.h"
 
 void look(client_t *client, server_t *server,
     __attribute__((unused))char **args)
@@ -43,4 +44,5 @@ void eject(client_t *client, server_t *server,
     bool egg_hit = hit_eggs(client, server);
 
     send(client->socket, (player_hit | egg_hit) ? "ok\n" : "ko\n", 3, 0);
+    gui_event(GUI_PEX, server, client);
 }
