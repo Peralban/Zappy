@@ -29,7 +29,7 @@ void gui_event(event_type_e event, server_t *server, void *data)
     printf("Unknown event\n");
 }
 
-void suc(server_t *server, void *data)
+void suc(__attribute__((unused))server_t *server, void *data)
 {
     client_t *client = (client_t *)data;
 

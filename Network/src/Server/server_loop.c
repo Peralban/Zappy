@@ -32,6 +32,7 @@ static void start_communication_with_client(client_t *client,
             send(client->socket, buffer, strlen(buffer), 0);
             client->state = PLAYING;
             create_player(server, client, server->info_game.team_names[i]);
+            gui_event(GUI_PNW, server, client);
             return;
         }
     }
