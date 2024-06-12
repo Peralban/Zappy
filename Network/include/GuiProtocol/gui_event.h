@@ -9,64 +9,14 @@
 
 #include "Server/server.h"
 
-typedef enum {
-    GUI_PNW = 1,
-    GUI_PEX,
-    GUI_PBC,
-    GUI_PIC,
-    GUI_PIE,
-    GUI_PFK,
-    GUI_PDR,
-    GUI_PGT,
-    GUI_PDI,
-    GUI_ENW,
-    GUI_EBO,
-    GUI_EDI,
-    GUI_SEG,
-    GUI_SMG,
-    GUI_SUC,
-    GUI_SBP
-} event_type_e;
-
-void gui_event(event_type_e event, server_t *server, void *data);
-
 void send_all_graphics(server_t *server, char *str);
 
-typedef struct {
-    event_type_e event_type;
-    void (*function)(server_t *server, void *data);
-} event_gui_t;
-
-void pnw(server_t *server, void *data);
-
-void suc(server_t *server, void *data);
-
-void pex(server_t *server, void *data);
-
-void pbc(server_t *server, void *data);
-
-void pic(server_t *server, void *data);
-
-void pie(server_t *server, void *data);
-
-void pfk(server_t *server, void *data);
-
-static const event_gui_t event_gui[] = {
-    {GUI_PNW, &pnw},
-    {GUI_PEX, &pex},
-    {GUI_PBC, &pbc},
-    {GUI_PIC, &pic},
-    {GUI_PIE, &pie},
-    {GUI_PFK, &pfk},
-    //{GUI_PDR, &pdr},
-    //{GUI_PGT, &pgt},
-    //{GUI_PDI, &pdi},
-    //{GUI_ENW, &enw},
-    //{GUI_EBO, &ebo},
-    //{GUI_EDI, &edi},
-    //{GUI_SEG, &seg},
-    //{GUI_SMG, &smg},
-    {GUI_SUC, &suc},
-    //{GUI_SBP, &sbp},
-    {0, NULL}
-};
+void gui_pnw(server_t *server, drone_t *drone);
+void gui_suc(int socket);
+void gui_pex(server_t *server, int id);
+void gui_pbc(server_t *server, int id, char *msg);
+void gui_pic(server_t *server, drone_t *drone);
+void gui_pie(server_t *server, drone_t *drone);
+void gui_pfk(server_t *server, int id);
+void gui_pdr(server_t *server, int id, int item);
+void gui_pgt(server_t *server, int id, int item);

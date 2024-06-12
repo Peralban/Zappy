@@ -18,27 +18,13 @@ void send_all_graphics(server_t *server, char *str)
     }
 }
 
-void gui_event(event_type_e event, server_t *server, void *data)
+void gui_suc(int socket)
 {
-    for (int i = 0; event_gui[i].event_type != 0; i++) {
-        if (event_gui[i].event_type == event) {
-            event_gui[i].function(server, data);
-            return;
-        }
-    }
-    printf("Unknown event\n");
+    send(socket, "suc\n", 4, 0);
 }
 
-void suc(__attribute__((unused))server_t *server, void *data)
+void gui_pnw(server_t *server, drone_t *drone)
 {
-    client_t *client = (client_t *)data;
-
-    send(client->socket, "suc\n", 4, 0);
-}
-
-void pnw(server_t *server, void *data)
-{
-    drone_t *drone = (drone_t *)data;
     char buffer[1024] = {0};
 
     sprintf(buffer, "pnw #%d %d %d %d %d %s\n", drone->id,

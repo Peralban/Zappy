@@ -33,12 +33,10 @@ void inventory(client_t *client, server_t *server,
 void broadcast(client_t *client, server_t *server, char **args)
 {
     bool is_ok = launch_broadcast(client->drone, server, args[0]);
-    void *data[2];
 
     send(client->socket, is_ok ? "ok\n" : "ko\n", 3, 0);
-    ((drone_t **)data)[0] = client->drone;
-    ((char **)data)[1] = args[0];
-    gui_event(GUI_PBC, server, data);
+    if (is_ok)
+        gui_pbc(server, client->drone->id, args[0]);
 }
 
 void eject(client_t *client, server_t *server,
@@ -48,5 +46,5 @@ void eject(client_t *client, server_t *server,
     bool egg_hit = hit_eggs(client, server);
 
     send(client->socket, (player_hit | egg_hit) ? "ok\n" : "ko\n", 3, 0);
-    gui_event(GUI_PEX, server, client->drone);
+    gui_pex(server, client->drone->id);
 }

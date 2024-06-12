@@ -7,11 +7,26 @@
 
 #include "GuiProtocol/gui_event.h"
 
-void pfk(server_t *server, void *data)
+void gui_pfk(server_t *server, int id)
 {
-    drone_t *drone = (drone_t *)data;
     char buffer[1024] = {0};
 
-    sprintf(buffer, "pfk #%d\n", drone->id);
+    sprintf(buffer, "pfk #%d\n", id);
+    send_all_graphics(server, buffer);
+}
+
+void gui_pdr(server_t *server, int id, int item)
+{
+    char buffer[1024] = {0};
+
+    sprintf(buffer, "pdr #%d %d\n", id, item);
+    send_all_graphics(server, buffer);
+}
+
+void gui_pgt(server_t *server, int id, int item)
+{
+    char buffer[1024] = {0};
+
+    sprintf(buffer, "pgt #%d %d\n", id, item);
     send_all_graphics(server, buffer);
 }

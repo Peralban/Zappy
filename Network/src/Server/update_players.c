@@ -118,7 +118,7 @@ static void update_incantation_tile(int x, int y, int lvl, server_t *server)
             tmp->drone->incantation_ticks = 0;
             send(get_client_by_drone_id(tmp->drone->id, server)->socket,
                 buffer, strlen(buffer), 0);
-            gui_event(GUI_PIE, server, tmp->drone);
+            gui_pie(server, tmp->drone);
         }
     }
     for (int i = 1; i < 7; i++)
@@ -140,7 +140,7 @@ static bool update_incantation(client_t *client, server_t *server)
         } else {
             sprintf(buffer, "Current level: %d\n", client->drone->level);
             send(client->socket, buffer, strlen(buffer), 0);
-            gui_event(GUI_PIE, server, client->drone);
+            gui_pie(server, client->drone);
         }
     }
     return true;

@@ -81,7 +81,7 @@ bool check_incantation_condition(client_t *client, server_t *server,
     } else {
         put_everyone_on_tile_to_incantation_lvl(client->drone->x,
             client->drone->y, client->drone->level, server);
-        gui_event(GUI_PIC, server, client->drone);
+        gui_pic(server, client->drone);
         return true;
     }
 }

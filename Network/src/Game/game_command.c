@@ -55,7 +55,7 @@ void fork_player(client_t *client, server_t *server,
             server->game->teams[i].nb_egg++;
     }
     send(client->socket, "ok\n", 3, 0);
-    gui_event(GUI_PFK, server, client->drone);
+    gui_pfk(server, client->drone->id);
 }
 
 void connect_nbr(client_t *client, server_t *server,
