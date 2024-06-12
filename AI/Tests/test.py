@@ -23,5 +23,29 @@ class TestParsing(unittest.TestCase):
         self.assertEqual(name, 'antoine')
         self.assertEqual(host, '127.0.0.1')
 
+    @patch('sys.argv', ['../../zappy_ai', '-p', '-n', 'antoine', '-h', '127.0.0.1'])
+    def test_missing_port(self):
+        with self.assertRaises(SystemExit) as cmd:
+            parse_arguments()
+        self.assertEqual(cmd.exception.code, 84)
+
+    @patch('sys.argv', ['../../zappy_ai', '-p', '12345', '-n', '-h', '127.0.0.1'])
+    def test_missing_name(self):
+        with self.assertRaises(SystemExit) as cmd:
+            parse_arguments()
+        self.assertEqual(cmd.exception.code, 84)
+
+    @patch('sys.argv', ['../../zappy_ai', '-p', '12345', '-n', 'antoine', '-h'])
+    def test_missing_host(self):
+        with self.assertRaises(SystemExit) as cmd:
+            parse_arguments()
+        self.assertEqual(cmd.exception.code, 84)
+
+    @patch('sys.argv', ['../../zappy_ai', '-p', 'invalid', '-n', 'antoine', '-h', '127.0.0.1'])
+    def test_invalid_port(self):
+        with self.assertRaises(SystemExit) as cmd:
+            parse_arguments()
+        self.assertEqual(cmd.exception.code, 84)
+
 if __name__ == '__main__':
     unittest.main()
