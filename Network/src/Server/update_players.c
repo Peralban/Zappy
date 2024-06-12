@@ -56,8 +56,17 @@ void set_ticks(client_t *client)
     }
 }
 
-static void reset_client(client_t *client)
+void reset_client(client_t *client, server_t *server)
 {
+    linked_list_drone_t *list =
+        server->game->map[client->drone->x][client->drone->y].drone_list;
+
+    for (linked_list_drone_t *tmp = list; tmp != NULL; tmp = tmp->next) {
+        if (tmp->drone == client->drone) {
+            remove_drone_in_list(&list, tmp->drone);
+            break;
+        }
+    }
     free(client->drone);
     client->drone = NULL;
     for (int i = 0; i < MAX_COMMAND; i++) {
@@ -67,7 +76,7 @@ static void reset_client(client_t *client)
     client->state = WAITING;
 }
 
-static bool update_life(client_t *client)
+static bool update_life(client_t *client, server_t *server)
 {
     drone_t *drone = client->drone;
 
@@ -77,7 +86,7 @@ static bool update_life(client_t *client)
             drone->inventory[FOOD]--;
         } else {
             send(client->socket, "dead\n", 5, 0);
-            reset_client(client);
+            reset_client(client, server);
             return false;
         }
     } else
@@ -151,7 +160,7 @@ void update_players(server_t *server)
     for (client_list_t *tmp = server->list; tmp != NULL; tmp = tmp->next) {
         if (tmp->client == NULL || tmp->client->drone == NULL)
             continue;
-        if (!update_life(tmp->client))
+        if (!update_life(tmp->client, server))
             continue;
         if (update_incantation(tmp->client, server))
             continue;

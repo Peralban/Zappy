@@ -35,6 +35,7 @@ SRC		= 		main.c								\
 				Game/eject_function.c				\
 				GuiProtocol/gui_event.c				\
 				GuiProtocol/gui_event_bis.c			\
+				GuiProtocol/gui_event_ter.c			\
 
 TRUE_SRC 	= 	$(patsubst %,src/%, $(SRC))
 

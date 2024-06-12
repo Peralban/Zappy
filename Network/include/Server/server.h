@@ -179,3 +179,17 @@ egg_t *create_egg(char *team_name, int x, int y);
  * @param server The server containing the clients.
  */
 client_t *get_client_by_drone_id(int id, server_t *server);
+
+/**
+ * @brief removes a drone from the list of drones.
+ * @param list The list of drones.
+ * @param drone The drone to remove.
+ */
+void remove_drone_in_list(linked_list_drone_t **list, drone_t *drone);
+
+/**
+ * @brief resets a client to its initial state.
+ * @param client The client to reset.
+ * @param server The server containing the client.
+ */
+void reset_client(client_t *client, server_t *server);

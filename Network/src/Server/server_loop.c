@@ -127,9 +127,10 @@ static void recv_command(client_t *client, server_t *server)
         return;
     buffer[buffer_length - 2] = '\0';
     printf("Received: %s\n", buffer);
-    if (strcmp(buffer, "quit") == 0)
+    if (strcmp(buffer, "quit") == 0) {
+        reset_client(client, server);
         eject_client_from_server(client, server);
-    else
+    } else
         client_state_switch(client, server, buffer);
 }
 

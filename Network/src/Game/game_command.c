@@ -9,6 +9,7 @@
 #include "Game/game_command.h"
 #include "Game/game_functions.h"
 #include "Server/server.h"
+#include "GuiProtocol/gui_event.h"
 
 void forward(client_t *client, server_t *server,
     __attribute__((unused))char **args)
@@ -54,6 +55,7 @@ void fork_player(client_t *client, server_t *server,
             server->game->teams[i].nb_egg++;
     }
     send(client->socket, "ok\n", 3, 0);
+    gui_event(GUI_PFK, server, client->drone);
 }
 
 void connect_nbr(client_t *client, server_t *server,
