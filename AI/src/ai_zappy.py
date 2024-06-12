@@ -82,6 +82,8 @@ class Bot:
             self.fork(result)
         if self.waiting_command[0] == "Incantation" and not "ko" in result:
             self.incantation()
+        if self.waiting_command[0] == "Look":
+            self.look(result)
 
         self.waiting_command.pop(0)
         return
@@ -118,8 +120,60 @@ class Bot:
             self.direction = 0
         return
 
-    #def look(self):
-    #    return
+    def look(self, results):
+        results.split(',')
+        for result in results:
+            result.split(' ')
+
+        if self.direction == 1:
+            for i in range(self.level + 1):
+                for result in results[i]:
+                    self.map[self.position['y']][self.position['x'] + i][result] += 1
+                for u in range(i):
+                    for result in results[i - u]:
+                        self.map[self.position['y'] - u][self.position['x'] + i][result] += 1
+                    for result in results[i + u]:
+                        self.map[self.position['y'] + u][self.position['x'] + i][result] += 1
+                for y in range(i * 2 + 1):
+                    results.pop(0)
+        
+        elif self.direction == 2:
+            for i in range(self.level + 1):
+                for result in results[i]:
+                    self.map[self.position['y'] + i][self.position['x']][result] += 1
+                for u in range(i):
+                    for result in results[i - u]:
+                        self.map[self.position['y'] + i][self.position['x'] - u][result] += 1
+                    for result in results[i + u]:
+                        self.map[self.position['y'] + i][self.position['x'] + u][result] += 1
+                for y in range(i * 2 + 1):
+                    results.pop(0)
+
+        elif self.direction == 3:
+            for i in range(self.level + 1):
+                for result in results[i]:
+                    self.map[self.position['y']][self.position['x'] - i][result] += 1
+                for u in range(i):
+                    for result in results[i - u]:
+                        self.map[self.position['y'] - u][self.position['x'] - i][result] += 1
+                    for result in results[i + u]:
+                        self.map[self.position['y'] + u][self.position['x'] - i][result] += 1
+                for y in range(i * 2 + 1):
+                    results.pop(0)
+
+        else:
+            for i in range(self.level + 1):
+                for result in results[i]:
+                    self.map[self.position['y'] - i][self.position['x']][result] += 1
+                for u in range(i):
+                    for result in results[i - u]:
+                        self.map[self.position['y'] - i][self.position['x'] - u][result] += 1
+                    for result in results[i + u]:
+                        self.map[self.position['y'] - i][self.position['x'] + u][result] += 1
+                for y in range(i * 2 + 1):
+                    results.pop(0)
+
+        return
 
     def update_inventory(self):
         res = res.split(',')
