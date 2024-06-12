@@ -98,7 +98,7 @@ static void exec_gui_commands(client_t *client, server_t *server, char *buffer)
 }
 
 static void client_state_switch(client_t *client, server_t *server,
-                                char *buffer)
+    char *buffer)
 {
     switch (client->state) {
         case WAITING:

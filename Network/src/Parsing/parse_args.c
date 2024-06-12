@@ -36,7 +36,7 @@ bool do_parsing_argument(parsing_argument_t data, int *i, int j)
         strcat(data.array[NAMES], " ");
         if (strcmp(tmp, "GRAPHIC") == 0) {
             free(tmp);
-            printf("Invalid team name, can't be 'graphic'\n");
+            printf("Invalid team name, can't be 'GRAPHIC'\n");
             return true;
         }
         strcat(data.array[NAMES], tmp);
