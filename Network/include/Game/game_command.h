@@ -74,7 +74,7 @@ void broadcast(client_t *client, server_t *server, char **args);
  */
 void fork_player(client_t *client, server_t *server, char **args);
 
-bool fork_condition(client_t*client, server_t *server, char **args);
+bool fork_condition(client_t *client, server_t *server, char **args);
 
 /**
  * @brief Allows the client's character to check the number of unused

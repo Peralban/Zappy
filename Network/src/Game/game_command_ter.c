@@ -25,7 +25,7 @@ void take_object_up(client_t *client, server_t *server, char **args)
     send(client->socket, is_ok ? "ok\n" : "ko\n", 3, 0);
 }
 
-bool fork_condition(client_t*client, server_t *server,
+bool fork_condition(client_t *client, server_t *server,
     __attribute__((unused))char **args)
 {
     gui_pfk(server, client->drone->id);
@@ -33,7 +33,7 @@ bool fork_condition(client_t*client, server_t *server,
 }
 
 void fork_player(client_t *client, server_t *server,
-                 __attribute__((unused))char **args)
+    __attribute__((unused))char **args)
 {
     linked_list_egg_t *tmp = calloc(1, sizeof(linked_list_egg_t));
 
