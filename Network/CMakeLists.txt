@@ -20,6 +20,7 @@ add_executable(Zappy_Server
         src/Game/egg_hatching.c
         src/Game/game_functions.c
         src/Server/update_players.c
+        src/Game/game_tick.c
 )
 
 # Specify the C standard

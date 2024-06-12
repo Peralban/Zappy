@@ -31,6 +31,8 @@ SRC		= 		main.c								\
 				Game/launch_broadcast.c				\
 				Game/object_manipulation.c			\
 				Game/incantation.c					\
+				Game/game_tick.c					\
+				Game/eject_function.c				\
 
 TRUE_SRC 	= 	$(patsubst %,src/%, $(SRC))
 

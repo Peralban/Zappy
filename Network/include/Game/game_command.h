@@ -18,7 +18,7 @@
  * @param server The server where the game is hosted.
  * @param args The arguments for the command.
  */
-void forward(client_t *client, server_t *server, char *args);
+void forward(client_t *client, server_t *server, char **args);
 
 /**
  * @brief Turns the client's character to the right in the game.
@@ -27,7 +27,7 @@ void forward(client_t *client, server_t *server, char *args);
  * @param server The server where the game is hosted.
  * @param args The arguments for the command.
  */
-void right(client_t *client, server_t *server, char *args);
+void right(client_t *client, server_t *server, char **args);
 
 /**
  * @brief Turns the client's character to the left in the game.
@@ -36,7 +36,7 @@ void right(client_t *client, server_t *server, char *args);
  * @param server The server where the game is hosted.
  * @param args The arguments for the command.
  */
-void left(client_t *client, server_t *server, char *args);
+void left(client_t *client, server_t *server, char **args);
 
 /**
  * @brief Allows the client's character to look around in the game.
@@ -45,7 +45,7 @@ void left(client_t *client, server_t *server, char *args);
  * @param server The server where the game is hosted.
  * @param args The arguments for the command.
  */
-void look(client_t *client, server_t *server, char *args);
+void look(client_t *client, server_t *server, char **args);
 
 /**
  * @brief Allows the client's character to check their inventory in the game.
@@ -54,7 +54,7 @@ void look(client_t *client, server_t *server, char *args);
  * @param server The server where the game is hosted.
  * @param args The arguments for the command.
  */
-void inventory(client_t *client, server_t *server, char *args);
+void inventory(client_t *client, server_t *server, char **args);
 
 /**
  * @brief Allows the client's character to broadcast a message in the game.
@@ -63,7 +63,7 @@ void inventory(client_t *client, server_t *server, char *args);
  * @param server The server where the game is hosted.
  * @param args The arguments for the command.
  */
-void broadcast(client_t *client, server_t *server, char *args);
+void broadcast(client_t *client, server_t *server, char **args);
 
 /**
  * @brief Allows the client's character to fork a new player in the game.
@@ -72,7 +72,7 @@ void broadcast(client_t *client, server_t *server, char *args);
  * @param server The server where the game is hosted.
  * @param args The arguments for the command.
  */
-void fork_player(client_t *client, server_t *server, char *args);
+void fork_player(client_t *client, server_t *server, char **args);
 
 /**
  * @brief Allows the client's character to check the number of unused
@@ -82,7 +82,7 @@ void fork_player(client_t *client, server_t *server, char *args);
  * @param server The server where the game is hosted.
  * @param args The arguments for the command.
  */
-void connect_nbr(client_t *client, server_t *server, char *args);
+void connect_nbr(client_t *client, server_t *server, char **args);
 
 /**
  * @brief Allows the client's character to eject other players from
@@ -92,9 +92,9 @@ void connect_nbr(client_t *client, server_t *server, char *args);
  * @param server The server where the game is hosted.
  * @param args The arguments for the command.
  */
-void eject(client_t *client, server_t *server, char *args);
+void eject(client_t *client, server_t *server, char **args);
 
-void incantation(client_t *client, server_t *server, char *args);
+void incantation(client_t *client, server_t *server, char **args);
 
 static const inventory_t incantation_level_prerequisites[7] = {
     {1, 1, 0, 0, 0, 0, 0},
@@ -107,7 +107,7 @@ static const inventory_t incantation_level_prerequisites[7] = {
 };
 
 bool check_incantation_condition(client_t *client, server_t *server,
-    char *args);
+    char **args);
 
 /**
  * @brief Allows the client's character to set down an object in the game.
@@ -118,7 +118,7 @@ bool check_incantation_condition(client_t *client, server_t *server,
  * @return Returns true if the object was successfully set down, false
  * otherwise.
  */
-void set_object_down(client_t *client, server_t *server, char *args);
+void set_object_down(client_t *client, server_t *server, char **args);
 
 /**
  * @brief Allows the client's character to take an object in the game.
@@ -129,7 +129,7 @@ void set_object_down(client_t *client, server_t *server, char *args);
  * @return Returns true if the object was successfully taken, false
  * otherwise.
  */
-void take_object_up(client_t *client, server_t *server, char *args);
+void take_object_up(client_t *client, server_t *server, char **args);
 
 /**
  * @brief A structure to represent a game command.
@@ -141,8 +141,8 @@ void take_object_up(client_t *client, server_t *server, char *args);
  */
 typedef struct {
     char *name;
-    void (*function)(client_t *client, server_t *server, char *arg);
-    bool (*condition)(client_t *client, server_t *server, char *arg);
+    void (*function)(client_t *client, server_t *server, char **args);
+    bool (*condition)(client_t *client, server_t *server, char **args);
     int duration;
     int nb_args;
 } command_t;

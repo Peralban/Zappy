@@ -142,3 +142,19 @@ bool take_object(client_t *client, server_t *server, char *args);
  */
 
 bool check_incantation_prerequisites(client_t *client, server_t *server);
+
+/**
+ * @brief Check if the player will hit other players.
+ * @param client The client who is playing the game.
+ * @param server The server where the game is hosted.
+ * @return bool if the player will hit other players
+ */
+bool hit_players(client_t *client, server_t *server);
+
+/**
+ * @brief Check if the player will hit eggs.
+ * @param client The client who is playing the game.
+ * @param server The server where the game is hosted.
+ * @return bool if the player will hit eggs
+ */
+bool hit_eggs(const client_t *client, server_t *server);

@@ -11,14 +11,14 @@
 #include "Server/server.h"
 
 void forward(client_t *client, server_t *server,
-    __attribute__((unused))char *args)
+    __attribute__((unused))char **args)
 {
     move(client->drone, server, client->drone->orientation);
     send(client->socket, "ok\n", 3, 0);
 }
 
 void right(client_t *client, server_t *server,
-    __attribute__((unused))char *args)
+    __attribute__((unused))char **args)
 {
     (void)server;
     turn(client->drone, RIGHT);
@@ -26,7 +26,7 @@ void right(client_t *client, server_t *server,
 }
 
 void left(client_t *client, server_t *server,
-    __attribute__((unused))char *args)
+    __attribute__((unused))char **args)
 {
     (void)server;
     turn(client->drone, LEFT);
@@ -34,7 +34,7 @@ void left(client_t *client, server_t *server,
 }
 
 void fork_player(client_t *client, server_t *server,
-    __attribute__((unused))char *args)
+    __attribute__((unused))char **args)
 {
     linked_list_egg_t *tmp = calloc(1, sizeof(linked_list_egg_t));
 
@@ -57,7 +57,7 @@ void fork_player(client_t *client, server_t *server,
 }
 
 void connect_nbr(client_t *client, server_t *server,
-    __attribute__((unused))char *args)
+    __attribute__((unused))char **args)
 {
     char buffer[1024];
 

@@ -46,6 +46,7 @@ typedef enum error_type_e {
 typedef enum client_state_e {
     WAITING,
     PLAYING,
+    GRAPHIC
 } client_state_t;
 
 typedef struct drone_s drone_t;
@@ -150,6 +151,12 @@ in_game_t *init_game(info_game_t info_game);
  * @param server The server containing the players to update.
  */
 void update_players(server_t *server);
+
+/**
+ * @brief Updates the game state.
+ * @param server The server containing the game state to update.
+ */
+void game_tick(server_t *server);
 
 /**
  * @brief sets the number of ticks to wait for
