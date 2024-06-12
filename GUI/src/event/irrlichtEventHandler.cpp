@@ -8,9 +8,13 @@
 #include "irrlichtEventHandler.hpp"
 #include <iostream>
 
-myEventReceiver::myEventReceiver(irr::IrrlichtDevice* device) :
-    _Device(device)
+myEventReceiver::myEventReceiver(irr::IrrlichtDevice* device)
 {
+    if (device == nullptr) {
+        std::cerr << "myEventReceiver: Error: trying to create myEventReceiver but given device is null" << std::endl;
+        exit(EXIT_FAILURE);
+    }
+    _Device = device;
 }
 
 myEventReceiver::~myEventReceiver()
@@ -18,6 +22,10 @@ myEventReceiver::~myEventReceiver()
 }
 
 bool myEventReceiver::OnEvent(const irr::SEvent& event) {
+    if (_Device == nullptr) {
+        std::cerr << "OnEvent: Error: trying to handle an event but device is not setted" << std::endl;
+        exit(EXIT_FAILURE);
+    }
     if (event.EventType != irr::EET_KEY_INPUT_EVENT)
         return false;
     if (event.KeyInput.PressedDown)
@@ -30,7 +38,8 @@ bool myEventReceiver::keyPress(const irr::SEvent& event)
     irr::EKEY_CODE keyCode = event.KeyInput.Key;
 
     if (keyCode == irr::KEY_ESCAPE) {
-        _Device->closeDevice();
+        if (_Device->isWindowActive())
+            _Device->closeDevice();
         return true;
     }
     if (keyCode == irr::KEY_KEY_P) {

@@ -31,12 +31,31 @@ irrlichtWindow::irrlichtWindow(
     this->_Debug = debug;
 }
 
+void irrlichtWindow::parseArgs(int ac, char **av)
+{
+   if (ac != 3) {
+        std::cerr << "Usage: " << av[0] << " <server_ip> <server_port>" << std::endl;
+        exit(EXIT_FAILURE);
+    }
+    std::regex ip_regex(R"(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})");
+    if (!std::regex_match(av[1], ip_regex)) {
+        std::cerr << "Invalid server IP address" << std::endl;
+        exit(EXIT_FAILURE);
+    }
+    if (std::stoi(av[2]) < 1024 || std::stoi(av[2]) > 65535) {
+        std::cerr << "Invalid server port" << std::endl;
+        exit(EXIT_FAILURE);
+    }
+    this->_ServerAdress = av[1];
+    this->_ServerPort = std::stoi(av[2]);
+}
+
 void irrlichtWindow::windowCreateDevice()
 {
     irr::IrrlichtDevice *device = irr::createDevice(this->_DriverType, irr::core::dimension2d<irr::u32>(this->_Width, this->_Height), 16, false, false, false, 0);
 	if (device == 0) {
-        this->_Device = nullptr;
-		return;
+        std::cerr << "windowCreateDevice : Error: Could not create device" << std::endl;
+        exit(EXIT_FAILURE);
     }
 	this->_Device = device;
 }
@@ -48,6 +67,10 @@ irrlichtWindow::~irrlichtWindow()
 
 void irrlichtWindow::initDrivers()
 {
+    if (!this->_Device) {
+        std::cerr << "initDrivers : Error: Device not initialized, can't create driver" << std::endl;
+        exit(EXIT_FAILURE);
+    }
     this->_Driver = this->_Device->getVideoDriver();
     this->_SceneManager = this->_Device->getSceneManager();
 }
@@ -60,103 +83,181 @@ void irrlichtWindow::initLoader()
 
 void irrlichtWindow::initCamera()
 {
+    //making the height of the camera relative to the platform size
     int height = (this->_PlatformX + this->_PlatformY) * 3 + 25;
 
 	this->_Device->getCursorControl()->setVisible(false);
 
 	this->_SceneManager->addCameraSceneNodeFPS();
-    auto activeCamera = this->_SceneManager->getActiveCamera();
+    this->_ActiveCamera = this->_SceneManager->getActiveCamera();
+
 	// droite-gauche   haut-bas   avant-arriere
-	activeCamera->setPosition(irr::core::vector3df(-15, height, -15));
-	activeCamera->setTarget(irr::core::vector3df(50, 35, 50));
-	activeCamera->setFarValue(10000.0f);
-	activeCamera->setNearValue(0.1f);
-	activeCamera->setAspectRatio(1.33f);
-	activeCamera->setInputReceiverEnabled(true);
-	activeCamera->setDebugDataVisible(irr::scene::EDS_FULL);
-	activeCamera->setViewMatrixAffector(irr::core::matrix4());
+	this->_ActiveCamera->setPosition(irr::core::vector3df(-15, height, -15));
+	this->_ActiveCamera->setTarget(irr::core::vector3df(50, 35, 50));
+	this->_ActiveCamera->setFarValue(10000.0f);
+	this->_ActiveCamera->setNearValue(0.1f);
+	this->_ActiveCamera->setAspectRatio(1.33f);
+	this->_ActiveCamera->setInputReceiverEnabled(true);
+	this->_ActiveCamera->setDebugDataVisible(irr::scene::EDS_FULL);
+	this->_ActiveCamera->setViewMatrixAffector(irr::core::matrix4());
     if (this->_Debug)
         std::cout << "Camera initialized" << std::endl;
 }
 
 void irrlichtWindow::initEventReceiver()
 {
-    _EventReceiver = new myEventReceiver(_Device);
-    _Device->setEventReceiver(_EventReceiver);
+    this->_EventReceiver = new myEventReceiver(this->_Device);
+    if (this->_EventReceiver == nullptr) {
+        std::cerr << "initEventReceiver: Error: Could not create event receiver" << std::endl;
+        exit(EXIT_FAILURE);
+    }
+    this->_Device->setEventReceiver(this->_EventReceiver);
 }
 
 void irrlichtWindow::initChessBoard()
 {
     this->_chessBoard = new chessBoard(this, this->_PlatformX, this->_PlatformY, this->_TileSize);
+    if (this->_chessBoard == nullptr) {
+        std::cerr << "initChessBoard: Error: Could not create chess board" << std::endl;
+        exit(EXIT_FAILURE);
+    }
     this->_chessBoard->createBoard();
     if (this->_Debug)
 	    std::cout << "chessBoard created" << std::endl;
 }
 
+char *irrlichtWindow::getServerAdress()
+{
+    if (!this->_ServerAdress) {
+        std::cerr << "getServerAdress Error: Server adress not initialized" << std::endl;
+        exit(EXIT_FAILURE);
+    }
+    return this->_ServerAdress;
+}
+
+int irrlichtWindow::getServerPort()
+{
+    if (this->_ServerPort < 1024 || this->_ServerPort > 65535) {
+        std::cerr << "getServerPort: Error: Invalid server port" << std::endl;
+        exit(EXIT_FAILURE);
+    }
+    return this->_ServerPort;
+}
+
 int irrlichtWindow::runWindow()
 {
     while(this->_Device->run()) {
-        this->updateNetwork();
+        // for (int i = 0; i < 100; i++)
+        //     this->_LinkedGuiClient->selectSocket();
         if (this->_Device->isWindowActive()) {
         	this->_Driver->beginScene(true, true, irr::video::SColor(255, 100, 101, 140));
             this->_SceneManager->drawAll();
             this->_Driver->endScene();
         } else
             this->_Device->yield();
-
     }
     return 0;
 }
 
 irr::IrrlichtDevice *irrlichtWindow::getDevice()
 {
+    if (!this->_Device) {
+        std::cerr << "getDevice: Error: Device not initialized" << std::endl;
+        exit(EXIT_FAILURE);
+    }
     return this->_Device;
 }
 
 irr::video::IVideoDriver *irrlichtWindow::getDriver()
 {
+    if (!this->_Driver) {
+        std::cerr << "getDriver: Error: Driver not initialized" << std::endl;
+        exit(EXIT_FAILURE);
+    }
     return this->_Driver;
 }
 
 irr::scene::ISceneManager *irrlichtWindow::getSceneManager()
 {
+    if (!this->_SceneManager) {
+        std::cerr << "getSceneManager: Error: SceneManager not initialized" << std::endl;
+        exit(EXIT_FAILURE);
+    }
     return this->_SceneManager;
 }
 
 quality irrlichtWindow::getQuality()
 {
+    if (!this->_Quality) {
+        std::cout << "getQuality: Warning: Quality not initialized returning default value : LOW" << std::endl;
+        return LOW;
+    }
     return this->_Quality;
 }
 
 void irrlichtWindow::linkZappyGame(ZappyGame *gameToLink)
 {
+    if (!gameToLink) {
+        std::cerr << "linkZappyGame: Error: ZappyGame not linked" << std::endl;
+        exit(EXIT_FAILURE);
+    }
     this->_LinkedZappyGame = gameToLink;
     gameToLink->linkWithDevice(this);
+    this->_LinkedZappyGame->initServerEvents();
 }
 
 void irrlichtWindow::linkGuiClient(guiNetworkClient *clientToLink)
 {
+    if (!this->_LinkedZappyGame) {
+        std::cerr << "Error: ZappyGame not linked" << std::endl;
+        exit(EXIT_FAILURE);
+    }
+    if (!clientToLink) {
+        std::cerr << "Error: guiNetworkClient not linked" << std::endl;
+        exit(EXIT_FAILURE);
+    }
     this->_LinkedGuiClient = clientToLink;
     clientToLink->setLinkedGame(this);
+    if (this->_LinkedZappyGame->getServerDataParser() == nullptr) {
+        std::cerr << "linkGuiClient: Error: ServerDataParser not initialized" << std::endl;
+        exit(EXIT_FAILURE);
+    }
+    this->_LinkedZappyGame->getServerDataParser()->SetParentClient(clientToLink);
 }
 
 ZappyGame *irrlichtWindow::getLinkedZappyGame()
 {
+    if (!this->_LinkedZappyGame) {
+        std::cerr << "getLinkedZappyGame: Error: ZappyGame not initialized" << std::endl;
+        exit(EXIT_FAILURE);
+    }
     return this->_LinkedZappyGame;
 }
 
 guiNetworkClient *irrlichtWindow::getGuiClient()
 {
+    if (!this->_LinkedGuiClient) {
+        std::cerr << "getGuiClient: Error: guiNetworkClient not initialized" << std::endl;
+        exit(EXIT_FAILURE);
+    }
     return this->_LinkedGuiClient;
 }
 
 ObjLoader *irrlichtWindow::getObjLoader()
 {
+    if (this->_ObjLoader == nullptr) {
+        std::cerr << "getObjLoader: Error: ObjLoader not initialized" << std::endl;
+        exit(EXIT_FAILURE);
+    }
     return this->_ObjLoader;
 }
 
 TextureLoader *irrlichtWindow::getTextureLoader()
 {
+    if (!this->_TextureLoader) {
+        std::cerr << "getTextureLoader: Error: TextureLoader not initialized" << std::endl;
+        exit(EXIT_FAILURE);
+    }
     return this->_TextureLoader;
 }
 
@@ -188,15 +289,4 @@ float irrlichtWindow::getTileSize()
 bool irrlichtWindow::getDebugState()
 {
     return this->_Debug;
-}
-
-void irrlichtWindow::updateNetwork()
-{
-    this->_socket = this->_LinkedGuiClient->getSocketFd();
-    fd_set read_fds;
-    FD_ZERO(&read_fds);
-    FD_SET(this->_socket, &read_fds);
-    if (FD_ISSET(this->_socket, &read_fds)) {
-        this->_LinkedGuiClient->handleRead();
-    }
 }

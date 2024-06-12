@@ -11,6 +11,7 @@
 #include "game/ZappyGame.hpp"
 #include "chessElement/chessBoard.hpp"
 #include "event/irrlichtEventHandler.hpp"
+#include "event/serverDataReceiver.hpp"
 #include "networkGui/guiClient.hpp"
 #include "loader/objLoader.hpp"
 #include "loader/textureLoader.hpp"
@@ -48,6 +49,16 @@ public:
      * @brief Destroys the irrlichtWindow object.
      */
     ~irrlichtWindow();
+
+    /**
+     * @brief Parses the command line arguments.
+     * @param ac The number of command line arguments.
+     * @param av An array of command line arguments.
+     * 
+     * this will use the command line arguments to set the server address and port.
+     * like this: ./zappy_gui adress port
+     */
+    void parseArgs(int ac, char **av);
 
     /**
      * @brief Creates the Irrlicht device.
@@ -106,11 +117,22 @@ public:
     void linkGuiClient(guiNetworkClient *GuiClientToLink);
 
     /**
-     * @brief Updates the network.
+     * @brief Returns the server address.
      * 
-     * this will call the update function of the linked guiNetworkClient object.
+     * @return The server address.
+     * 
+     * the server adress should be av[1] from the command line arguments.
      */
-    void updateNetwork();
+    char *getServerAdress();
+
+    /**
+     * @brief Returns the server port.
+     * 
+     * @return The server port.
+     * 
+     * the server port should be av[2] from the command line arguments.
+     */
+    int getServerPort();
 
     /**
      * @brief Runs the window and returns the exit code.
@@ -224,7 +246,8 @@ private:
     int _PlatformY; /** < The Height Y of the platform */
     float _TileSize; /** < The size of each tile of the platform */
 
-    int _socket; /** < The socket file descriptor */
+    char *_ServerAdress; /** < The server address under the form : 255.255.255.255 */
+    int _ServerPort; /** < The server port */
 
     bool _Debug; /** < The debug state */
 
@@ -233,6 +256,7 @@ private:
     irr::video::IVideoDriver *_Driver; /** < The video driver */
     irr::scene::ISceneManager *_SceneManager; /** < The scene manager */
     irr::video::E_DRIVER_TYPE _DriverType; /** < The video driver type */
+    irr::scene::ICameraSceneNode *_ActiveCamera; /** < The camera */
     chessBoard *_chessBoard; /** < The chess board Object */
     myEventReceiver *_EventReceiver; /** < The event receiver Object */
     ZappyGame *_LinkedZappyGame; /** < The linked ZappyGame Object */
