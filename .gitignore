@@ -11,6 +11,11 @@
 *.gch
 *.pch
 
+# Python caches elements
+
+/AI/src/__pycache__/
+/AI/Tests/__pycache__/
+
 # Compiled Dynamic libraries
 *.so
 *.dylib

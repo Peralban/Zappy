@@ -9,10 +9,31 @@ Socket connection to the server.
 import socket
 import select
 import sys
+import AI.src.ai_zappy as ai_zappy
+
+current_line = 0
+sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+sock_file = None
+data = []
+
+def get_next_instruction():
+    sock_file = sock.makefile('r')
+    inputs = [sock_file]
+    readable, _, _ = select.select(inputs, [], [])
+    for s in readable:
+        if s is sock_file:
+            data = []
+            for i, message in enumerate(s):
+                data.append(message.strip())
+                break
+    return data
+
+def send_instruction(instruction):
+    sock.sendall((instruction + '\n').encode())
 
 def connect_to_server(host, port, name):
+    global current_line
     server_address = (host, port)
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     LatLng = ()
 
     try:
@@ -30,6 +51,7 @@ def connect_to_server(host, port, name):
             for s in readable:
                 if s is sock_file:
                     for message in s:
+                        current_line += 1
                         if not message:
                             print('Disconnected from server')
                             sys.exit()
@@ -38,6 +60,9 @@ def connect_to_server(host, port, name):
                             parts = message.strip().split()
                             if len(parts) == 2:
                                 LatLng = (int(parts[0]), int(parts[1]))
+                                Bot = ai_zappy.Bot(name, LatLng[0], LatLng[1])
+                                Bot.run()
+                                return
                 else:
                     message = sys.stdin.readline()
                     sock.sendall(message.encode())
