@@ -37,6 +37,7 @@ SRC		= 		main.c								\
 				GuiProtocol/gui_event_bis.c			\
 				GuiProtocol/gui_event_ter.c			\
 				GuiProtocol/gui_event_quat.c		\
+				GuiProtocol/gui_event_quin.c		\
 
 TRUE_SRC 	= 	$(patsubst %,src/%, $(SRC))
 

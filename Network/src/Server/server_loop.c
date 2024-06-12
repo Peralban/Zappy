@@ -83,7 +83,13 @@ static void exec_one_gui_command(client_t *client, server_t *server,
         len == 1 + commands_gui[j].nb_args) {
             commands_gui[j].function(client, server, command_args + 1);
             my_free_array(command_args);
-            break;
+            return;
+        }
+        if (strcmp(command, commands_gui[j].name) == 0 &&
+        len != 1 + commands_gui[j].nb_args) {
+            gui_sbp(client->socket);
+            my_free_array(command_args);
+            return;
         }
     }
     gui_suc(client->socket);

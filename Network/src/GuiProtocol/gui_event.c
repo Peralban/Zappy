@@ -18,11 +18,6 @@ void send_all_graphics(server_t *server, char *str)
     }
 }
 
-void gui_suc(int socket)
-{
-    send(socket, "suc\n", 4, 0);
-}
-
 void gui_pnw(server_t *server, drone_t *drone)
 {
     char buffer[1024] = {0};
