@@ -10,13 +10,17 @@
 #include "Game/game_functions.h"
 #include "Game/game_command.h"
 #include "Game/game.h"
+#include "GuiProtocol/gui.h"
 #include "lib/my.h"
 #include <stdio.h>
-#include <sys/time.h>
 
 static void start_communication_with_client(client_t *client,
     server_t *server, char *buffer)
 {
+    if (strcmp(buffer, "GRAPHIC") == 0) {
+        client->state = GRAPHIC;
+        return;
+    }
     for (int i = 0; server->info_game.team_names[i] != NULL; i++) {
         if (strcmp(buffer, server->info_game.team_names[i]) == 0 &&
             server->game->teams[i].nb_egg > 0) {
@@ -66,6 +70,52 @@ static void push_command(client_t *client, char *buffer)
     my_free_array(commands_arr);
 }
 
+static void exec_one_gui_command(client_t *client, server_t *server,
+    char *command)
+{
+    char **command_args = my_str_to_word_array(command, " ");
+    int len = my_array_len(command_args);
+
+    for (int j = 0; commands_gui[j].name != NULL; j++) {
+        if (strcmp(command, commands_gui[j].name) == 0 &&
+        len == 1 + commands_gui[j].nb_args) {
+            commands_gui[j].function(client, server, command_args + 1);
+            my_free_array(command_args);
+            break;
+        }
+    }
+    send(client->socket, "ko\n", 3, 0);
+    my_free_array(command_args);
+}
+
+static void exec_gui_commands(client_t *client, server_t *server, char *buffer)
+{
+    char **commands_arr = my_str_to_word_array(buffer, "\n");
+
+    for (int i = 0; commands_arr[i] != NULL; i++)
+        exec_one_gui_command(client, server, commands_arr[i]);
+    my_free_array(commands_arr);
+}
+
+static void client_state_switch(client_t *client, server_t *server,
+    char *buffer)
+{
+    switch (client->state) {
+        case WAITING:
+            start_communication_with_client(client, server, buffer);
+            break;
+        case PLAYING:
+            push_command(client, buffer);
+            break;
+        case GRAPHIC:
+            exec_gui_commands(client, server, buffer);
+            break;
+        default:
+            printf("error unknown state");
+            break;
+    }
+}
+
 // the send is temporary, it will be deplaced in another function.
 // the "quit" command may be temporary.
 static void recv_command(client_t *client, server_t *server)
@@ -80,10 +130,8 @@ static void recv_command(client_t *client, server_t *server)
     printf("Received: %s\n", buffer);
     if (strcmp(buffer, "quit") == 0)
         eject_client_from_server(client, server);
-    else if (client->state == WAITING)
-        start_communication_with_client(client, server, buffer);
     else
-        push_command(client, buffer);
+        client_state_switch(client, server, buffer);
 }
 
 static void client_already_connected(server_t *server)
@@ -112,49 +160,6 @@ static void set_all_in_fd(server_t *server, int *max_fd)
             *max_fd = tmp->client->socket;
         if (tmp->next == NULL)
             break;
-    }
-}
-
-uint64_t get_time(void)
-{
-    struct timeval tv;
-
-    gettimeofday(&tv, NULL);
-    return tv.tv_sec * (uint64_t)1000000 + tv.tv_usec;
-}
-
-static void spawn_resources(server_t *server)
-{
-    int x;
-    int y;
-
-    for (int k = 0; k < MAX_ITEMS; k++) {
-        for (int i = 0; i < server->game->picked_up_items[k] &&
-        server->game->picked_up_items[k] > 0; i++) {
-            x = rand() % server->info_game.width;
-            y = rand() % server->info_game.height;
-            server->game->map[x][y].inventory[k]++;
-        }
-        if (server->game->picked_up_items[k] > 0) {
-            server->game->picked_up_items[k] = 0;
-        }
-    }
-}
-
-static void game_tick(server_t *server)
-{
-    static uint64_t last_tick_time = 0;
-    uint64_t current_time = get_time();
-
-    if (current_time - last_tick_time >=
-    (1000000 / (uint64_t)server->info_game.freq)) {
-        update_players(server);
-        server->game->spawn_tick++;
-        last_tick_time = current_time;
-    }
-    if (server->game->spawn_tick >= 20) {
-        server->game->spawn_tick = 0;
-        spawn_resources(server);
     }
 }
 
