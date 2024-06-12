@@ -11,7 +11,7 @@ void gui_pex(server_t *server, int id)
 {
     char buffer[1024] = {0};
 
-    sprintf(buffer, "pex #%d\n", id);
+    sprintf(buffer, "pex %d\n", id);
     send_all_graphics(server, buffer);
 }
 
@@ -19,7 +19,7 @@ void gui_pbc(server_t *server, int id, char *msg)
 {
     char buffer[1024] = {0};
 
-    sprintf(buffer, "pbc #%d %s\n", id, msg);
+    sprintf(buffer, "pbc %d %s\n", id, msg);
     send_all_graphics(server, buffer);
 }
 
@@ -33,7 +33,7 @@ void gui_pic(server_t *server, drone_t *drone)
     server->game->map[drone->x][drone->y].drone_list;
     tmp != NULL; tmp = tmp->next) {
         if (tmp->drone->level == drone->level) {
-            sprintf(buffer + strlen(buffer), " #%d", tmp->drone->id);
+            sprintf(buffer + strlen(buffer), " %d", tmp->drone->id);
         }
     }
     buffer[strlen(buffer)] = '\n';
