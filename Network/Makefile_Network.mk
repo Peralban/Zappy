@@ -38,9 +38,9 @@ SRC		= 		main.c								\
 				GuiProtocol/gui_event_ter.c			\
 				GuiProtocol/gui_event_quat.c		\
 				GuiProtocol/gui_event_quin.c		\
-				GUI/game_info_cmd.c					\
-				GUI/player_info_cmd.c				\
-				GUI/time_cmd.c						\
+				GuiProtocol/game_info_cmd.c			\
+				GuiProtocol/player_info_cmd.c		\
+				GuiProtocol/time_cmd.c				\
 
 TRUE_SRC 	= 	$(patsubst %,src/%, $(SRC))
 
