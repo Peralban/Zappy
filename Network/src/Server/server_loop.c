@@ -11,6 +11,7 @@
 #include "Game/game_command.h"
 #include "Game/game.h"
 #include "GuiProtocol/gui.h"
+#include "GuiProtocol/gui_event.h"
 #include "lib/my.h"
 #include <stdio.h>
 
@@ -84,7 +85,7 @@ static void exec_one_gui_command(client_t *client, server_t *server,
             break;
         }
     }
-    send(client->socket, "ko\n", 3, 0);
+    gui_event(GUI_SUC, server, client);
     my_free_array(command_args);
 }
 

@@ -35,8 +35,12 @@ typedef struct {
     void (*function)(server_t *server, void *data);
 } event_gui_t;
 
+void pnw(server_t *server, void *data);
+
+void suc(server_t *server, void *data);
+
 static const event_gui_t event_gui[] = {
-    //{GUI_PNW, &pnw},
+    {GUI_PNW, &pnw},
     //{GUI_PEX, &pex},
     //{GUI_PBC, &pbc},
     //{GUI_PIC, &pic},
@@ -50,7 +54,7 @@ static const event_gui_t event_gui[] = {
     //{GUI_EDI, &edi},
     //{GUI_SEG, &seg},
     //{GUI_SMG, &smg},
-    //{GUI_SUC, &suc},
+    {GUI_SUC, &suc},
     //{GUI_SBP, &sbp},
     {0, NULL}
 };
