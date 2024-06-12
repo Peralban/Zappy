@@ -26,6 +26,7 @@ bool drop_object(client_t *client, server_t *server, char *args)
         return false;
     client->drone->inventory[i] -= 1;
     tile->inventory[i] += 1;
+    server->game->picked_up_items[i] += 1;
     return true;
 }
 
@@ -47,5 +48,6 @@ bool take_object(client_t *client, server_t *server, char *args)
         return false;
     client->drone->inventory[i] += 1;
     tile->inventory[i] -= 1;
+    server->game->picked_up_items[i] -= 1;
     return true;
 }
