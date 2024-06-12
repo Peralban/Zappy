@@ -56,15 +56,32 @@ class Bot:
             elif "message" in result:
                 self.broadcast_analyse(result)
             else:
-                print("command")
+                self.manage_result(result)
         return
     
     def manage_result(self, result):
         if self.waiting_command[0] == "Forward" and "ok" in result:
             self.forward()
-            self.waiting_command.pop(0)
+        if self.waiting_command[0] == "Right" and "ok" in result:
+            self.right()
+        if self.waiting_command[0] == "Left" and "ok" in result:
+            self.left()
+        if self.waiting_command[0] == "Inventory":
+            self.update_inventory()
+        if "Take" in self.waiting_command[0] and "ok" in result:
+            self.take(self.waiting_command[0][:' '])
+        if "Set" in self.waiting_command[0] and "ok" in result:
+            self.left(self.waiting_command[0][:' '])
+        if self.waiting_command[0] == "Connect_nbr":
+            self.connect_nbr(result)
+        if self.waiting_command[0] == "Fork" and "ok" in result:
+            self.fork(result)
+        if self.waiting_command[0] == "Incantation" and not "ko" in result:
+            self.incantation()
 
-
+        self.waiting_command.pop(0)
+        return
+        
     def forward(self):
         if self.direction == 1:
             self.position['x'] += 1
@@ -97,8 +114,8 @@ class Bot:
             self.direction = 0
         return
 
-    def look(self):
-        return
+    #def look(self):
+    #    return
 
     def update_inventory(self):
         res = res.split(',')
@@ -107,10 +124,13 @@ class Bot:
             self.inventory[object[0]] = int(object[1])
         return
 
-    def connect_nbr(self):
+    def connect_nbr(self, nb):
+        if int(nb) > 0:
+            print("insert fork function")
         return
 
     def fork(self):
+        print("insert fork function")
         return
 
     def eject(self):
@@ -125,9 +145,11 @@ class Bot:
         return
 
     def incantation(self):
+        self.level += 1
+        #maybe a message for other IA if there is with position and level
         return
 
-    def broadcast(self, message):
+    def create_broadcast(self):
         return
 
     def broadcast_analyse(self, message):
