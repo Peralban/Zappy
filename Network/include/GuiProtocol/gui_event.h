@@ -43,10 +43,12 @@ void suc(server_t *server, void *data);
 
 void pex(server_t *server, void *data);
 
+void pbc(server_t *server, void *data);
+
 static const event_gui_t event_gui[] = {
     {GUI_PNW, &pnw},
     {GUI_PEX, &pex},
-    //{GUI_PBC, &pbc},
+    {GUI_PBC, &pbc},
     //{GUI_PIC, &pic},
     //{GUI_PIE, &pie},
     //{GUI_PFK, &pfk},

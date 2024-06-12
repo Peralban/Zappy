@@ -33,8 +33,12 @@ void inventory(client_t *client, server_t *server,
 void broadcast(client_t *client, server_t *server, char **args)
 {
     bool is_ok = launch_broadcast(client->drone, server, args[0]);
+    void *data[2];
 
     send(client->socket, is_ok ? "ok\n" : "ko\n", 3, 0);
+    ((client_t **)data)[0] = client;
+    ((char **)data)[1] = args[0];
+    gui_event(GUI_PBC, server, data);
 }
 
 void eject(client_t *client, server_t *server,
