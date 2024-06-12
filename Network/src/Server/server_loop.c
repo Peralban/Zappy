@@ -110,6 +110,9 @@ static void client_state_switch(client_t *client, server_t *server,
         case GRAPHIC:
             exec_gui_commands(client, server, buffer);
             break;
+        default:
+            printf("error unknown state");
+            break;
     }
 }
 
