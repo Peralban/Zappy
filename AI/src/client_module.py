@@ -70,6 +70,8 @@ def connect_to_server(host, port, name):
                     sys.stdout.write(message)
                     sys.stdout.flush()
     except KeyboardInterrupt:
+        send_instruction('quit')
+        sock.close()
         print("\nClient interrupted.")
     finally:
         sock.close()
