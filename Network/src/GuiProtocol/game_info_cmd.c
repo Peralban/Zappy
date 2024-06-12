@@ -7,10 +7,11 @@
 
 #include "Game/game.h"
 #include "Server/server.h"
+#include "GuiProtocol/gui_event.h"
 
 void map_size_cmd(client_t *client, server_t *server, char **args)
 {
-    char return_str[128] = {0};
+    char return_str[1024] = {0};
 
     (void)args;
     sprintf(return_str, "msz %d %d\n", server->info_game.width,
@@ -37,7 +38,7 @@ void one_tile_content(client_t *client, server_t *server, char **args)
 
     if (x < 0 || x >= server->info_game.width || y < 0 ||
         y >= server->info_game.height) {
-        send(client->socket, "sbp\n", 4, 0);
+        gui_sbp(client->socket);
         return;
     }
     return_str = get_tile_content_at(&(server->game->map[x][y]), x, y);

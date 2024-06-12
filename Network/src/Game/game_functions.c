@@ -115,7 +115,7 @@ static void exchange_drone(server_t *server, linked_list_drone_t *src,
     src->prev = dest;
 }
 
-void move(drone_t *drone, server_t *server, orientation_t orientation)
+void move(drone_t *drone, server_t *server, orientation_t ori)
 {
     int movement[] = {-1, -1, 1, 1};
     int *coord[] = {&drone->y, &drone->x,
@@ -127,12 +127,9 @@ void move(drone_t *drone, server_t *server, orientation_t orientation)
 
     if (src == NULL)
         return;
-    *coord[orientation] = (*coord[orientation] +
-    movement[orientation] +
-    max[orientation]) % max[orientation];
+    *coord[ori] = (*coord[ori] + movement[ori] + max[ori]) % max[ori];
     remove_drone_in_list(&server->game->map[old[X]][old[Y]].drone_list, drone);
     exchange_drone(server, src, drone);
-    printf("Drone from %d %d %d to %d %d\n", old[X], old[Y], drone->orientation, drone->x, drone->y);
 }
 
 void turn(drone_t *drone, side_t side)

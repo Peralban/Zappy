@@ -35,5 +35,6 @@ static const command_gui_t commands_gui[] = {
     {"plv", get_player_level, 1},
     {"pin", get_player_inventory, 1},
     {"sgt", time_request, 0},
-    {"sst", time_modification, 1}
+    {"sst", time_modification, 1},
+    {NULL, NULL, 0}
 };
