@@ -8,7 +8,7 @@
 #include "Game/game.h"
 #include "Server/server.h"
 
-void time_request(server_t *server, client_t *client, char **args)
+void time_request(client_t *client, server_t *server, char **args)
 {
     char *reponse = calloc(128, sizeof(char));
 
@@ -18,11 +18,11 @@ void time_request(server_t *server, client_t *client, char **args)
     free(reponse);
 }
 
-void time_modification(server_t *server, client_t *client, char **args)
+void time_modification(client_t *client, server_t *server, char **args)
 {
     char *reponse = calloc(128, sizeof(char));
 
-    server->info_game.freq = atoi(args[1]);
+    server->info_game.freq = atoi(args[0]);
     sprintf(reponse, "sgt %d\n", server->info_game.freq);
     send(client->socket, reponse, strlen(reponse), 0);
     free(reponse);
