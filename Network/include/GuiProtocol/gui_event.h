@@ -21,3 +21,6 @@ void gui_pfk(server_t *server, int id);
 void gui_pdr(server_t *server, int id, int item);
 void gui_pgt(server_t *server, int id, int item);
 void gui_pdi(server_t *server, int id);
+void gui_enw(server_t *server, drone_t *drone, egg_t *egg);
+void gui_ebo(server_t *server, egg_t *egg);
+void gui_edi(server_t *server, egg_t *egg);

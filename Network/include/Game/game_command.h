@@ -74,6 +74,8 @@ void broadcast(client_t *client, server_t *server, char **args);
  */
 void fork_player(client_t *client, server_t *server, char **args);
 
+bool fork_condition(client_t*client, server_t *server, char **args);
+
 /**
  * @brief Allows the client's character to check the number of unused
  * connections in the game.
@@ -160,7 +162,7 @@ static const command_t commands_opt[] = {
     {"Look", &look, NULL, 7, 0},
     {"Inventory", &inventory, NULL, 1, 0},
     {"Broadcast", &broadcast, NULL, 7, 1},
-    {"Fork", &fork_player, NULL, 42, 0},
+    {"Fork", &fork_player, &fork_condition, 42, 0},
     {"Connect_nbr", &connect_nbr, NULL, 7, 0},
     {"Eject", &eject, NULL, 7, 0},
     {"Set", &set_object_down, NULL, 7, 1},
