@@ -43,7 +43,7 @@ bool check_incantation_prerequisites(client_t *client, server_t *server)
     return true;
 }
 
-static client_t *get_client_by_drone_id(int id, server_t *server)
+client_t *get_client_by_drone_id(int id, server_t *server)
 {
     client_list_t *tmp = server->list;
 

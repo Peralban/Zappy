@@ -172,3 +172,10 @@ void set_ticks(client_t *client);
  * @return A pointer to the created egg.
  */
 egg_t *create_egg(char *team_name, int x, int y);
+
+/**
+ * @brief finds a client by its drone id.
+ * @param id The id of the drone to find.
+ * @param server The server containing the clients.
+ */
+client_t *get_client_by_drone_id(int id, server_t *server);

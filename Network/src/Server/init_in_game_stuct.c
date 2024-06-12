@@ -95,14 +95,22 @@ static void init_ressources(info_game_t info_game, in_game_t *game)
     int x;
     int y;
 
-    for (int k = 0; k < MAX_ITEMS; k++) {
-        ressources_quantity[k] *= info_game.width * info_game.height;
-        if (ressources_quantity[k] < 1)
-            ressources_quantity[k] = 1;
-        for (int n = 0; n < ressources_quantity[k]; n++) {
-            x = rand() % info_game.width;
-            y = rand() % info_game.height;
-            game->map[x][y].inventory[k] += 1;
+    //for (int k = 0; k < MAX_ITEMS; k++) {
+    //    ressources_quantity[k] *= info_game.width * info_game.height;
+    //    if (ressources_quantity[k] < 1)
+    //        ressources_quantity[k] = 1;
+    //    for (int n = 0; n < ressources_quantity[k]; n++) {
+    //        x = rand() % info_game.width;
+    //        y = rand() % info_game.height;
+    //        game->map[x][y].inventory[k] += 1;
+    //    }
+    //}
+    //debug: spawn 1 of each ressource on each tile
+    for (int i = 0; i < info_game.width; i++) {
+        for (int j = 0; j < info_game.height; j++) {
+            for (int k = 0; k < MAX_ITEMS; k++) {
+                game->map[i][j].inventory[k] = 1;
+            }
         }
     }
 }

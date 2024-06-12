@@ -9,7 +9,7 @@
 #include "Game/game.h"
 #include "Game/game_command.h"
 #include "lib/my.h"
-
+#include "GuiProtocol/gui_event.h"
 
 static void exec_command(char *command, client_t *client, server_t *server)
 {
@@ -102,12 +102,14 @@ static void update_incantation_tile(int x, int y, int lvl, server_t *server)
     char buffer[1024];
 
     sprintf(buffer, "Current level: %d\n", lvl + 1);
-    for (client_list_t *tmp = server->list; tmp != NULL; tmp = tmp->next) {
-        if (tmp->client->drone != NULL && tmp->client->drone->x == x &&
-        tmp->client->drone->y == y && tmp->client->drone->level == lvl) {
-            tmp->client->drone->level++;
-            tmp->client->drone->incantation_ticks = 0;
-            send(tmp->client->socket, buffer, strlen(buffer), 0);
+    for (linked_list_drone_t *tmp = server->game->map[x][y].drone_list;
+    tmp != NULL; tmp = tmp->next) {
+        if (tmp->drone->level == lvl) {
+            tmp->drone->level++;
+            tmp->drone->incantation_ticks = 0;
+            send(get_client_by_drone_id(tmp->drone->id, server)->socket,
+                buffer, strlen(buffer), 0);
+            gui_event(GUI_PIE, server, tmp->drone);
         }
     }
     for (int i = 1; i < 7; i++)
@@ -129,6 +131,7 @@ static bool update_incantation(client_t *client, server_t *server)
         } else {
             sprintf(buffer, "Current level: %d\n", client->drone->level);
             send(client->socket, buffer, strlen(buffer), 0);
+            gui_event(GUI_PIE, server, client->drone);
         }
     }
     return true;

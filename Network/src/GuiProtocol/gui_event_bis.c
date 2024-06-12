@@ -32,12 +32,23 @@ void pic(server_t *server, void *data)
     char buffer[1024] = {0};
 
     sprintf(buffer, "pic %d %d %d", drone->x, drone->y,
-        drone->level + 1);
-    for (linked_list_drone_t *tmp = server->game->map[drone->x][drone->y].drone_list; tmp != NULL; tmp = tmp->next) {
+        drone->level);
+    for (linked_list_drone_t *tmp =
+    server->game->map[drone->x][drone->y].drone_list;
+    tmp != NULL; tmp = tmp->next) {
         if (tmp->drone->level == drone->level) {
             sprintf(buffer + strlen(buffer), " %d", tmp->drone->id);
         }
     }
     buffer[strlen(buffer)] = '\n';
+    send_all_graphics(server, buffer);
+}
+
+void pie(server_t *server, void *data)
+{
+    drone_t *drone = (drone_t *)data;
+    char buffer[1024] = {0};
+
+    sprintf(buffer, "pie %d %d %d\n", drone->x, drone->y, drone->level);
     send_all_graphics(server, buffer);
 }
