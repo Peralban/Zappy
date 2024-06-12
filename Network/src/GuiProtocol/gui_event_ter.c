@@ -12,6 +12,6 @@ void pfk(server_t *server, void *data)
     drone_t *drone = (drone_t *)data;
     char buffer[1024] = {0};
 
-    sprintf(buffer, "pfk %d\n", drone->id);
+    sprintf(buffer, "pfk #%d\n", drone->id);
     send_all_graphics(server, buffer);
 }

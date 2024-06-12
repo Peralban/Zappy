@@ -12,7 +12,7 @@ void pex(server_t *server, void *data)
     drone_t *drone = (drone_t *)data;
     char buffer[1024] = {0};
 
-    sprintf(buffer, "pex %d\n", drone->id);
+    sprintf(buffer, "pex #%d\n", drone->id);
     send_all_graphics(server, buffer);
 }
 
@@ -22,7 +22,7 @@ void pbc(server_t *server, void *data)
     char *msg = ((char **)data)[1];
     char buffer[1024] = {0};
 
-    sprintf(buffer, "pbc %d %s\n", drone->id, msg);
+    sprintf(buffer, "pbc #%d %s\n", drone->id, msg);
     send_all_graphics(server, buffer);
 }
 
@@ -37,7 +37,7 @@ void pic(server_t *server, void *data)
     server->game->map[drone->x][drone->y].drone_list;
     tmp != NULL; tmp = tmp->next) {
         if (tmp->drone->level == drone->level) {
-            sprintf(buffer + strlen(buffer), " %d", tmp->drone->id);
+            sprintf(buffer + strlen(buffer), " #%d", tmp->drone->id);
         }
     }
     buffer[strlen(buffer)] = '\n';
