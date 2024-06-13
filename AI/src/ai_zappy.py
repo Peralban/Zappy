@@ -183,11 +183,11 @@ class Bot:
 
     def connect_nbr(self, nb):
         if int(nb) > 0:
-            print("insert fork function")
+            client_module.parsing.sub_process()
         return
 
     def fork(self):
-        print("insert fork function")
+        client_module.parsing.sub_process()
         return
 
     def eject(self):
