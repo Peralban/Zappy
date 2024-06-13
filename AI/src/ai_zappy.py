@@ -128,6 +128,8 @@ class Bot:
             for object in data:
                 if object == "":
                     data.remove(object)
+            if data == ['']:
+                data = []
             datas.append(data)
 
         print(datas)
@@ -137,48 +139,48 @@ class Bot:
                 for data in datas[i]:
                     self.map[self.position['y']][self.position['x'] + i][data] += 1
                 for u in range(i):
-                    for data in datas[i - u]:
-                        self.map[self.position['y'] - u][self.position['x'] + i][data] += 1
-                    for data in datas[i + u]:
-                        self.map[self.position['y'] + u][self.position['x'] + i][data] += 1
+                    for data in datas[i - (u + 1)]:
+                        self.map[self.position['y'] - (u + 1)][self.position['x'] + i][data] += 1
+                    for data in datas[i + (u + 1)]:
+                        self.map[self.position['y'] + (u + 1)][self.position['x'] + i][data] += 1
                 for y in range(i * 2 + 1):
-                    results.pop(0)
+                    datas.pop(0)
         
         elif self.direction == 2:
             for i in range(self.level + 1):
                 for data in datas[i]:
                     self.map[self.position['y'] + i][self.position['x']][data] += 1
                 for u in range(i):
-                    for data in datas[i - u]:
-                        self.map[self.position['y'] + i][self.position['x'] - u][data] += 1
-                    for data in datas[i + u]:
-                        self.map[self.position['y'] + i][self.position['x'] + u][data] += 1
+                    for data in datas[i - (u + 1)]:
+                        self.map[self.position['y'] + i][self.position['x'] - (u + 1)][data] += 1
+                    for data in datas[i + (u + 1)]:
+                        self.map[self.position['y'] + i][self.position['x'] + (u + 1)][data] += 1
                 for y in range(i * 2 + 1):
-                    results.pop(0)
+                    datas.pop(0)
 
         elif self.direction == 3:
             for i in range(self.level + 1):
                 for data in datas[i]:
                     self.map[self.position['y']][self.position['x'] - i][data] += 1
                 for u in range(i):
-                    for data in datas[i - u]:
-                        self.map[self.position['y'] - u][self.position['x'] - i][data] += 1
-                    for data in datas[i + u]:
-                        self.map[self.position['y'] + u][self.position['x'] - i][data] += 1
+                    for data in datas[i - (u + 1)]:
+                        self.map[self.position['y'] - (u + 1)][self.position['x'] - i][data] += 1
+                    for data in datas[i + (u + 1)]:
+                        self.map[self.position['y'] + (u + 1)][self.position['x'] - i][data] += 1
                 for y in range(i * 2 + 1):
-                    results.pop(0)
+                    datas.pop(0)
 
         else:
             for i in range(self.level + 1):
                 for data in datas[i]:
                     self.map[self.position['y'] - i][self.position['x']][data] += 1
                 for u in range(i):
-                    for data in datas[i - u]:
-                        self.map[self.position['y'] - i][self.position['x'] - u][data] += 1
-                    for data in datas[i + u]:
-                        self.map[self.position['y'] - i][self.position['x'] + u][data] += 1
+                    for data in datas[i - (u + 1)]:
+                        self.map[self.position['y'] - i][self.position['x'] - (u + 1)][data] += 1
+                    for data in datas[i + (u + 1)]:
+                        self.map[self.position['y'] - i][self.position['x'] + (u + 1)][data] += 1
                 for y in range(i * 2 + 1):
-                    results.pop(0)
+                    datas.pop(0)
         print(datas)
         print(self.map)
         return
