@@ -8,6 +8,7 @@
 #include "Game/game.h"
 #include "Game/game_functions.h"
 #include "Server/server.h"
+#include "GuiProtocol/gui_event.h"
 
 static void eject_other(drone_t *other, drone_t *drone, server_t *server)
 {
@@ -60,6 +61,7 @@ bool hit_eggs(const client_t *client, server_t *server)
         if (tmp_egg->egg->x == client->drone->x &&
             tmp_egg->egg->y == client->drone->y) {
             hit = true;
+            gui_edi(server, tmp_egg->egg);
             decrease_egg_counter(server, tmp_egg);
             free(tmp_egg->egg);
             remove_egg_elem(tmp_egg, &server->game->egg_list);
