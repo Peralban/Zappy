@@ -17,6 +17,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include "Game/game.h"
+#include <signal.h>
 
 #define EXIT_FAIL 84
 #define EXIT_SUCC 0
@@ -193,3 +194,37 @@ void remove_drone_in_list(linked_list_drone_t **list, drone_t *drone);
  * @param server The server containing the client.
  */
 void reset_client(client_t *client, server_t *server);
+
+/**
+ * @brief Accepts a new client connection to the server.
+ *
+ * This function is responsible for accepting a new client connection to the server.
+ * It creates a new client object and adds it to the server's list of clients.
+ *
+ * @param server The server that the client is connecting to.
+ */
+void new_client(server_t *server);
+
+/**
+ * @brief Ends the server operation.
+ *
+ * This function is responsible for ending the server operation.
+ * It closes all client connections and releases any resources used by the server.
+ *
+ * @param server The server to end.
+ * @return Returns 0 on successful execution and non-zero on failure.
+ */
+int end_server(server_t *server);
+
+/**
+ * @brief Replaces the global stop variable.
+ *
+ * This function is responsible for replacing the global stop variable.
+ * It is used to control the server loop, stopping it when necessary.
+ *
+ * @param change The new value for the stop variable.
+ * @warning if change is -1, the function will return the current
+ * value of the stop variable. And will not change it.
+ * @return The new value of the stop variable.
+ */
+sig_atomic_t replace_stop(int change);

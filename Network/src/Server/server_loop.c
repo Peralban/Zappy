@@ -39,21 +39,6 @@ static void start_communication_with_client(client_t *client,
     send(client->socket, "ko\n", 3, 0);
 }
 
-static void new_client(server_t *server)
-{
-    struct sockaddr_in client_address;
-    socklen_t client_address_length = sizeof(client_address);
-    int client_socket = accept(server->socket,
-    (struct sockaddr *) &client_address, &client_address_length);
-
-    if (!check_return_value(client_socket, ACCEPT))
-        return;
-    add_client_to_list(server->list, create_client(client_socket));
-    FD_SET(client_socket, &server->readfds);
-    FD_SET(client_socket, &server->writefds);
-    send(client_socket, "WELCOME\n", 8, 0);
-}
-
 static void push_command(client_t *client, char *buffer)
 {
     char **commands_arr = my_str_to_word_array(buffer, "\n");
@@ -131,7 +116,6 @@ static void recv_command(client_t *client, server_t *server)
         buffer[buffer_length - 2] = '\0';
     else
         buffer[buffer_length - 1] = '\0';
-    buffer[strlen(buffer) - 1] = '\0';
     printf("Received: %s\n", buffer);
     if (strcmp(buffer, "quit") == 0) {
         reset_client(client, server);
@@ -169,6 +153,12 @@ static void set_all_in_fd(server_t *server, int *max_fd)
     }
 }
 
+static void inthand(int signum)
+{
+    (void)signum;
+    replace_stop(1);
+}
+
 int server_loop(server_t *server)
 {
     int max_fd = server->socket;
@@ -176,7 +166,8 @@ int server_loop(server_t *server)
     struct timeval timeout = {0, 0};
 
     server->list = create_client_list();
-    while (1) {
+    while (!replace_stop(-1)) {
+        signal(SIGINT, inthand);
         if (FD_ISSET(server->socket, &server->readfds))
             new_client(server);
         FD_ZERO(&server->readfds);
@@ -189,4 +180,5 @@ int server_loop(server_t *server)
         client_already_connected(server);
         game_tick(server);
     }
+    return end_server(server);
 }
