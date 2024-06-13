@@ -8,6 +8,7 @@ Retrieve value from arguments given by the user.
 
 import argparse
 import sys
+import subprocess
 
 def parse_arguments():
     parser = argparse.ArgumentParser(
@@ -36,3 +37,7 @@ if __name__ == "__main__":
             sys.exit(84)
         else:
             raise
+
+def sub_process():
+    port, name, host = parse_arguments()
+    subprocess.run(["python3", "zappy_ai", "-p", str(port), "-n", str(name), "-h", str(host)])
