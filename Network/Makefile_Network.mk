@@ -123,6 +123,8 @@ tests_compile: fclean
 tests_launch:
 	./unit_tests
 	@printf "\033[1;35mNetWork Tests launched ✅\033[0m\n"
+	gcovr --exclude Tests
+	@printf "\033[1;35mNetwork Coverage generated ✅\033[0m\n"
 
 tests_run: tests_compile tests_launch
 	@printf "\033[1;32mTests runned ✅\033[0m\n"

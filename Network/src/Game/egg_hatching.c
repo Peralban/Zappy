@@ -1,6 +1,6 @@
 /*
 ** EPITECH PROJECT, 2024
-** Zappy_Server
+** egg_hatching.c
 ** File description:
 ** No file there , just an epitech header example .
 */
