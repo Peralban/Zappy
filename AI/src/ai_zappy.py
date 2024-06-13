@@ -116,9 +116,13 @@ class Bot:
         return
 
     def look(self, results):
+        results = results[1:-1]
         results.split(',')
         for result in results:
             result.split(' ')
+            for i in range(len(result)):
+                if result[i] == " ":
+                    result.pop(i)
 
         if self.direction == 1:
             for i in range(self.level + 1):
@@ -199,7 +203,6 @@ class Bot:
 
     def incantation(self):
         self.level += 1
-        #maybe a message for other IA if there is with position and level
         return
 
     def create_broadcast(self):
