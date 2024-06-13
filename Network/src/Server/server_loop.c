@@ -127,9 +127,10 @@ static void recv_command(client_t *client, server_t *server)
     buffer_length = (int)recv(client->socket, buffer, 1024, 0);
     if (!check_return_value(buffer_length, RECV))
         return;
-    if (buffer[buffer_length - 1] == 10)
+    if (buffer[buffer_length - 2] == '\r')
+        buffer[buffer_length - 2] = '\0';
+    else
         buffer[buffer_length - 1] = '\0';
-    buffer[strlen(buffer) - 1] = '\0';
     printf("Received: %s\n", buffer);
     if (strcmp(buffer, "quit") == 0) {
         reset_client(client, server);
