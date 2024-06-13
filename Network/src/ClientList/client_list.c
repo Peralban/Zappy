@@ -59,19 +59,18 @@ static void remove_client_bis(client_list_t *tmp, client_t *client)
         tmp->next->prev = tmp->prev;
 }
 
-void remove_client_from_list(client_list_t *list, client_t *client)
+void remove_client_from_list(client_list_t **list, client_t *client)
 {
-    client_list_t *tmp = list;
+    client_list_t *tmp = *list;
 
     if (tmp != NULL && tmp->client == client) {
         if (tmp->next != NULL) {
-            list->client = tmp->next->client;
-            list->next = tmp->next->next;
-            list->prev = NULL;
+            *list = tmp->next;
+            (*list)->prev = NULL;
         } else {
-            list->next = NULL;
-            list->prev = NULL;
-            list->client = NULL;
+            (*list)->next = NULL;
+            (*list)->prev = NULL;
+            (*list)->client = NULL;
         }
         return;
     }
