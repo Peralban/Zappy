@@ -10,12 +10,12 @@ import AI.src.client_module as client_module
 
 def init_map(x, y):
         game_map = []
-        tile = {'food' : 0, 'linemate' : 0, 'deraumere' : 0, 'sibur' : 0, 'mendiane' : 0, 'phiras' : 0, 'thystame' : 0}
 
         for i in range(y):
             line = []
 
             for u in range(x):
+                tile = {'food' : 0, 'linemate' : 0, 'deraumere' : 0, 'sibur' : 0, 'mendiane' : 0, 'phiras' : 0, 'thystame' : 0, 'player' : 0}
                 line.append(tile)
 
             game_map.append(line)
@@ -35,6 +35,7 @@ class Bot:
         self.waiting_command = []
 
     def run(self):
+        self.send_instruction("Look")
         while self.alive == True:
             self.get_result()
         return
@@ -116,62 +117,70 @@ class Bot:
         return
 
     def look(self, results):
-        results = results[1:-1]
-        results.split(',')
+        data = []
+        datas = []
+
+        results = str(results[1:-1])
+        results = results.split(',')
         for result in results:
-            result.split(' ')
-            for i in range(len(result)):
-                if result[i] == " ":
-                    result.pop(i)
+            result = str(result)
+            data = result.split(' ')
+            for object in data:
+                if object == "":
+                    data.remove(object)
+            datas.append(data)
+
+        print(datas)
 
         if self.direction == 1:
             for i in range(self.level + 1):
-                for result in results[i]:
-                    self.map[self.position['y']][self.position['x'] + i][result] += 1
+                for data in datas[i]:
+                    self.map[self.position['y']][self.position['x'] + i][data] += 1
                 for u in range(i):
-                    for result in results[i - u]:
-                        self.map[self.position['y'] - u][self.position['x'] + i][result] += 1
-                    for result in results[i + u]:
-                        self.map[self.position['y'] + u][self.position['x'] + i][result] += 1
+                    for data in datas[i - u]:
+                        self.map[self.position['y'] - u][self.position['x'] + i][data] += 1
+                    for data in datas[i + u]:
+                        self.map[self.position['y'] + u][self.position['x'] + i][data] += 1
                 for y in range(i * 2 + 1):
                     results.pop(0)
         
         elif self.direction == 2:
             for i in range(self.level + 1):
-                for result in results[i]:
-                    self.map[self.position['y'] + i][self.position['x']][result] += 1
+                for data in datas[i]:
+                    self.map[self.position['y'] + i][self.position['x']][data] += 1
                 for u in range(i):
-                    for result in results[i - u]:
-                        self.map[self.position['y'] + i][self.position['x'] - u][result] += 1
-                    for result in results[i + u]:
-                        self.map[self.position['y'] + i][self.position['x'] + u][result] += 1
+                    for data in datas[i - u]:
+                        self.map[self.position['y'] + i][self.position['x'] - u][data] += 1
+                    for data in datas[i + u]:
+                        self.map[self.position['y'] + i][self.position['x'] + u][data] += 1
                 for y in range(i * 2 + 1):
                     results.pop(0)
 
         elif self.direction == 3:
             for i in range(self.level + 1):
-                for result in results[i]:
-                    self.map[self.position['y']][self.position['x'] - i][result] += 1
+                for data in datas[i]:
+                    self.map[self.position['y']][self.position['x'] - i][data] += 1
                 for u in range(i):
-                    for result in results[i - u]:
-                        self.map[self.position['y'] - u][self.position['x'] - i][result] += 1
-                    for result in results[i + u]:
-                        self.map[self.position['y'] + u][self.position['x'] - i][result] += 1
+                    for data in datas[i - u]:
+                        self.map[self.position['y'] - u][self.position['x'] - i][data] += 1
+                    for data in datas[i + u]:
+                        self.map[self.position['y'] + u][self.position['x'] - i][data] += 1
                 for y in range(i * 2 + 1):
                     results.pop(0)
 
         else:
             for i in range(self.level + 1):
-                for result in results[i]:
-                    self.map[self.position['y'] - i][self.position['x']][result] += 1
+                for data in datas[i]:
+                    self.map[self.position['y'] - i][self.position['x']][data] += 1
                 for u in range(i):
-                    for result in results[i - u]:
-                        self.map[self.position['y'] - i][self.position['x'] - u][result] += 1
-                    for result in results[i + u]:
-                        self.map[self.position['y'] - i][self.position['x'] + u][result] += 1
+                    for data in datas[i - u]:
+                        self.map[self.position['y'] - i][self.position['x'] - u][data] += 1
+                    for data in datas[i + u]:
+                        self.map[self.position['y'] - i][self.position['x'] + u][data] += 1
                 for y in range(i * 2 + 1):
                     results.pop(0)
-
+        print(datas)
+        print(self.map)
         return
 
     def update_inventory(self):
