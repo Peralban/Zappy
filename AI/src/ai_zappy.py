@@ -26,7 +26,7 @@ class Bot:
     def __init__(self, team_name, x, y):
         self.team_name = team_name
         self.map = init_map(x, y)
-        self.dimension = {'x' : x - 1, 'y' : y - 1}
+        self.dimension = {'x' : x, 'y' : y}
         self.inventory = {'food' : 0, 'linemate' : 0, 'deraumere' : 0, 'sibur' : 0, 'mendiane' : 0, 'phiras' : 0, 'thystame' : 0}
         self.position = {'x' : 0, 'y' : 0}
         self.direction = 1
@@ -94,14 +94,14 @@ class Bot:
         if self.direction == 4:
             self.position['y'] -= 1
 
-        if self.position['y'] > self.dimension['y']:
+        if self.position['y'] >= self.dimension['y']:
             self.position['y'] == 0
         if self.position['y'] < 0:
-            self.position['y'] == self.dimension['y']
+            self.position['y'] += self.dimension['y']
         if self.position['x'] >= self.dimension['x']:
             self.position['x'] == 0
         if self.position['x'] < 0:
-            self.position['x'] == self.dimension['x']
+            self.position['x'] += self.dimension['x']
         return
 
     def right(self):
@@ -119,6 +119,7 @@ class Bot:
     def look(self, results):
         data = []
         datas = []
+        tiles_refill = []
 
         results = str(results[1:-1])
         results = results.split(',')
@@ -136,13 +137,39 @@ class Bot:
 
         if self.direction == 1:
             for i in range(self.level + 1):
-                for data in datas[i]:
-                    self.map[self.position['y']][self.position['x'] + i][data] += 1
+                x = self.position['x'] + i
+                y = self.position['y']
+
+                if x >= self.dimension['x']:
+                    x = x - self.dimension['x']
+                        
+                if {'x' : x, 'y' : y} not in tiles_refill:
+                    for data in datas[i]:
+                        self.map[y][x][data] += 1
+                        tiles_refill.append({'x' : self.position['x'] + i, 'y' : self.position['y']})
+
                 for u in range(i):
-                    for data in datas[i - (u + 1)]:
-                        self.map[self.position['y'] - (u + 1)][self.position['x'] + i][data] += 1
-                    for data in datas[i + (u + 1)]:
-                        self.map[self.position['y'] + (u + 1)][self.position['x'] + i][data] += 1
+                    y = self.position['y'] - (u + 1)
+
+                    if y < 0:
+                        y += self.dimension['y']
+
+                    if {'x' : x, 'y' : y} not in tiles_refill:
+                        for data in datas[i - (u + 1)]:
+                            self.map[y][x][data] += 1
+                        tiles_refill.append({'x' : x, 'y' : y})
+
+
+                    y = self.position['y'] + (u + 1)
+
+                    if y >= self.dimension['y']:
+                        y -= self.dimension['y']
+
+                    if {'x' : x, 'y' : y} not in tiles_refill:
+                        for data in datas[i + (u + 1)]:
+                            self.map[y][x][data] += 1
+                        tiles_refill.append({'x' : x, 'y' : y})
+
                 for y in range(i * 2 + 1):
                     datas.pop(0)
         
@@ -181,7 +208,7 @@ class Bot:
                         self.map[self.position['y'] - i][self.position['x'] + (u + 1)][data] += 1
                 for y in range(i * 2 + 1):
                     datas.pop(0)
-        print(datas)
+        print(tiles_refill)
         print(self.map)
         return
 
