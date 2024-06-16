@@ -115,11 +115,96 @@ class Bot:
         if self.direction == 4:
             self.direction = 0
         return
+    
+    def update_map_x(self, datas, indicator):
+        tiles_refill = []
+
+        for i in range(self.level + 1):
+            x = self.position['x'] + i * indicator
+            y = self.position['y']
+
+            if x < 0:
+                x += self.dimension['x']
+            elif x >= self.dimension['x']:
+                x -= self.dimension['x']
+                    
+            if {'x' : x, 'y' : y} not in tiles_refill:
+                for data in datas[i]:
+                    self.map[y][x][data] += 1
+                    tiles_refill.append({'x' : x, 'y' : y})
+
+            for u in range(i):
+                y = self.position['y'] - (u + 1)
+
+                if y < 0:
+                    y += self.dimension['y']
+
+                if {'x' : x, 'y' : y} not in tiles_refill:
+                    for data in datas[i - (u + 1)]:
+                        self.map[y][x][data] += 1
+                    tiles_refill.append({'x' : x, 'y' : y})
+
+
+                y = self.position['y'] + (u + 1)
+
+                if y >= self.dimension['y']:
+                    y -= self.dimension['y']
+
+                if {'x' : x, 'y' : y} not in tiles_refill:
+                    for data in datas[i + (u + 1)]:
+                        self.map[y][x][data] += 1
+                    tiles_refill.append({'x' : x, 'y' : y})
+
+            for y in range(i * 2 + 1):
+                    datas.pop(0)
+        return
+    
+    def update_map_y(self, datas, indicator):
+        tiles_refill = []
+
+        for i in range(self.level + 1):
+            y = self.position['y'] + i * indicator
+            x = self.position['x']
+
+            if y < 0:
+                y += self.dimension['y']
+            elif y >= self.dimension['y']:
+                y -= self.dimension['y']
+                    
+            if {'x' : x, 'y' : y} not in tiles_refill:
+                for data in datas[i]:
+                    self.map[y][x][data] += 1
+                    tiles_refill.append({'x' : x, 'y' : y})
+
+            for u in range(i):
+                x = self.position['x'] - (u + 1)
+
+                if x < 0:
+                    x += self.dimension['x']
+
+                if {'x' : x, 'y' : y} not in tiles_refill:
+                    for data in datas[i - (u + 1)]:
+                        self.map[y][x][data] += 1
+                    tiles_refill.append({'x' : x, 'y' : y})
+
+
+                x = self.position['x'] + (u + 1)
+
+                if x >= self.dimension['x']:
+                    x -= self.dimension['x']
+
+                if {'x' : x, 'y' : y} not in tiles_refill:
+                    for data in datas[i + (u + 1)]:
+                        self.map[y][x][data] += 1
+                    tiles_refill.append({'x' : x, 'y' : y})
+
+            for y in range(i * 2 + 1):
+                    datas.pop(0)
+        return
 
     def look(self, results):
         data = []
         datas = []
-        tiles_refill = []
 
         results = str(results[1:-1])
         results = results.split(',')
@@ -135,80 +220,16 @@ class Bot:
 
         print(datas)
 
+
         if self.direction == 1:
-            for i in range(self.level + 1):
-                x = self.position['x'] + i
-                y = self.position['y']
-
-                if x >= self.dimension['x']:
-                    x = x - self.dimension['x']
-                        
-                if {'x' : x, 'y' : y} not in tiles_refill:
-                    for data in datas[i]:
-                        self.map[y][x][data] += 1
-                        tiles_refill.append({'x' : self.position['x'] + i, 'y' : self.position['y']})
-
-                for u in range(i):
-                    y = self.position['y'] - (u + 1)
-
-                    if y < 0:
-                        y += self.dimension['y']
-
-                    if {'x' : x, 'y' : y} not in tiles_refill:
-                        for data in datas[i - (u + 1)]:
-                            self.map[y][x][data] += 1
-                        tiles_refill.append({'x' : x, 'y' : y})
-
-
-                    y = self.position['y'] + (u + 1)
-
-                    if y >= self.dimension['y']:
-                        y -= self.dimension['y']
-
-                    if {'x' : x, 'y' : y} not in tiles_refill:
-                        for data in datas[i + (u + 1)]:
-                            self.map[y][x][data] += 1
-                        tiles_refill.append({'x' : x, 'y' : y})
-
-                for y in range(i * 2 + 1):
-                    datas.pop(0)
-        
+            self.update_map_x(datas, 1)
         elif self.direction == 2:
-            for i in range(self.level + 1):
-                for data in datas[i]:
-                    self.map[self.position['y'] + i][self.position['x']][data] += 1
-                for u in range(i):
-                    for data in datas[i - (u + 1)]:
-                        self.map[self.position['y'] + i][self.position['x'] - (u + 1)][data] += 1
-                    for data in datas[i + (u + 1)]:
-                        self.map[self.position['y'] + i][self.position['x'] + (u + 1)][data] += 1
-                for y in range(i * 2 + 1):
-                    datas.pop(0)
-
+            self.update_map_y(datas, 1)
         elif self.direction == 3:
-            for i in range(self.level + 1):
-                for data in datas[i]:
-                    self.map[self.position['y']][self.position['x'] - i][data] += 1
-                for u in range(i):
-                    for data in datas[i - (u + 1)]:
-                        self.map[self.position['y'] - (u + 1)][self.position['x'] - i][data] += 1
-                    for data in datas[i + (u + 1)]:
-                        self.map[self.position['y'] + (u + 1)][self.position['x'] - i][data] += 1
-                for y in range(i * 2 + 1):
-                    datas.pop(0)
-
+            self.update_map_x(datas, -1)
         else:
-            for i in range(self.level + 1):
-                for data in datas[i]:
-                    self.map[self.position['y'] - i][self.position['x']][data] += 1
-                for u in range(i):
-                    for data in datas[i - (u + 1)]:
-                        self.map[self.position['y'] - i][self.position['x'] - (u + 1)][data] += 1
-                    for data in datas[i + (u + 1)]:
-                        self.map[self.position['y'] - i][self.position['x'] + (u + 1)][data] += 1
-                for y in range(i * 2 + 1):
-                    datas.pop(0)
-        print(tiles_refill)
+            self.update_map_y(datas, -1)
+            
         print(self.map)
         return
 
