@@ -36,6 +36,15 @@ class Bot:
 
     def run(self):
         self.send_instruction("Look")
+        self.send_instruction("Right")
+        self.send_instruction("Look")
+        self.send_instruction("Right")
+        self.send_instruction("Look")
+        self.send_instruction("Right")
+        self.send_instruction("Look")
+        print(self.direction)
+        self.send_instruction("Right")
+        print(self.direction)
         while self.alive == True:
             self.get_result()
         return
@@ -63,6 +72,7 @@ class Bot:
         if self.waiting_command[0] == "Forward" and "ok" in result:
             self.forward()
         if self.waiting_command[0] == "Right" and "ok" in result:
+            print(result)
             self.right()
         if self.waiting_command[0] == "Left" and "ok" in result:
             self.left()
@@ -129,6 +139,7 @@ class Bot:
                 x -= self.dimension['x']
                     
             if {'x' : x, 'y' : y} not in tiles_refill:
+                self.map[y][x] = {'food' : 0, 'linemate' : 0, 'deraumere' : 0, 'sibur' : 0, 'mendiane' : 0, 'phiras' : 0, 'thystame' : 0, 'player' : 0}
                 for data in datas[i]:
                     self.map[y][x][data] += 1
                     tiles_refill.append({'x' : x, 'y' : y})
@@ -140,6 +151,7 @@ class Bot:
                     y += self.dimension['y']
 
                 if {'x' : x, 'y' : y} not in tiles_refill:
+                    self.map[y][x] = {'food' : 0, 'linemate' : 0, 'deraumere' : 0, 'sibur' : 0, 'mendiane' : 0, 'phiras' : 0, 'thystame' : 0, 'player' : 0}
                     for data in datas[i - (u + 1)]:
                         self.map[y][x][data] += 1
                     tiles_refill.append({'x' : x, 'y' : y})
@@ -151,6 +163,7 @@ class Bot:
                     y -= self.dimension['y']
 
                 if {'x' : x, 'y' : y} not in tiles_refill:
+                    self.map[y][x] = {'food' : 0, 'linemate' : 0, 'deraumere' : 0, 'sibur' : 0, 'mendiane' : 0, 'phiras' : 0, 'thystame' : 0, 'player' : 0}
                     for data in datas[i + (u + 1)]:
                         self.map[y][x][data] += 1
                     tiles_refill.append({'x' : x, 'y' : y})
@@ -172,6 +185,7 @@ class Bot:
                 y -= self.dimension['y']
                     
             if {'x' : x, 'y' : y} not in tiles_refill:
+                self.map[y][x] = {'food' : 0, 'linemate' : 0, 'deraumere' : 0, 'sibur' : 0, 'mendiane' : 0, 'phiras' : 0, 'thystame' : 0, 'player' : 0}
                 for data in datas[i]:
                     self.map[y][x][data] += 1
                     tiles_refill.append({'x' : x, 'y' : y})
@@ -183,6 +197,7 @@ class Bot:
                     x += self.dimension['x']
 
                 if {'x' : x, 'y' : y} not in tiles_refill:
+                    self.map[y][x] = {'food' : 0, 'linemate' : 0, 'deraumere' : 0, 'sibur' : 0, 'mendiane' : 0, 'phiras' : 0, 'thystame' : 0, 'player' : 0}
                     for data in datas[i - (u + 1)]:
                         self.map[y][x][data] += 1
                     tiles_refill.append({'x' : x, 'y' : y})
@@ -194,6 +209,7 @@ class Bot:
                     x -= self.dimension['x']
 
                 if {'x' : x, 'y' : y} not in tiles_refill:
+                    self.map[y][x] = {'food' : 0, 'linemate' : 0, 'deraumere' : 0, 'sibur' : 0, 'mendiane' : 0, 'phiras' : 0, 'thystame' : 0, 'player' : 0}
                     for data in datas[i + (u + 1)]:
                         self.map[y][x][data] += 1
                     tiles_refill.append({'x' : x, 'y' : y})
