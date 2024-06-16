@@ -72,22 +72,31 @@ sig_atomic_t replace_stop(int change)
     return stop;
 }
 
+static void remove_any_client(server_t *server, client_list_t *tmp)
+{
+    if (tmp->client->state == PLAYING)
+        free_client_player(tmp->client);
+    if (tmp->client->state == GRAPHIC)
+        free_client_gui(tmp->client);
+    eject_client_from_server(tmp->client, server);
+}
+
 int end_server(server_t *server)
 {
     client_list_t *tmp2 = NULL;
+    client_list_t *tmp = server->list;
 
-    for (client_list_t *tmp = server->list; tmp != NULL; tmp = tmp->next) {
-        if (tmp2 != NULL)
-            free(tmp2);
-        if (tmp->client->state == PLAYING)
-            free_client_player(tmp->client);
-        if (tmp->client->state == GRAPHIC)
-            free_client_gui(tmp->client);
-        eject_client_from_server(tmp->client, server);
-        tmp2 = tmp;
+    while (tmp != NULL) {
+        if (tmp->client != NULL) {
+            remove_any_client(server, tmp);
+        }
+        tmp = tmp->next;
     }
-    if (tmp2 != NULL)
-        free(tmp2);
+    if (tmp != NULL && tmp->client != NULL) {
+        remove_any_client(server, tmp);
+    }
+    if (server->list != NULL)
+        free(server->list);
     free_in_game(server->game, server->info_game);
     my_free_array(server->info_game.team_names);
     free(server->serverAddress);

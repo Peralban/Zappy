@@ -198,7 +198,8 @@ void reset_client(client_t *client, server_t *server);
 /**
  * @brief Accepts a new client connection to the server.
  *
- * This function is responsible for accepting a new client connection to the server.
+ * This function is responsible for accepting a new client connection
+ * to the server.
  * It creates a new client object and adds it to the server's list of clients.
  *
  * @param server The server that the client is connecting to.
@@ -209,7 +210,8 @@ void new_client(server_t *server);
  * @brief Ends the server operation.
  *
  * This function is responsible for ending the server operation.
- * It closes all client connections and releases any resources used by the server.
+ * It closes all client connections and releases any resources
+ * used by the server.
  *
  * @param server The server to end.
  * @return Returns 0 on successful execution and non-zero on failure.
