@@ -35,18 +35,8 @@ class Bot:
         self.waiting_command = []
 
     def run(self):
-        self.send_instruction("Look")
-        self.send_instruction("Right")
-        self.send_instruction("Look")
-        self.send_instruction("Right")
-        self.send_instruction("Look")
-        self.send_instruction("Right")
-        self.send_instruction("Look")
-        print(self.direction)
-        self.send_instruction("Right")
-        print(self.direction)
         while self.alive == True:
-            self.get_result()
+            self.get_result()        
         return
 
     def send_instruction(self, instruction):
