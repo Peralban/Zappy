@@ -57,6 +57,7 @@ static void remove_client_bis(client_list_t *tmp, client_t *client)
         tmp->prev->next = tmp->next;
     if (tmp->next != NULL)
         tmp->next->prev = tmp->prev;
+    free(tmp);
 }
 
 void remove_client_from_list(client_list_t **list, client_t *client)
@@ -67,6 +68,7 @@ void remove_client_from_list(client_list_t **list, client_t *client)
         if (tmp->next != NULL) {
             *list = tmp->next;
             (*list)->prev = NULL;
+            free(tmp);
         } else {
             (*list)->next = NULL;
             (*list)->prev = NULL;

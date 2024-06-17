@@ -102,16 +102,18 @@ static void client_state_switch(client_t *client, server_t *server,
     }
 }
 
+static void client_already_connected(server_t *server);
+
 // the send is temporary, it will be deplaced in another function.
 // the "quit" command may be temporary.
-static void recv_command(client_t *client, server_t *server)
+static int recv_command(client_t *client, server_t *server)
 {
     char buffer[1024];
     int buffer_length;
 
     buffer_length = (int)recv(client->socket, buffer, 1024, 0);
     if (!check_return_value(buffer_length, RECV))
-        return;
+        return 0;
     if (buffer[buffer_length - 2] == '\r')
         buffer[buffer_length - 2] = '\0';
     else
@@ -120,16 +122,20 @@ static void recv_command(client_t *client, server_t *server)
     if (strcmp(buffer, "quit") == 0) {
         reset_client(client, server);
         eject_client_from_server(client, server);
+        client_already_connected(server);
+        return 1;
     } else
         client_state_switch(client, server, buffer);
+    return 0;
 }
 
 static void client_already_connected(server_t *server)
 {
     for (client_list_t *tmp = server->list;
     tmp->client != NULL; tmp = tmp->next) {
-        if (FD_ISSET(tmp->client->socket, &server->readfds))
-            recv_command(tmp->client, server);
+        if (FD_ISSET(tmp->client->socket, &server->readfds) &&
+        recv_command(tmp->client, server))
+            break;
         if (tmp->next == NULL || tmp->client == NULL)
             break;
     }

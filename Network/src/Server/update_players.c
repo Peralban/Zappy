@@ -58,19 +58,18 @@ void set_ticks(client_t *client)
 
 void reset_client(client_t *client, server_t *server)
 {
-    linked_list_drone_t *list;
+    linked_list_drone_t **list;
 
-    client->drone = NULL;
     for (int i = 0; i < MAX_COMMAND; i++) {
         free(client->command[i]);
         client->command[i] = NULL;
     }
     if (client->drone == NULL)
         return;
-    list = server->game->map[client->drone->x][client->drone->y].drone_list;
-    for (linked_list_drone_t *tmp = list; tmp != NULL; tmp = tmp->next) {
+    list = &server->game->map[client->drone->x][client->drone->y].drone_list;
+    for (linked_list_drone_t *tmp = *list; tmp != NULL; tmp = tmp->next) {
         if (tmp->drone == client->drone) {
-            remove_drone_in_list(&list, tmp->drone);
+            remove_drone_in_list(list, tmp->drone);
             break;
         }
     }

@@ -24,13 +24,6 @@ void new_client(server_t *server)
     send(client_socket, "WELCOME\n", 8, 0);
 }
 
-static void free_client_player(client_t *client)
-{
-    free(client->drone);
-    for (int i = 0; client->command[i] != NULL; i++)
-        free(client->command[i]);
-}
-
 static void free_client_gui(client_t *client)
 {
     for (int i = 0; client->command[i] != NULL; i++)
@@ -53,8 +46,6 @@ static void free_egg_list(linked_list_egg_t *egg_list)
 static void free_in_game(in_game_t *game, info_game_t info_game)
 {
     for (int i = 0; i < info_game.width; i++) {
-        for (int j = 0; j < info_game.height; j++)
-            free(game->map[i][j].drone_list);
         free(game->map[i]);
     }
     free(game->map);
@@ -75,7 +66,7 @@ sig_atomic_t replace_stop(int change)
 static void remove_any_client(server_t *server, client_list_t *tmp)
 {
     if (tmp->client->state == PLAYING)
-        free_client_player(tmp->client);
+        reset_client(tmp->client, server);
     if (tmp->client->state == GRAPHIC)
         free_client_gui(tmp->client);
     eject_client_from_server(tmp->client, server);
@@ -87,16 +78,16 @@ int end_server(server_t *server)
     client_list_t *tmp = server->list;
 
     while (tmp != NULL) {
-        free(tmp2);
+        tmp2 = tmp->next;
         if (tmp->client != NULL) {
             remove_any_client(server, tmp);
+            break;
         }
-        tmp2 = tmp;
-        tmp = tmp->next;
+        tmp = tmp2;
     }
-    if (tmp != NULL && tmp->client != NULL) {
+    if (tmp != NULL && tmp->client != NULL)
         remove_any_client(server, tmp);
-    }
+    free(tmp);
     if (server->list != NULL)
         free(server->list);
     free_in_game(server->game, server->info_game);
