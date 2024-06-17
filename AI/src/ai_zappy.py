@@ -62,7 +62,6 @@ class Bot:
         if self.waiting_command[0] == "Forward" and "ok" in result:
             self.forward()
         if self.waiting_command[0] == "Right" and "ok" in result:
-            print(result)
             self.right()
         if self.waiting_command[0] == "Left" and "ok" in result:
             self.left()
@@ -104,13 +103,13 @@ class Bot:
             self.position['x'] += self.dimension['x']
         return
 
-    def right(self):
+    def left(self):
         self.direction -= 1
         if self.direction == 0:
             self.direction = 4
         return
 
-    def left(self):
+    def right(self):
         self.direction += 1
         if self.direction == 4:
             self.direction = 0
