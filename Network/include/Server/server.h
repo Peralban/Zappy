@@ -154,10 +154,16 @@ in_game_t *init_game(info_game_t info_game);
 void update_players(server_t *server);
 
 /**
- * @brief Updates the game state.
+ * @brief Updates the game state if the time has come.
  * @param server The server containing the game state to update.
  */
 void game_tick(server_t *server);
+
+/**
+ * @brief Updates the game state.
+ * @param server The server containing the game state to update.
+ */
+void game_tick_action(server_t *server);
 
 /**
  * @brief sets the number of ticks to wait for

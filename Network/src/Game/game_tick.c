@@ -6,6 +6,7 @@
 */
 
 #include "Server/server.h"
+#include "ClientList/client_list.h"
 #include <sys/time.h>
 
 static uint64_t get_time(void)
@@ -34,19 +35,40 @@ static void spawn_resources(server_t *server)
     }
 }
 
+static void remove_dead_players(server_t *server)
+{
+    for (client_list_t *tmp = server->list; tmp != NULL; tmp = tmp->next) {
+        if (tmp->client == NULL)
+            continue;
+        if (tmp->client->drone == NULL && tmp->client->state == PLAYING) {
+            eject_client_from_server(tmp->client, server);
+            remove_dead_players(server);
+            return;
+        }
+    }
+}
+
+void game_tick_action(server_t *server)
+{
+    update_players(server);
+    remove_dead_players(server);
+    server->game->spawn_tick++;
+    if (server->game->spawn_tick >= 20) {
+        server->game->spawn_tick = 0;
+        spawn_resources(server);
+    }
+}
+
 void game_tick(server_t *server)
 {
     static uint64_t last_tick_time = 0;
     uint64_t current_time = get_time();
 
+    if (server->game->paused)
+        return;
     if (current_time - last_tick_time >=
-        (1000000 / (uint64_t)server->info_game.freq)) {
-        update_players(server);
-        server->game->spawn_tick++;
+    (1000000 / (uint64_t)server->info_game.freq)) {
+        game_tick_action(server);
         last_tick_time = current_time;
-    }
-    if (server->game->spawn_tick >= 20) {
-        server->game->spawn_tick = 0;
-        spawn_resources(server);
     }
 }

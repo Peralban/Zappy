@@ -5,7 +5,7 @@
 ** No file there , just an epitech header example .
 */
 
-#include "Admin/admin_function.h"
+#include "Admin/admin.h"
 #include "Server/server.h"
 #include "lib/my.h"
 #include <stdio.h>
@@ -23,13 +23,11 @@ static void exec_one_admin_command(client_t *client, server_t *server,
         if (len == 1 + commands_admin[j].nb_args)
             commands_admin[j].function(client, server, command_args + 1);
         else
-            //gui_sbp(client->socket);
-            printf("sbp\n");
+            send(client->socket, "Not enough arguments\n", 21, 0);
         my_free_array(command_args);
         return;
     }
-    //gui_suc(client->socket);
-    printf("suc\n");
+    send(client->socket, "Unknown command\n", 16, 0);
     my_free_array(command_args);
 }
 

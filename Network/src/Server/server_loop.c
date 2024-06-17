@@ -10,7 +10,7 @@
 #include "Game/game_functions.h"
 #include "GuiProtocol/gui.h"
 #include "GuiProtocol/gui_event.h"
-#include "Admin/admin_function.h"
+#include "Admin/admin.h"
 #include "lib/my.h"
 #include <stdio.h>
 

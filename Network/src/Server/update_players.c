@@ -73,7 +73,6 @@ void reset_client(client_t *client, server_t *server)
         free(client->command[i]);
         client->command[i] = NULL;
     }
-    client->state = WAITING;
 }
 
 static bool update_life(client_t *client, server_t *server)
@@ -149,11 +148,11 @@ static bool update_incantation(client_t *client, server_t *server)
 
 static void update_drone_action(client_t *client, server_t *server)
 {
+    client->drone->ticks--;
     if (client->drone->ticks == 0) {
         exec_command(client->command[0], client, server);
         shift_commands(client);
-    } else
-        client->drone->ticks--;
+    }
 }
 
 void update_players(server_t *server)

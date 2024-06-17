@@ -5,7 +5,7 @@
 ** DESCRIPTION
 */
 
-#include "Admin/admin_function.h"
+#include "Admin/admin.h"
 
 static bool is_a_number(char *str)
 {
