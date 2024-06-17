@@ -129,7 +129,6 @@ float PlayerPos::getTileSize()
     return this->_TileSize;
 }
 
-
 // -------------- SETTERS --------------
 
 void PlayerPos::setX(int x)

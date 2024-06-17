@@ -64,7 +64,6 @@ def connect_to_server(host, port, name):
                                     sys.exit(84)
                                 else:
                                     nb_players = int(message.strip())
-                                    send_instruction(str(nb_players))
                                     if nb_players != 0:
                                         parsing.sub_process()
                             if current_line == 3:

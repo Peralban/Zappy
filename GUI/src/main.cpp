@@ -21,10 +21,13 @@ int main(int ac, char **av)
 	std::cout << "Starting Zappy" << std::endl;
 	guiNetworkClient *client = new guiNetworkClient();
 	ZappyGame *zappy = new ZappyGame();
+
 	irrlichtWindow window(width, height, platformX, platformY, tileSize, irr::video::EDT_OPENGL, quality, debug);
+	window.parseArgs(ac, av);
 	window.windowCreateDevice();
 	if (window.getDevice() == nullptr)
 		return 1;
+
 	window.initDrivers();
 	window.initLoader();
 	window.initCamera();
@@ -34,7 +37,6 @@ int main(int ac, char **av)
 	window.linkZappyGame(zappy);
 	window.linkGuiClient(client);
 
-	window.getGuiClient()->parseArgs(ac, av);
 	window.getGuiClient()->createSocket();
 	window.getGuiClient()->initIdentification();
 	std::cout << "map size is " << window.getGuiClient()->getMapSize() << std::endl;

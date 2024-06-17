@@ -8,6 +8,7 @@ Retrieve value from arguments given by the user.
 
 import argparse
 import sys
+import os
 import subprocess
 
 def parse_arguments():
@@ -40,4 +41,4 @@ if __name__ == "__main__":
 
 def sub_process():
     port, name, host = parse_arguments()
-    subprocess.run(["python3", "zappy_ai", "-p", str(port), "-n", str(name), "-h", str(host)])
+    os.popen(f'python3 zappy_ai -p {port} -n {name} -h {host}')

@@ -48,16 +48,6 @@ public:
     void setLinkedGame(irrlichtWindow *linkedWindow);
 
     /**
-     * @brief Parses the command line arguments.
-     * @param ac The number of command line arguments.
-     * @param av An array of command line arguments.
-     * 
-     * this will use the command line arguments to set the server address and port.
-     * like this: ./zappy_gui adress port
-     */
-    void parseArgs(int ac, char **av);
-
-    /**
      * @brief Creates a socket for network communication.
      */
     void createSocket();
@@ -80,14 +70,27 @@ public:
 
     /**
      * @brief send a message to the server saying that we are a GUI.
+     * 
+     * basically consist of handleWrite("GRAPHIC\n");
      */
     void initIdentification();
 
     /**
-     * @brief Retrieves the server response.
-     * @return The server response as a string.
+     * @brief Selects the socket for reading.
      * 
-     * this is used with a blocking socket to get the server response.
+     * if the socket is ready to read, it will call handleRead.
+     */
+    void selectSocket();
+
+    /**
+     * @brief Retrieves the bytes available to read.
+     * @return The server data as a string.
+     */
+    std::string getServerData();
+
+    /**
+     * @brief Retrieves all of the bytes read from the server as a string.
+     * @return The server response as a string.
      */
     std::string getServerResponse();
 
@@ -109,17 +112,23 @@ public:
      */
     int getSocketFd();
 
+    /**
+     * @brief Retrieves the server address.
+     * @return The server address.
+     */
+    struct sockaddr_in getServerAddr();
+
 private:
     std::string _ServerAdress; // The server address
     int _ServerPort; // The server port
 
-    char _Buffer[8192]; // The buffer for reading data
-    int _BytesRead; // The number of bytes read
+    std::string _ServData; // The data read from the server
 
     int _Sockfd; // The socket file descriptor
     struct sockaddr_in _ServerAddr; // The server address structure
     irrlichtWindow *_LinkedWindow; // The linked irrlichtWindow object
     ZappyGame *_LinkedGame; // The linked ZappyGame object
+    ServerDataParser *_ServerDataParser; // The server data parser object
 
-    std::function<void(std::string)> _printServerMessage; // A pointer to a function in the ZappyGame class
+    std::function<void(std::string)> _HandleServerMessage; // A pointer to a function in the ZappyGame class
 };
