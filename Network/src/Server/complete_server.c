@@ -87,9 +87,11 @@ int end_server(server_t *server)
     client_list_t *tmp = server->list;
 
     while (tmp != NULL) {
+        free(tmp2);
         if (tmp->client != NULL) {
             remove_any_client(server, tmp);
         }
+        tmp2 = tmp;
         tmp = tmp->next;
     }
     if (tmp != NULL && tmp->client != NULL) {
