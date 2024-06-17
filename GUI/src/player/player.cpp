@@ -38,17 +38,29 @@ Player::~Player()
 
 ZappyGame *Player::getParentGame()
 {
+    if (this->_ParentGame == nullptr) {
+        std::cerr << "getParentGame: Error: ParentGame is not setted" << std::endl;
+        exit(EXIT_FAILURE);
+    }
     return this->_ParentGame;
 }
 
 void Player::setParentGame(ZappyGame *parentGame)
 {
+    if (parentGame == nullptr) {
+        std::cerr << "setParentGame: Error: trying to set ParentGame but given parentGame is null" << std::endl;
+        exit(EXIT_FAILURE);
+    }
     this->_ParentGame = parentGame;
     this->_PlayerPosition.initPos();
 }
 
 void Player::setName(std::string name)
 {
+    if (name == "undefined") {
+        std::cout << "setName: Warning: Player name is undefined, name is not setted" << std::endl;
+        return;
+    }
     this->_Name = name;
 }
 
@@ -60,7 +72,8 @@ void Player::playerInit()
         _chessPieces->getPiece(_PieceType),
         this->_PlayerPosition.getVecPosConverted(),
         this->_PlayerPosition.getVecRotConverted(),
-        WHITE);
+        WHITE
+    );
 }
 
 void Player::setTeam(Team *team)
@@ -85,8 +98,15 @@ void Player::setPlayerPosition(PlayerPos *pos)
 
 void Player::updatePlayerPos()
 {
-    std::cout << "Player position updated" << std::endl;
+    if (this->_chessPieceNode == nullptr) {
+        std::cerr << "updatePlayerPos: Error: ChessPieceNode is not setted" << std::endl;
+        exit(EXIT_FAILURE);
+    }
+    if (this->_PlayerPosition.getVecPosConverted() == irr::core::vector3df(0, 0, 0))
+        std::cout << "updatePlayerPos: Warning: PlayerPosition is not setted" << std::endl;
     this->_chessPieceNode->setPosition(this->_PlayerPosition.getVecPosConverted());
+    if (this->_PlayerPosition.getVecRotConverted() == irr::core::vector3df(0, 0, 0))
+        std::cout << "updatePlayerPos: Warning: PlayerRotation is not setted" << std::endl;
     this->_chessPieceNode->setRotation(this->_PlayerPosition.getVecRotConverted());
 }
 
@@ -105,8 +125,16 @@ void Player::setLevel(int level)
 
 void Player::updateLevel()
 {
+    if (this->_chessPieceNode == nullptr) {
+        std::cerr << "updateLevel: Error: ChessPieceNode is not setted" << std::endl;
+        exit(EXIT_FAILURE);
+    }
     this->_chessPieceNode->remove();
     chessPiece *_chessPieces = this->_ParentGame->getChessPieces();
+    if (_chessPieces == nullptr) {
+        std::cerr << "updateLevel: Error: ChessPieces wasn't correctly getted" << std::endl;
+        exit(EXIT_FAILURE);
+    }
     this-> _chessPieceNode = _chessPieces->placePiece(
         _chessPieces->getPiece(_PieceType),
         this->_PlayerPosition.getVecPosConverted(),

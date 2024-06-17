@@ -11,6 +11,10 @@
 
 chessPiece::chessPiece(irrlichtWindow *window)
 {
+    if (window == nullptr) {
+        std::cerr << "chessPiece: Error: given parent window is Null" << std::endl;
+        exit(84);
+    }
     _ParentWindow = window;
     _SceneManager = window->getSceneManager();
     _Device = window->getDevice();
@@ -68,6 +72,14 @@ void chessPiece::setCurrentQuality(quality newQuality)
 
 irr::scene::IAnimatedMeshSceneNode *chessPiece::placePiece(irr::scene::IAnimatedMesh *pieceToPlace, irr::core::vector3df position, irr::core::vector3df rotation, teamColor color = DEFAULT)
 {
+    if (_SceneManager == nullptr) {
+        std::cerr << "placePiece: Error: Scene manager is not set." << std::endl;
+        exit(84);
+    }
+    if (pieceToPlace == nullptr) {
+        std::cerr << "placePiece: Error: Piece to place is null." << std::endl;
+        exit(84);
+    }
     irr::scene::IAnimatedMeshSceneNode* pawnNode = _SceneManager->addAnimatedMeshSceneNode(pieceToPlace);
     if (pawnNode) {
         pawnNode->setPosition(position); // Adjust position as needed
@@ -83,7 +95,7 @@ irr::scene::IAnimatedMeshSceneNode *chessPiece::placePiece(irr::scene::IAnimated
         pawnNode->setMaterialType(irr::video::EMT_SOLID);
         pawnNode->setMaterialFlag(irr::video::EMF_BACK_FACE_CULLING, false);
     } else {
-        std::cerr << "Error: Could not create mesh scene node for pawn." << std::endl;
+        std::cerr << "placePiece: Error: Could not create mesh scene node for pawn." << std::endl;
         _Device->drop();
         return nullptr;
     }

@@ -10,6 +10,7 @@
 #include <irrlicht/irrlicht.h>
 #include "chessElement/chessPiece.hpp"
 #include "player/player.hpp"
+#include "event/serverDataReceiver.hpp"
 #include <iostream>
 #include <vector>
 
@@ -40,6 +41,8 @@ class ZappyGame {
          */
         void linkWithDevice(irrlichtWindow *parentDevice);
 
+        void setServerDataParser(ServerDataParser *serverDataParser);
+
         /**
          * @brief Loads every chess pieces for the game so they will be loaded only one time.
          * 
@@ -64,6 +67,13 @@ class ZappyGame {
          * The time unit is the number of action per second.
          */
         void setTimeUnit(int timeUnit);
+
+        /**
+         * @brief Initializes the server events for the game.
+         * 
+         * This function initializes the server data parser object.
+         */
+        void initServerEvents();
         
         /**
          * @brief Gets the chess pieces of the game.
@@ -99,21 +109,16 @@ class ZappyGame {
          * @param name The name of the player to get.
          * @return A pointer to the player.
          */
-        Player *getPlayer(std::string name);
+        Player *getPlayer(std::string name);;
 
-        /**
-         * @brief Prints a server message.
-         * 
-         * @param message The message to print.
-         * 
-         * this is used to debug, the message will be printed in the console.
-         */
-        void printServerMessage(std::string message);
+        ServerDataParser *getServerDataParser();
 
     private:
         irrlichtWindow *_ParentDevice; /**< The parent irrlichtWindow object. */
 
         chessPiece *_chessPieces; /**< The chess pieces Object. */
+
+        ServerDataParser *_serverDataParser; /**< The server data parser object. */
     
         std::vector<std::pair<std::string, Player*>> _playerList; /**< The list of players in the game. */
 

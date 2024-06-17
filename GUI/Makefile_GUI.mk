@@ -12,6 +12,7 @@ SRC		=       chessElement/chessBoard.cpp 		\
 				loader/objLoader.cpp 				\
 				loader/textureLoader.cpp 			\
 				event/irrlichtEventHandler.cpp 		\
+				event/serverDataReceiver.cpp 		\
 				zappyIrrlicht/irrlichtWindow.cpp    \
 				networkGui/guiClient.cpp			\
 				player/team.cpp     				\

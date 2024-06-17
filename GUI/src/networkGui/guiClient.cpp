@@ -6,6 +6,7 @@
 */
 
 #include "guiClient.hpp"
+#include "zappyIrrlicht/irrlichtWindow.hpp"
 
 guiNetworkClient::guiNetworkClient()
 {
@@ -13,8 +14,7 @@ guiNetworkClient::guiNetworkClient()
 
 guiNetworkClient::guiNetworkClient(irrlichtWindow *linkedWindow)
 {
-    _LinkedWindow = linkedWindow;
-    _printServerMessage = std::bind(&ZappyGame::printServerMessage, linkedWindow->getLinkedZappyGame(), std::placeholders::_1);
+    setLinkedGame(linkedWindow);
 }
 
 guiNetworkClient::~guiNetworkClient()
@@ -22,50 +22,33 @@ guiNetworkClient::~guiNetworkClient()
     close(_Sockfd);
 }
 
-void guiNetworkClient::parseArgs(int ac, char **av)
-{
-   if (ac != 3) {
-        std::cerr << "Usage: " << av[0] << " <server_ip> <server_port>" << std::endl;
-        exit(EXIT_FAILURE);
-    }
-    std::regex ip_regex(R"(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})");
-    if (!std::regex_match(av[1], ip_regex)) {
-        std::cerr << "Invalid server IP address" << std::endl;
-        exit(EXIT_FAILURE);
-    }
-    if (std::stoi(av[2]) < 1024 || std::stoi(av[2]) > 65535) {
-        std::cerr << "Invalid server port" << std::endl;
-        exit(EXIT_FAILURE);
-    }
-    _ServerAdress = av[1];
-    _ServerPort = std::stoi(av[2]);
-}
-
 void guiNetworkClient::createSocket()
 {
     _Sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if (_Sockfd < 0) {
-        perror("Socket creation failed");
+        std::cerr << "createSocket: Error: socket creation failed" << std::endl;
         exit(EXIT_FAILURE);
     }
 
     _ServerAddr.sin_family = AF_INET;
     _ServerAddr.sin_port = htons(_ServerPort);
+
     if (inet_pton(AF_INET, _ServerAdress.c_str(), &_ServerAddr.sin_addr) <= 0) {
-        perror("Invalid address/Address not supported");
+        std::cerr << "createSocket: Error: Invalid address/ Address not supported" << std::endl;
         exit(EXIT_FAILURE);
     }
     if (connect(_Sockfd, (struct sockaddr*)&_ServerAddr, sizeof(_ServerAddr)) < 0) {
-        perror("Connection failed");
+        perror("createSocket: Error: Connection failed");
         exit(EXIT_FAILURE);
     }
+    std::cout << "--------------------- Successfully connected to " << _ServerAdress << ":" << _ServerPort << " ---------------------" << std::endl;
 }
 
 void guiNetworkClient::handleRead()
 {
     std::string response = getServerResponse();
     if (response.size() > 0)
-        _printServerMessage(response);
+        _HandleServerMessage(response);
 }
 
 void guiNetworkClient::handleWrite(std::string message)
@@ -77,24 +60,41 @@ void guiNetworkClient::initIdentification()
 {
     handleWrite("GRAPHIC\n");
     std::string response = getServerResponse();
-    if (response.size() > 0) {
-        if (response.find("WELCOME") != std::string::npos) {
-            std::cout << "Successfully connected to server" << std::endl;
-        }
-    }
+    if (response.size() > 0 && response.find("WELCOME") != std::string::npos)
+        std::cout << "------- Successfully registered as GRAPHIC -----------"<< std::endl;
 }
 
 void guiNetworkClient::makeNonBlocking()
 {
     int flags = fcntl(_Sockfd, F_GETFL, 0);
     if (flags == -1) {
-        perror("fcntl");
+        std::cerr << "makeNonBlocking: Error: failed to get socket flags" << std::endl;
         exit(EXIT_FAILURE);
     }
     if (fcntl(_Sockfd, F_SETFL, flags | O_NONBLOCK) == -1) {
-        perror("fcntl");
+        std::cerr << "makeNonBlocking: Error: failed to set socket to non-blocking" << std::endl;
         exit(EXIT_FAILURE);
     }
+    std::cout << "Socket is now non-blocking" << std::endl;
+}
+
+void guiNetworkClient::selectSocket()
+{
+    int _Select;
+    fd_set _ReadFds;
+    struct timeval _TimeOut;
+    FD_ZERO(&_ReadFds);
+    FD_SET(_Sockfd, &_ReadFds);
+    _TimeOut.tv_sec = 0;
+    _TimeOut.tv_usec = 0;
+    _Select = select(_Sockfd + 1, &_ReadFds, NULL, NULL, &_TimeOut);
+    if (_Select < 0) {
+        std::cerr << "selectSocket: Error: select failed" << std::endl;
+        exit(EXIT_FAILURE);
+    }
+    if (_Select > 0)
+        if (FD_ISSET(_Sockfd, &_ReadFds))
+            handleRead();
 }
 
 std::string guiNetworkClient::getMapSize()
@@ -111,25 +111,63 @@ std::string guiNetworkClient::getTimeUnit()
 
 std::string guiNetworkClient::getServerResponse()
 {
-        _Buffer[0] = '\0';
-    _BytesRead = read(_Sockfd, _Buffer, sizeof(_Buffer) - 1);
-    if (_BytesRead > 0) {
-        _Buffer[_BytesRead] = '\0';
-        return _Buffer;
-    } else if (_BytesRead < 0 && errno != EWOULDBLOCK) {
-        perror("Read failed");
-        exit(EXIT_FAILURE);
+    std::string response = getServerData();
+    if (response.size() > 0)
+        _ServData.append(response);
+    if (response == "\n") {
+        std::string data = _ServData;
+        _ServData.clear();
+        return data;
     }
-    return "";
+    return getServerResponse();
+}
+
+std::string guiNetworkClient::getServerData()
+{
+    char Buffer[2] = {0};
+    std::string message = "";
+
+    if (recv(this->_Sockfd, Buffer, 1, 0) < 0)
+        return "";
+    message = std::string(Buffer);
+    return message;
 }
 
 int guiNetworkClient::getSocketFd()
 {
+    if (_Sockfd < 0) {
+        std::cerr << "getSocketFd: Error: socket file descriptor not initialized" << std::endl;
+        exit(EXIT_FAILURE);
+    }
     return _Sockfd;
+}
+
+struct sockaddr_in guiNetworkClient::getServerAddr()
+{
+    if (_ServerAddr.sin_port == 0) {
+        std::cerr << "getServerAddr: Error: server address not initialized" << std::endl;
+        exit(EXIT_FAILURE);
+    }
+    return _ServerAddr;
 }
 
 void guiNetworkClient::setLinkedGame(irrlichtWindow *linkedWindow)
 {
+    if (!linkedWindow) {
+        std::cerr << "Error: irrlichtWindow not linked" << std::endl;
+        exit(EXIT_FAILURE);
+    }
+    _ServerAdress = linkedWindow->getServerAdress();
+    _ServerPort = linkedWindow->getServerPort();
     _LinkedWindow = linkedWindow;
-    _printServerMessage = std::bind(&ZappyGame::printServerMessage, linkedWindow->getLinkedZappyGame(), std::placeholders::_1);
+    if (!linkedWindow->getLinkedZappyGame()) {
+        std::cerr << "setLinkedGame Error: linked window is not linked to a game" << std::endl;
+        exit(EXIT_FAILURE);
+    }
+     if (!linkedWindow->getLinkedZappyGame()->getServerDataParser()) {
+        std::cerr << "setLinkedGame Error: linked window linked game is not linked to a server data parser" << std::endl;
+        exit(EXIT_FAILURE);
+    }
+    _ServerDataParser = linkedWindow->getLinkedZappyGame()->getServerDataParser();
+    _HandleServerMessage = std::bind(&ServerDataParser::HandleServerMessage, linkedWindow->getLinkedZappyGame()->getServerDataParser(), std::placeholders::_1);
 }
