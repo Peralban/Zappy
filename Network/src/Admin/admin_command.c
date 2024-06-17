@@ -5,7 +5,7 @@
 ** No file there , just an epitech header example .
 */
 
-#include "Admin/admin.h"
+#include "Admin/admin_function.h"
 #include "Server/server.h"
 #include "lib/my.h"
 #include <stdio.h>

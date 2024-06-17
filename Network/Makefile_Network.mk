@@ -42,6 +42,7 @@ SRC		= 		main.c								\
 				GuiProtocol/player_info_cmd.c		\
 				GuiProtocol/time_cmd.c				\
 				Admin/admin_command.c				\
+				Admin/admin_function.c				\
 
 TRUE_SRC 	= 	$(patsubst %,src/%, $(SRC))
 
