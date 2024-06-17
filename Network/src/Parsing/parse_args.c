@@ -34,9 +34,9 @@ bool do_parsing_argument(parsing_argument_t data, int *i, int j)
 
     if (*data.n_flag) {
         strcat(data.array[NAMES], " ");
-        if (strcmp(tmp, "GRAPHIC") == 0) {
+        if (strcmp(tmp, "GRAPHIC") == 0 || strcmp(tmp, "ADMIN") == 0) {
+            printf("Invalid team name, can't be \'%s\'\n", tmp);
             free(tmp);
-            printf("Invalid team name, can't be 'GRAPHIC'\n");
             return true;
         }
         strcat(data.array[NAMES], tmp);
