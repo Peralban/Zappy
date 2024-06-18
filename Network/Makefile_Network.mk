@@ -13,6 +13,7 @@ SRC		= 		main.c								\
 				ErrorHandling/check_return_value.c	\
 				Server/zappy_network.c				\
 				Server/server_loop.c				\
+				Server/complete_server.c			\
 				Server/init_in_game_stuct.c			\
 				Server/update_players.c				\
 				Parsing/parse_args.c				\
