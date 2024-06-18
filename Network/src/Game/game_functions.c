@@ -86,6 +86,11 @@ void remove_drone_in_list(linked_list_drone_t **list, drone_t *drone)
 {
     linked_list_drone_t *tmp = *list;
 
+    if ((*list)->next == NULL && (*list)->prev == NULL) {
+        free(*list);
+        *list = NULL;
+        return;
+    }
     while (tmp != NULL && tmp->drone != drone)
         tmp = tmp->next;
     if (tmp == NULL)
