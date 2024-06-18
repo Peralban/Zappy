@@ -230,3 +230,5 @@ int end_server(server_t *server);
  * @return The new value of the stop variable.
  */
 sig_atomic_t replace_stop(int change);
+
+void client_already_connected(server_t *server);
