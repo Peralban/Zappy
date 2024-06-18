@@ -243,8 +243,10 @@ void client_already_connected(server_t *server);
 /**
  * @brief Creates a list of drones for a specific tile.
  *
- * This function is responsible for creating a list of drones that are currently on a specific tile.
- * It takes a tile and a drone as parameters, and adds the drone to the tile's list of drones.
+ * This function is responsible for creating a list of drones
+ * that are currently on a specific tile.
+ * It takes a tile and a drone as parameters,
+ * and adds the drone to the tile's list of drones.
  *
  * @param tile The tile to which the drone list is to be added.
  * @param drone The drone to be added to the tile's drone list.

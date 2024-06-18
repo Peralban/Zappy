@@ -48,8 +48,8 @@ void adm_get_inventory(client_t *client, server_t *server, char **args)
     if (tmp == NULL)
         return print_and_send("Drone not found\n", client);
     sprintf(buffer, "Drone %d inventory:\n\t"
-    "Food: %d\n\tLinemate: %d\n\tDeraumere: %d\n\tSibur: %d\n\tMendiane: %d\n\t"
-    "Phiras: %d\n\tThystame: %d\n", ref_id, tmp->client->drone->inventory[0],
+    "Food: %d\n\tLinemate: %d\n\tDeraumere: %d\n\tSibur: %d\n\tMendiane: %d\n"
+    "\tPhiras: %d\n\tThystame: %d\n", ref_id, tmp->client->drone->inventory[0],
     tmp->client->drone->inventory[1], tmp->client->drone->inventory[2],
     tmp->client->drone->inventory[3], tmp->client->drone->inventory[4],
     tmp->client->drone->inventory[5], tmp->client->drone->inventory[6]);
@@ -63,7 +63,8 @@ void adm_help(client_t *client, server_t *server, char **args)
     (void)server;
     (void)args;
     sprintf(buffer, "Available commands:\n"
-    "Drone ID is the ID of the drone you want to interact with, it starts at 0\n"
+    "Drone ID is the ID of the drone you want to interact with, "
+    "it starts at 0\n"
     "\t/pause\n"
     "\t/set_freq [freq]\n"
     "\t/tick [time] [unit] (unit: t, s, m, h, d)\n"

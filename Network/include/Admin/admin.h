@@ -192,7 +192,8 @@ static const tick_command_admin_t tick_commands_admin[] = {
 /**
  * @brief Prints and sends a message.
  *
- * This function is responsible for printing and sending a message. It takes a message and a client as parameters.
+ * This function is responsible for printing and sending a message.
+ * It takes a message and a client as parameters.
  *
  * @param msg The message to be printed and sent.
  * @param client The client to whom the message is sent.
@@ -202,7 +203,8 @@ void print_and_send(char *msg, client_t *client);
 /**
  * @brief Gets a drone by its ID.
  *
- * This function is responsible for getting a drone by its ID. It takes a server and an ID as parameters.
+ * This function is responsible for getting a drone by its ID.
+ * It takes a server and an ID as parameters.
  *
  * @param server The server where the drone is located.
  * @param id The ID of the drone.
