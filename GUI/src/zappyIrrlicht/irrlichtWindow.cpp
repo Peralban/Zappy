@@ -121,9 +121,6 @@ void irrlichtWindow::initChessBoard()
         std::cerr << "initChessBoard: Error: Could not create chess board" << std::endl;
         exit(EXIT_FAILURE);
     }
-    this->_chessBoard->createBoard();
-    if (this->_Debug)
-	    std::cout << "chessBoard created" << std::endl;
 }
 
 char *irrlichtWindow::getServerAdress()
@@ -223,6 +220,15 @@ void irrlichtWindow::linkGuiClient(guiNetworkClient *clientToLink)
         exit(EXIT_FAILURE);
     }
     this->_LinkedZappyGame->getServerDataParser()->SetParentClient(clientToLink);
+}
+
+chessBoard *irrlichtWindow::getChessBoard()
+{
+    if (!this->_chessBoard) {
+        std::cerr << "getChessBoard: Error: ChessBoard not initialized" << std::endl;
+        exit(EXIT_FAILURE);
+    }
+    return this->_chessBoard;
 }
 
 ZappyGame *irrlichtWindow::getLinkedZappyGame()

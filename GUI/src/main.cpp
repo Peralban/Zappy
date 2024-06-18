@@ -31,17 +31,22 @@ int main(int ac, char **av)
 	window.initDrivers();
 	window.initLoader();
 	window.initCamera();
-	window.initChessBoard();
 	window.initEventReceiver();
+	window.initChessBoard();
 
+	std::cout << " -------------- LINKING CLIENT AND ZAPPY -------------- "	<< std::endl;
 	window.linkZappyGame(zappy);
 	window.linkGuiClient(client);
-
+	std::cout << " -------------- CREATING SOCKET -------------- "	<< std::endl;
 	window.getGuiClient()->createSocket();
+	std::cout << " -------------- INITIALIZING IDENTIFICATION -------------- "	<< std::endl;
 	window.getGuiClient()->initIdentification();
+	std::cout << " -------------- INITIALIZING SERVER DATA RECEIVER -------------- "	<< std::endl;
 	std::cout << "map size is " << window.getGuiClient()->getMapSize() << std::endl;
 	std::cout << "time unit is " << window.getGuiClient()->getTimeUnit() << std::endl;
 	window.getGuiClient()->makeNonBlocking();
+	std::cout << " -------------- INITIALIZING CHESS BOARD -------------- "	<< std::endl;
+	window.getChessBoard()->createBoard();
 
 	window.getLinkedZappyGame()->loadChessPieces();
 	window.getLinkedZappyGame()->addPlayer("player1");

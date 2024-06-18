@@ -38,6 +38,10 @@ class chessBoard {
          */
         ~chessBoard();
 
+        void setWidth(int width);
+
+        void setHeight(int height);
+
         /**
          * @brief Creates the chess board.
          * 

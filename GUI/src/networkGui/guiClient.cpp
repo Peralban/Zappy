@@ -29,10 +29,11 @@ void guiNetworkClient::createSocket()
         std::cerr << "createSocket: Error: socket creation failed" << std::endl;
         exit(EXIT_FAILURE);
     }
+    std::cout << "--------------------- Socket created ---------------------" << std::endl;
 
     _ServerAddr.sin_family = AF_INET;
     _ServerAddr.sin_port = htons(_ServerPort);
-
+    std::cout << "--------------------- Connecting to " << _ServerAdress << ":" << _ServerPort << " ---------------------" << std::endl;
     if (inet_pton(AF_INET, _ServerAdress.c_str(), &_ServerAddr.sin_addr) <= 0) {
         std::cerr << "createSocket: Error: Invalid address/ Address not supported" << std::endl;
         exit(EXIT_FAILURE);
@@ -100,7 +101,20 @@ void guiNetworkClient::selectSocket()
 std::string guiNetworkClient::getMapSize()
 {
     handleWrite("msz\n");
-    return getServerResponse();
+    std::string resp = getServerResponse();
+    int x = 0;
+    int y = 0;
+    std::cout << "map size is " << resp << std::endl;
+    if (resp.size() > 0) {
+        std::istringstream iss(resp);
+        std::string command;
+        iss >> command >> x >> y;
+        if (!iss.fail()) {
+            _LinkedWindow->getChessBoard()->setWidth(x);
+            _LinkedWindow->getChessBoard()->setHeight(y);
+        }
+    }
+    return resp;
 }
 
 std::string guiNetworkClient::getTimeUnit()

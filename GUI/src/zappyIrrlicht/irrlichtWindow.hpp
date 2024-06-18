@@ -169,6 +169,8 @@ public:
      */
     quality getQuality();
 
+    chessBoard *getChessBoard();
+
     /**
      * @brief Returns the linked ZappyGame object.
      * 
