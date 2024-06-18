@@ -155,16 +155,19 @@ void PlayerPos::setZ(int z)
 void PlayerPos::setConvertedX(float x)
 {
     this->_Converted_x = x;
+    this->_X = int(x / this->_TileSize);
 }
 
 void PlayerPos::setConvertedY(float y)
 {
     this->_Converted_y = y;
+    this->_Y = int(y / this->_TileSize);
 }
 
 void PlayerPos::setConvertedZ(float z)
 {
     this->_Converted_z = z;
+    this->_Z = int(z / this->_TileSize);
 }
 
 void PlayerPos::setOrientationX(int orientationx)
@@ -191,16 +194,19 @@ void PlayerPos::setOrientationZ(int orientationz)
 void PlayerPos::setConvertedOrientationX(int orientationx)
 {
     this->_Converted_Orientation_x = orientationx;
+    this->_Orientation_x = int(orientationx / 90);
 }
 
 void PlayerPos::setConvertedOrientationY(int orientationy)
 {
     this->_Converted_Orientation_y = orientationy;
+    this->_Orientation_y = int(orientationy / 90);
 }
 
 void PlayerPos::setConvertedOrientationZ(int orientationz)
 {
     this->_Converted_Orientation_z = orientationz;
+    this->_Orientation_z = int(orientationz / 90);
 }
 
 void PlayerPos::setTileSize(float tileSize)
@@ -214,9 +220,13 @@ void PlayerPos::setTileSize(float tileSize)
 void PlayerPos::setPos(int x, int y, int z)
 {
     this->setX(x);
+    this->setConvertedX(float(x) * this->_TileSize);
     this->setY(y);
-    if (z != -1)
+    this->setConvertedY(float(y) * this->_TileSize);
+    if (z != -1) {
         this->setZ(z);
+        this->setConvertedZ(float(z) * this->_TileSize);
+    }
 }
 
 void PlayerPos::setConvertedPos(float x, float y, float z)
@@ -230,15 +240,21 @@ void PlayerPos::setConvertedPos(float x, float y, float z)
 void PlayerPos::setOrientation(int orientationx, int orientationy, int orientationz)
 {
     this->setOrientationX(orientationx);
+    this->_Converted_Orientation_x = orientationx * 90;
     this->setOrientationY(orientationy);
+    this->_Converted_Orientation_y = orientationy * 90;
     this->setOrientationZ(orientationz);
+    this->_Converted_Orientation_z = orientationz * 90;
 }
 
 void PlayerPos::setConvertedOrientation(int orientationx, int orientationy, int orientationz)
 {
     this->setConvertedOrientationX(orientationx);
+    this->_Orientation_x = orientationx / 90;
     this->setConvertedOrientationY(orientationy);
+    this->_Orientation_y = orientationy / 90;
     this->setConvertedOrientationZ(orientationz);
+    this->_Orientation_z = orientationz / 90;
 }
 
 PlayerPos *PlayerPos::getPlayerPos()

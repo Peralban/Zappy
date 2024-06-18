@@ -103,6 +103,20 @@ public:
     void initCamera();
 
     /**
+     * @brief Sets the width of the platform.
+     * 
+     * @param width The width of the platform.
+     */
+    void setPlatformX(int platformX);
+
+    /**
+     * @brief Sets the height of the platform.
+     * 
+     * @param height The height of the platform.
+     */
+    void setPlatformY(int platformY);
+
+    /**
      * @brief Links the ZappyGame object to the irrlichtWindow.
      * 
      * @param ZappyGameToLink The ZappyGame object to link.
@@ -169,6 +183,11 @@ public:
      */
     quality getQuality();
 
+    /**
+     * @brief Returns the chess board object.
+     * 
+     * @return The chess board object.
+     */
     chessBoard *getChessBoard();
 
     /**

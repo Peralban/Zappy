@@ -112,6 +112,8 @@ std::string guiNetworkClient::getMapSize()
         if (!iss.fail()) {
             _LinkedWindow->getChessBoard()->setWidth(x);
             _LinkedWindow->getChessBoard()->setHeight(y);
+            _LinkedWindow->setPlatformX(x);
+            _LinkedWindow->setPlatformY(y);
         }
     }
     return resp;

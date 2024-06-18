@@ -51,7 +51,7 @@ int main(int ac, char **av)
 	window.getLinkedZappyGame()->loadChessPieces();
 	window.getLinkedZappyGame()->addPlayer("player1");
 	window.getLinkedZappyGame()->getPlayer("player1")->getPlayerPosition()->setPos(5, 3);
-	window.getLinkedZappyGame()->getPlayer("player1")->getPlayerPosition()->setConvertedZ(5.0f);
+	window.getLinkedZappyGame()->getPlayer("player1")->getPlayerPosition()->setZ(2);
 	window.getLinkedZappyGame()->getPlayer("player1")->getPlayerPosition()->setOrientation(0, 0, 2);
 	window.getLinkedZappyGame()->getPlayer("player1")->updatePlayerPos();
 	window.getLinkedZappyGame()->getPlayer("player1")->setLevel(2);

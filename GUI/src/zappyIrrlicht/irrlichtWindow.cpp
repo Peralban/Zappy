@@ -104,6 +104,24 @@ void irrlichtWindow::initCamera()
         std::cout << "Camera initialized" << std::endl;
 }
 
+void irrlichtWindow::setPlatformX(int platformX)
+{
+    if (platformX <= 0) {
+        std::cerr << "setPlatformX: Error: Invalid platform width" << std::endl;
+        exit(EXIT_FAILURE);
+    }
+    this->_PlatformX = platformX;
+}
+
+void irrlichtWindow::setPlatformY(int platformY)
+{
+    if (platformY <= 0) {
+        std::cerr << "setPlatformY: Error: Invalid platform height" << std::endl;
+        exit(EXIT_FAILURE);
+    }
+    this->_PlatformY = platformY;
+}
+
 void irrlichtWindow::initEventReceiver()
 {
     this->_EventReceiver = new myEventReceiver(this->_Device);
@@ -143,10 +161,27 @@ int irrlichtWindow::getServerPort()
 
 int irrlichtWindow::runWindow()
 {
+    int count = 0;
     while(this->_Device->run()) {
         // for (int i = 0; i < 100; i++)
         //     this->_LinkedGuiClient->selectSocket();
         if (this->_Device->isWindowActive()) {
+            // make the player rotate
+            float orientation = this->getLinkedZappyGame()->getPlayer("player1")->getPlayerPosition()->getConvOrientationX();
+            if (orientation >= 359)
+                this->getLinkedZappyGame()->getPlayer("player1")->getPlayerPosition()->setConvertedOrientationX(0);
+            else
+                this->getLinkedZappyGame()->getPlayer("player1")->getPlayerPosition()->setConvertedOrientationX(orientation + 1);
+
+            // update the player position BUT NOT THE CONV POSITION
+            this->getLinkedZappyGame()->getPlayer("player1")->updatePlayerPos();
+            if (count < 100) {
+                count++;
+            } else {
+
+                this->getLinkedZappyGame()->getPlayer("player1")->getPlayerPosition()->setPos(rand() % this->getPlatformX(), rand() % this->getPlatformY(), 3);
+                count = 0;
+            }
         	this->_Driver->beginScene(true, true, irr::video::SColor(255, 100, 101, 140));
             this->_SceneManager->drawAll();
             this->_Driver->endScene();
