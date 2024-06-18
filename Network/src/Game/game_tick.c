@@ -62,13 +62,15 @@ void game_tick_action(server_t *server)
 void game_tick(server_t *server)
 {
     static uint64_t last_tick_time = 0;
-    uint64_t current_time = get_time();
+    uint64_t ticks;
 
+    if (last_tick_time == 0)
+        last_tick_time = get_time();
     if (server->game->paused)
         return;
-    if (current_time - last_tick_time >=
-    (1000000 / (uint64_t)server->info_game.freq)) {
+    ticks = (1000000 / (uint64_t)server->info_game.freq);
+    for (uint64_t current_time = get_time();
+    current_time - last_tick_time >= ticks; last_tick_time += ticks) {
         game_tick_action(server);
-        last_tick_time = current_time;
     }
 }
