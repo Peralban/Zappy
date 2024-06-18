@@ -44,6 +44,7 @@ SRC		= 		main.c								\
 				GuiProtocol/time_cmd.c				\
 				Admin/admin_command.c				\
 				Admin/admin_function.c				\
+				Admin/admin_function_bis.c			\
 				Admin/admin_time.c					\
 
 TRUE_SRC 	= 	$(patsubst %,src/%, $(SRC))

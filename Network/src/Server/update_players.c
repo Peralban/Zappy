@@ -60,10 +60,6 @@ void reset_client(client_t *client, server_t *server)
 {
     linked_list_drone_t **list;
 
-    for (int i = 0; i < MAX_COMMAND; i++) {
-        free(client->command[i]);
-        client->command[i] = NULL;
-    }
     if (client->drone == NULL)
         return;
     list = &server->game->map[client->drone->x][client->drone->y].drone_list;
