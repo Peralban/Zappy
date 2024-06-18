@@ -131,15 +131,18 @@ std::string Player::getUUID()
     return this->_UUID;
 }
 
-std::string Player::generateUuid()
+std::string Player::generateUUID()
 {
-    uuid_t uuid;
-    uuid_generate(uuid);
+    std::string uuid = "";
+    const std::string characters = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+    const int length = 16;
 
-    char uuidStr[37];
-    uuid_unparse(uuid, uuidStr);
+    for (int i = 0; i < length; i++) {
+        int randomIndex = rand() % characters.length();
+        uuid += characters[randomIndex];
+    }
 
-    return std::string(uuidStr);
+    return uuid;
 }
 
 Team *Player::getTeam()

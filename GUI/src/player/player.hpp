@@ -12,7 +12,6 @@
 #include "playerPosition.hpp"
 #include "chessElement/chessPiece.hpp"
 #include <string>
-#include <uuid/uuid.h>
 
 class ZappyGame;
 class chessPiece;
