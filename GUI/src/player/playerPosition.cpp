@@ -52,14 +52,14 @@ PlayerPos::~PlayerPos()
 void PlayerPos::setParentPlayer(Player *parentPlayer)
 {
     this->_ParentPlayer = parentPlayer;
-    this->_TileSize = parentPlayer->getParentGame()->getParentDevice()->getTileSize();
+    this->_TileSize = parentPlayer->getParentGame()->getTileSize();
 }
 
 void PlayerPos::initPos()
 {
     if (this->_ParentPlayer == nullptr)
         return;
-    this->_TileSize = _ParentPlayer->getParentGame()->getParentDevice()->getTileSize();
+    this->_TileSize = _ParentPlayer->getParentGame()->getTileSize();
 }
 
 // -------------- GETTERS --------------

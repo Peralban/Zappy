@@ -65,6 +65,17 @@ void guiNetworkClient::initIdentification()
         std::cout << "------- Successfully registered as GRAPHIC -----------"<< std::endl;
 }
 
+void guiNetworkClient::askInitData()
+{
+    initIdentification();
+
+    handleWrite("msz\n");
+    _HandleServerMessage(getServerResponse());
+    handleWrite("sgt\n");
+    _HandleServerMessage(getServerResponse());
+
+}
+
 void guiNetworkClient::makeNonBlocking()
 {
     int flags = fcntl(_Sockfd, F_GETFL, 0);
@@ -96,33 +107,6 @@ void guiNetworkClient::selectSocket()
     if (_Select > 0)
         if (FD_ISSET(_Sockfd, &_ReadFds))
             handleRead();
-}
-
-std::string guiNetworkClient::getMapSize()
-{
-    handleWrite("msz\n");
-    std::string resp = getServerResponse();
-    int x = 0;
-    int y = 0;
-    std::cout << "map size is " << resp << std::endl;
-    if (resp.size() > 0) {
-        std::istringstream iss(resp);
-        std::string command;
-        iss >> command >> x >> y;
-        if (!iss.fail()) {
-            _LinkedWindow->getChessBoard()->setWidth(x);
-            _LinkedWindow->getChessBoard()->setHeight(y);
-            _LinkedWindow->setPlatformX(x);
-            _LinkedWindow->setPlatformY(y);
-        }
-    }
-    return resp;
-}
-
-std::string guiNetworkClient::getTimeUnit()
-{
-    handleWrite("sgt\n");
-    return getServerResponse();
 }
 
 std::string guiNetworkClient::getServerResponse()

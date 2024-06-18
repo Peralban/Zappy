@@ -11,20 +11,15 @@
 
 irrlichtWindow::irrlichtWindow(
     int width, int height,
-    int platformX, int platformY,
-    float tileSize, irr::video::E_DRIVER_TYPE driverType = irr::video::EDT_OPENGL,
+    irr::video::E_DRIVER_TYPE driverType = irr::video::EDT_OPENGL,
     quality selectedQuality = MID, bool debug = false)
 {
     this->_Width = width;
     this->_Height = height;
-    this->_PlatformX = platformX;
-    this->_PlatformY = platformY;
-    this->_TileSize = tileSize;
     this->_DriverType = driverType;
     this->_Device = nullptr;
     this->_Driver = nullptr;
     this->_SceneManager = nullptr;
-    this->_chessBoard = nullptr;
     this->_EventReceiver = nullptr;
     this->_LinkedZappyGame = nullptr;
     this->_Quality = selectedQuality;
@@ -84,7 +79,7 @@ void irrlichtWindow::initLoader()
 void irrlichtWindow::initCamera()
 {
     //making the height of the camera relative to the platform size
-    int height = (this->_PlatformX + this->_PlatformY) * 3 + 25;
+    int height = 25;
 
 	this->_Device->getCursorControl()->setVisible(false);
 
@@ -104,24 +99,6 @@ void irrlichtWindow::initCamera()
         std::cout << "Camera initialized" << std::endl;
 }
 
-void irrlichtWindow::setPlatformX(int platformX)
-{
-    if (platformX <= 0) {
-        std::cerr << "setPlatformX: Error: Invalid platform width" << std::endl;
-        exit(EXIT_FAILURE);
-    }
-    this->_PlatformX = platformX;
-}
-
-void irrlichtWindow::setPlatformY(int platformY)
-{
-    if (platformY <= 0) {
-        std::cerr << "setPlatformY: Error: Invalid platform height" << std::endl;
-        exit(EXIT_FAILURE);
-    }
-    this->_PlatformY = platformY;
-}
-
 void irrlichtWindow::initEventReceiver()
 {
     this->_EventReceiver = new myEventReceiver(this->_Device);
@@ -130,15 +107,6 @@ void irrlichtWindow::initEventReceiver()
         exit(EXIT_FAILURE);
     }
     this->_Device->setEventReceiver(this->_EventReceiver);
-}
-
-void irrlichtWindow::initChessBoard()
-{
-    this->_chessBoard = new chessBoard(this, this->_PlatformX, this->_PlatformY, this->_TileSize);
-    if (this->_chessBoard == nullptr) {
-        std::cerr << "initChessBoard: Error: Could not create chess board" << std::endl;
-        exit(EXIT_FAILURE);
-    }
 }
 
 char *irrlichtWindow::getServerAdress()
@@ -163,8 +131,8 @@ int irrlichtWindow::runWindow()
 {
     int count = 0;
     while(this->_Device->run()) {
-        // for (int i = 0; i < 100; i++)
-        //     this->_LinkedGuiClient->selectSocket();
+        for (int i = 0; i < 100; i++)
+            this->_LinkedGuiClient->selectSocket();
         if (this->_Device->isWindowActive()) {
             // make the player rotate
             float orientation = this->getLinkedZappyGame()->getPlayer("player1")->getPlayerPosition()->getConvOrientationX();
@@ -179,7 +147,7 @@ int irrlichtWindow::runWindow()
                 count++;
             } else {
 
-                this->getLinkedZappyGame()->getPlayer("player1")->getPlayerPosition()->setPos(rand() % this->getPlatformX(), rand() % this->getPlatformY(), 3);
+                this->getLinkedZappyGame()->getPlayer("player1")->getPlayerPosition()->setPos(rand() % this->getLinkedZappyGame()->getPlatformWidth(), rand() % this->getLinkedZappyGame()->getPlatformHeight(), 3);
                 count = 0;
             }
         	this->_Driver->beginScene(true, true, irr::video::SColor(255, 100, 101, 140));
@@ -189,6 +157,15 @@ int irrlichtWindow::runWindow()
             this->_Device->yield();
     }
     return 0;
+}
+
+irr::scene::ICameraSceneNode *irrlichtWindow::getActiveCamera()
+{
+    if (!this->_ActiveCamera) {
+        std::cerr << "getActiveCamera: Error: Camera not initialized" << std::endl;
+        exit(EXIT_FAILURE);
+    }
+    return this->_ActiveCamera;
 }
 
 irr::IrrlichtDevice *irrlichtWindow::getDevice()
@@ -257,15 +234,6 @@ void irrlichtWindow::linkGuiClient(guiNetworkClient *clientToLink)
     this->_LinkedZappyGame->getServerDataParser()->SetParentClient(clientToLink);
 }
 
-chessBoard *irrlichtWindow::getChessBoard()
-{
-    if (!this->_chessBoard) {
-        std::cerr << "getChessBoard: Error: ChessBoard not initialized" << std::endl;
-        exit(EXIT_FAILURE);
-    }
-    return this->_chessBoard;
-}
-
 ZappyGame *irrlichtWindow::getLinkedZappyGame()
 {
     if (!this->_LinkedZappyGame) {
@@ -310,21 +278,6 @@ int irrlichtWindow::getWidth()
 int irrlichtWindow::getHeight()
 {
     return this->_Height;
-}
-
-int irrlichtWindow::getPlatformX()
-{
-    return this->_PlatformX;
-}
-
-int irrlichtWindow::getPlatformY()
-{
-    return this->_PlatformY;
-}
-
-float irrlichtWindow::getTileSize()
-{
-    return this->_TileSize;
 }
 
 bool irrlichtWindow::getDebugState()

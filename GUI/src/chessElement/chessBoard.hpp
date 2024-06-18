@@ -10,6 +10,7 @@
 #include "irrlicht/irrlicht.h"
 #include "loader/textureLoader.hpp"
 
+class ZappyGame;
 class irrlichtWindow;
 
 /**
@@ -30,16 +31,42 @@ class chessBoard {
          * @param height The height of the chess board in number of tiles.
          * @param tileSize The size of each tile in the chess board.
          */
-        chessBoard(irrlichtWindow *parentWindow,
-            int width = 20, int height = 20, float tileSize = 10.0f);
+        chessBoard(ZappyGame *ParentZappy,
+            int width = -1, int height = -1, float tileSize = -1);
+
+        chessBoard();
 
         /**
          * @brief Destroys the chessBoard object.
          */
         ~chessBoard();
 
+        /**
+         * @brief Sets the parent game of the chess board.
+         * 
+         * @param parentGame A pointer to the parent ZappyGame object.
+         */
+        void setParentWindow(irrlichtWindow *parentWindow);
+
+        /**
+         * @brief Sets the white texture for the chess board.
+         * 
+         * @param whiteTexture A pointer to the white texture.
+         */
+        void setTileSize(float tileSize);
+
+        /**
+         * @brief Sets the black texture for the chess board.
+         * 
+         * @param blackTexture A pointer to the black texture.
+         */
         void setWidth(int width);
 
+        /**
+         * @brief Sets the width of the chess board.
+         * 
+         * @param width The width of the chess board.
+         */
         void setHeight(int height);
 
         /**
@@ -57,6 +84,7 @@ class chessBoard {
         irrlichtWindow *_ParentWindow; ///< A pointer to the irrlichtWindow object that is used as the parent window.
         irr::scene::ISceneManager *_SceneManager; ///< A pointer to the irr::scene::ISceneManager object for scene management.
         irr::video::IVideoDriver *_Driver; ///< A pointer to the irr::video::IVideoDriver object for video rendering.
+        ZappyGame *_ParentGame; ///< A pointer to the ZappyGame object that is used as the parent game.
 
         irr::video::ITexture* _WhiteTexture; ///< A pointer to the white texture used for rendering the tiles.
         irr::video::ITexture* _BlackTexture; ///< A pointer to the black texture used for rendering the tiles.
