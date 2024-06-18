@@ -20,7 +20,7 @@ data = []
 def get_next_instruction():
     sock_file = sock.makefile('r')
     inputs = [sock_file]
-    readable, _, _ = select.select(inputs, [], [])
+    readable, _, _ = select.select(inputs, [], [], 0)
     for s in readable:
         if s is sock_file:
             data = []
@@ -33,7 +33,7 @@ def send_instruction(instruction):
     sock.sendall((instruction + '\n').encode())
 
 def connect_to_server(host, port, name):
-    global current_line
+    current_line = 0
     server_address = (host, port)
     LatLng = ()
 
@@ -48,7 +48,7 @@ def connect_to_server(host, port, name):
 
     try:
         while True:
-            readable, _, _ = select.select(inputs, [], [])
+            readable, _, _ = select.select(inputs, [], [], 0)
             for s in readable:
                 if s is sock_file:
                     for message in s:
