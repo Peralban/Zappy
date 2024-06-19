@@ -35,10 +35,6 @@ class Bot:
         self.alive = True
         self.waiting_command = []
         self.nb_message = 0
-        #self.key = 0
-        #for i in range(len(self.team_name)):
-        #    self.key += ord(self.team_name[i]) - 65
-        #self.key %= 91
 
     def run(self):
         self.create_broadcast("hey les boys")
@@ -233,7 +229,6 @@ class Bot:
 
         print(datas)
 
-
         if self.direction == 1:
             self.update_map_x(datas, 1)
         elif self.direction == 2:
@@ -305,7 +300,7 @@ class Bot:
 
             decrypted_broadcast += str(chr(int(encrypted_char)))
 
-        team  = decrypted_broadcast.split(' ')[0]
+        team = decrypted_broadcast.split(' ')[0]
         nb_message = int(decrypted_broadcast.split(' ')[1].split(':')[0])
 
         print(decrypted_broadcast)
