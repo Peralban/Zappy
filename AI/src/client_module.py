@@ -72,7 +72,7 @@ def connect_to_server(host, port, name):
                                 LatLng = (int(parts[0]), int(parts[1]))
                                 Bot = ai_zappy.Bot(name, LatLng[0], LatLng[1])
                                 Bot.run()
-                                return
+                                break
                 else:
                     message = sys.stdin.readline()
                     sock.sendall(message.encode())
@@ -80,8 +80,7 @@ def connect_to_server(host, port, name):
                     sys.stdout.write(message)
                     sys.stdout.flush()
     except KeyboardInterrupt:
-        send_instruction('quit')
-        sock.close()
         print("\nClient interrupted.")
     finally:
+        send_instruction('quit')
         sock.close()

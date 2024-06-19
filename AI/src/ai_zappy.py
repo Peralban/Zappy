@@ -7,6 +7,7 @@ AI algorithm for the Zappy project.
 """
 
 import AI.src.client_module as client_module
+import time
 
 def init_map(x, y):
         game_map = []
@@ -34,10 +35,10 @@ class Bot:
         self.alive = True
         self.waiting_command = []
         self.nb_message = 0
-        self.key = 0
-        for i in range(len(self.team_name)):
-            self.key += ord(self.team_name[i]) - 65
-        self.key %= 91
+        #self.key = 0
+        #for i in range(len(self.team_name)):
+        #    self.key += ord(self.team_name[i]) - 65
+        #self.key %= 91
 
     def run(self):
         self.create_broadcast("hey les boys")
@@ -58,6 +59,7 @@ class Bot:
         for result in results:
             if "dead" in result:
                 self.alive = False
+                return
             elif "message" in result:
                 self.broadcast_analyse(result)
             else:
@@ -72,15 +74,15 @@ class Bot:
         if self.waiting_command[0] == "Left" and "ok" in result:
             self.left()
         if self.waiting_command[0] == "Inventory":
-            self.update_inventory()
+            self.update_inventory(result)
         if "Take" in self.waiting_command[0] and "ok" in result:
             self.take(self.waiting_command[0][:' '])
         if "Set" in self.waiting_command[0] and "ok" in result:
-            self.left(self.waiting_command[0][:' '])
+            self.set(self.waiting_command[0][:' '])
         if self.waiting_command[0] == "Connect_nbr":
             self.connect_nbr(result)
         if self.waiting_command[0] == "Fork" and "ok" in result:
-            self.fork(result)
+            self.fork()
         if self.waiting_command[0] == "Incantation" and not "ko" in result:
             self.incantation()
         if self.waiting_command[0] == "Look":
@@ -100,13 +102,13 @@ class Bot:
             self.position['y'] -= 1
 
         if self.position['y'] >= self.dimension['y']:
-            self.position['y'] == 0
+            self.position['y'] = 0
         if self.position['y'] < 0:
-            self.position['y'] += self.dimension['y']
+            self.position['y'] = self.dimension['y'] - 1
         if self.position['x'] >= self.dimension['x']:
-            self.position['x'] == 0
+            self.position['x'] = 0
         if self.position['x'] < 0:
-            self.position['x'] += self.dimension['x']
+            self.position['x'] = self.dimension['x'] - 1
         return
 
     def left(self):
@@ -244,11 +246,11 @@ class Bot:
         print(self.map)
         return
 
-    def update_inventory(self):
+    def update_inventory(self, res):
         res = res.split(',')
-        for object in res:
-            object = object.split()
-            self.inventory[object[0]] = int(object[1])
+        for objects in res:
+            objects = objects.split()
+            self.inventory[objects[0]] = int(objects[1])
         return
 
     def connect_nbr(self, nb):
@@ -280,7 +282,7 @@ class Bot:
         encrypted_broadcast = ""
         
         for i in range(len(broadcast)):
-            encrypted_char = ord(broadcast[i]) + self.key
+            encrypted_char = ord(broadcast[i]) + ord(self.team_name[i % len(self.team_name)])
             if encrypted_char > 122:
                 encrypted_char -= 91
             encrypted_broadcast += chr(encrypted_char)
@@ -297,7 +299,7 @@ class Bot:
         broadcast = str(temp[2])
 
         for i in range(len(broadcast)):
-            encrypted_char = ord(str(broadcast[i])) - self.key
+            encrypted_char = ord(str(broadcast[i])) - ord(self.team_name[i % len(self.team_name)])
             if encrypted_char < 32:
                 encrypted_char += 91
 
@@ -305,8 +307,6 @@ class Bot:
 
         team  = decrypted_broadcast.split(' ')[0]
         nb_message = int(decrypted_broadcast.split(' ')[1].split(':')[0])
-
-        self.nb_message += 1
 
         print(decrypted_broadcast)
 
