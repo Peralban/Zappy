@@ -54,6 +54,7 @@ void guiNetworkClient::handleRead()
 
 void guiNetworkClient::handleWrite(std::string message)
 {
+    std::cout << "Sending message: |" << message << "|" << std::endl;
     send(_Sockfd, message.c_str(), message.size(), 0);
 }
 
@@ -112,11 +113,13 @@ void guiNetworkClient::selectSocket()
 std::string guiNetworkClient::getServerResponse()
 {
     std::string response = getServerData();
-    if (response.size() > 0)
+    if (response.size() > 0) {
         _ServData.append(response);
+    }
     if (response == "\n") {
         std::string data = _ServData;
         _ServData.clear();
+        std::cout << "Server response: " << data << std::endl;
         return data;
     }
     return getServerResponse();
