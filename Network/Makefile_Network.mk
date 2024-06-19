@@ -13,6 +13,7 @@ SRC		= 		main.c								\
 				ErrorHandling/check_return_value.c	\
 				Server/zappy_network.c				\
 				Server/server_loop.c				\
+				Server/complete_server.c			\
 				Server/init_in_game_stuct.c			\
 				Server/update_players.c				\
 				Parsing/parse_args.c				\
@@ -41,6 +42,10 @@ SRC		= 		main.c								\
 				GuiProtocol/game_info_cmd.c			\
 				GuiProtocol/player_info_cmd.c		\
 				GuiProtocol/time_cmd.c				\
+				Admin/admin_command.c				\
+				Admin/admin_function.c				\
+				Admin/admin_function_bis.c			\
+				Admin/admin_time.c					\
 
 TRUE_SRC 	= 	$(patsubst %,src/%, $(SRC))
 

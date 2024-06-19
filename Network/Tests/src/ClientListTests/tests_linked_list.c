@@ -38,7 +38,7 @@ Test(remove_client_from_list, should_remove_client_from_list)
     client_list_t *list = create_client_list();
     client_t *client = create_client(1);
     add_client_to_list(list, client);
-    remove_client_from_list(list, client);
+    remove_client_from_list(&list, client);
     cr_assert_null(list->client);
 }
 

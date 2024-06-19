@@ -24,7 +24,7 @@ void eject_client_from_server(client_t *client, server_t *server)
     int return_value = close(client->socket);
 
     check_return_value(return_value, CLOSE);
-    remove_client_from_list(server->list, client);
+    remove_client_from_list(&server->list, client);
     FD_CLR(client->socket, &server->readfds);
     FD_CLR(client->socket, &server->writefds);
     free(client);
