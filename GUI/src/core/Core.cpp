@@ -62,14 +62,6 @@ void Core::initialize(int ac, char **av)
     m_zappy->getPlayer("player1")->setLevel(2);
 }
 
-Core::Core(int width, int height, int platformX, int platformY, float tileSize, quality gameQuality, bool debug)
-    : m_window(width, height, irr::video::EDT_OPENGL, gameQuality, debug),
-      m_client(new guiNetworkClient()),
-      m_zappy(new ZappyGame()) {
-    m_zappy->setPlatformSize(platformX, platformY);
-    m_zappy->setTileSize(tileSize);
-}
-
 void Core::run()
 {
     std::cout << " -------------- RUNNING WINDOW -------------- " << std::endl;
