@@ -18,6 +18,8 @@ sock_file = None
 data = []
 
 def get_next_instruction():
+    data = []
+
     sock_file = sock.makefile('r')
     inputs = [sock_file]
     readable, _, _ = select.select(inputs, [], [], 0)

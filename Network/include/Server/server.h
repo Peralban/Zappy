@@ -47,7 +47,8 @@ typedef enum error_type_e {
 typedef enum client_state_e {
     WAITING,
     PLAYING,
-    GRAPHIC
+    GRAPHIC,
+    ADMIN
 } client_state_t;
 
 typedef struct drone_s drone_t;
@@ -154,10 +155,16 @@ in_game_t *init_game(info_game_t info_game);
 void update_players(server_t *server);
 
 /**
- * @brief Updates the game state.
+ * @brief Updates the game state if the time has come.
  * @param server The server containing the game state to update.
  */
 void game_tick(server_t *server);
+
+/**
+ * @brief Updates the game state.
+ * @param server The server containing the game state to update.
+ */
+void game_tick_action(server_t *server);
 
 /**
  * @brief sets the number of ticks to wait for
@@ -232,3 +239,16 @@ int end_server(server_t *server);
 sig_atomic_t replace_stop(int change);
 
 void client_already_connected(server_t *server);
+
+/**
+ * @brief Creates a list of drones for a specific tile.
+ *
+ * This function is responsible for creating a list of drones
+ * that are currently on a specific tile.
+ * It takes a tile and a drone as parameters,
+ * and adds the drone to the tile's list of drones.
+ *
+ * @param tile The tile to which the drone list is to be added.
+ * @param drone The drone to be added to the tile's drone list.
+ */
+void create_drone_list(tile_t *tile, drone_t *drone);

@@ -19,6 +19,10 @@ static void exec_command(char *command, client_t *client, server_t *server)
     if (command_args == NULL)
         return;
     for (int i = 0; commands_opt[i].name != NULL; i++) {
+        if (strcmp(command_args[0], "Broadcast") == 0) {
+            broadcast(client, server, (char *[2]){command + 10, NULL});
+            return my_free_array(command_args);
+        }
         if (strcmp(command_args[0], commands_opt[i].name) == 0 &&
         len == 1 + commands_opt[i].nb_args) {
             commands_opt[i].function(client, server, command_args + 1);
@@ -44,26 +48,31 @@ static void shift_commands(client_t *client)
 void set_ticks(client_t *client)
 {
     int len = word_nbr(client->command[0], " ");
+    char **command_args = NULL;
 
+    if (client->command[0] == NULL)
+        return;
+    command_args = my_str_to_word_array(client->command[0], " ");
     for (int i = 0; commands_opt[i].name != NULL; i++) {
-        if (client->command[0] == NULL)
+        if (command_args[0] == NULL)
             return;
-        if (strcmp(client->command[0], commands_opt[i].name) == 0 &&
+        if (strcmp(command_args[0], "Broadcast") == 0) {
+            client->drone->ticks = 7;
+            return my_free_array(command_args);
+        }
+        if (strcmp(command_args[0], commands_opt[i].name) == 0 &&
         len == 1 + commands_opt[i].nb_args) {
             client->drone->ticks = commands_opt[i].duration;
-            return;
+            return my_free_array(command_args);
         }
     }
+    my_free_array(command_args);
 }
 
 void reset_client(client_t *client, server_t *server)
 {
     linked_list_drone_t **list;
 
-    for (int i = 0; i < MAX_COMMAND; i++) {
-        free(client->command[i]);
-        client->command[i] = NULL;
-    }
     if (client->drone == NULL)
         return;
     list = &server->game->map[client->drone->x][client->drone->y].drone_list;
@@ -74,7 +83,11 @@ void reset_client(client_t *client, server_t *server)
         }
     }
     free(client->drone);
-    client->state = WAITING;
+    client->drone = NULL;
+    for (int i = 0; i < MAX_COMMAND; i++) {
+        free(client->command[i]);
+        client->command[i] = NULL;
+    }
 }
 
 static bool update_life(client_t *client, server_t *server)
@@ -150,11 +163,11 @@ static bool update_incantation(client_t *client, server_t *server)
 
 static void update_drone_action(client_t *client, server_t *server)
 {
+    client->drone->ticks--;
     if (client->drone->ticks == 0) {
         exec_command(client->command[0], client, server);
         shift_commands(client);
-    } else
-        client->drone->ticks--;
+    }
 }
 
 void update_players(server_t *server)
