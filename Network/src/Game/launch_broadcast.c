@@ -56,8 +56,8 @@ static int get_square(int angle, orientation_t ori)
 
 static char *form_message(char *args, int first_square)
 {
-    char *message =
-    malloc(sizeof(char) * (strlen(args) + strlen("message , ") + 2));
+    char *message = malloc(sizeof(char) * (strlen(args) +
+    strlen("message , ") + 64));
 
     sprintf(message, "message %d, %s\n", first_square, args);
     return message;
