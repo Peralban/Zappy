@@ -129,6 +129,8 @@ int irrlichtWindow::getServerPort()
 
 int irrlichtWindow::runWindow(ZappyGame *game, guiNetworkClient *client)
 {
+    (void) game;
+    (void) client;
     int count = 0;
     while(this->_Device->run()) {
         for (int i = 0; i < 100; i++)
