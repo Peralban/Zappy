@@ -149,6 +149,7 @@ typedef struct in_game_s {
     tile_t **map;
     team_t *teams;
     int spawn_tick;
+    bool paused;
     inventory_t picked_up_items;
     linked_list_egg_t *egg_list;
 } in_game_t;

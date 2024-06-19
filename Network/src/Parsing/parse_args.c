@@ -28,12 +28,17 @@ char **return_array(char **array, const bool *args)
     return array;
 }
 
-void do_parsing_argument(parsing_argument_t data, int *i, int j)
+bool do_parsing_argument(parsing_argument_t data, int *i, int j)
 {
     char *tmp = strdup(data.av[*i]);
 
     if (*data.n_flag) {
         strcat(data.array[NAMES], " ");
+        if (strcmp(tmp, "GRAPHIC") == 0 || strcmp(tmp, "ADMIN") == 0) {
+            printf("Invalid team name, can't be \'%s\'\n", tmp);
+            free(tmp);
+            return true;
+        }
         strcat(data.array[NAMES], tmp);
     } else {
         data.args[j] = true;
@@ -42,16 +47,18 @@ void do_parsing_argument(parsing_argument_t data, int *i, int j)
         *data.n_flag = (j == NAMES);
     }
     free(tmp);
+    return false;
 }
 
-void check_all_flags(parsing_argument_t data, int *i)
+bool check_all_flags(parsing_argument_t data, int *i)
 {
     for (int j = 0; j < ALL_FLAGS; j++) {
         if (strcmp(data.av[*i], FLAGS[j]) == 0 || *data.n_flag) {
-            do_parsing_argument(data, i, j);
-            break;
+            return do_parsing_argument(data, i, j);
         }
     }
+    printf("Invalid flag \'%s\'\n", data.av[*i]);
+    return true;
 }
 
 bool print_param_error(int ac)
@@ -61,6 +68,12 @@ bool print_param_error(int ac)
         return true;
     }
     return false;
+}
+
+static void *free_and_return(void *object)
+{
+    free(object);
+    return NULL;
 }
 
 char **get_array_from_args(int ac, char **av)
@@ -77,12 +90,11 @@ char **get_array_from_args(int ac, char **av)
     for (int i = 1; i < ac; i++) {
         if (data.av[i][0] == '-')
             *data.n_flag = false;
-        check_all_flags(data, &i);
+        if (check_all_flags(data, &i))
+            return free_and_return(array);
     }
     args_array = return_array(data.array, data.args);
-    if (args_array == NULL || ac < 13) {
-        free(array);
-        return NULL;
-    }
+    if (args_array == NULL || ac < 13)
+        return free_and_return(array);
     return args_array;
 }

@@ -17,6 +17,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include "Game/game.h"
+#include <signal.h>
 
 #define EXIT_FAIL 84
 #define EXIT_SUCC 0
@@ -46,6 +47,8 @@ typedef enum error_type_e {
 typedef enum client_state_e {
     WAITING,
     PLAYING,
+    GRAPHIC,
+    ADMIN
 } client_state_t;
 
 typedef struct drone_s drone_t;
@@ -152,6 +155,18 @@ in_game_t *init_game(info_game_t info_game);
 void update_players(server_t *server);
 
 /**
+ * @brief Updates the game state if the time has come.
+ * @param server The server containing the game state to update.
+ */
+void game_tick(server_t *server);
+
+/**
+ * @brief Updates the game state.
+ * @param server The server containing the game state to update.
+ */
+void game_tick_action(server_t *server);
+
+/**
  * @brief sets the number of ticks to wait for
  * the client to execute its next command.
  * @param client The client to set the ticks for.
@@ -165,3 +180,75 @@ void set_ticks(client_t *client);
  * @return A pointer to the created egg.
  */
 egg_t *create_egg(char *team_name, int x, int y);
+
+/**
+ * @brief finds a client by its drone id.
+ * @param id The id of the drone to find.
+ * @param server The server containing the clients.
+ */
+client_t *get_client_by_drone_id(int id, server_t *server);
+
+/**
+ * @brief removes a drone from the list of drones.
+ * @param list The list of drones.
+ * @param drone The drone to remove.
+ */
+void remove_drone_in_list(linked_list_drone_t **list, drone_t *drone);
+
+/**
+ * @brief resets a client to its initial state.
+ * @param client The client to reset.
+ * @param server The server containing the client.
+ */
+void reset_client(client_t *client, server_t *server);
+
+/**
+ * @brief Accepts a new client connection to the server.
+ *
+ * This function is responsible for accepting a new client connection
+ * to the server.
+ * It creates a new client object and adds it to the server's list of clients.
+ *
+ * @param server The server that the client is connecting to.
+ */
+void new_client(server_t *server);
+
+/**
+ * @brief Ends the server operation.
+ *
+ * This function is responsible for ending the server operation.
+ * It closes all client connections and releases any resources
+ * used by the server.
+ *
+ * @param server The server to end.
+ * @return Returns 0 on successful execution and non-zero on failure.
+ */
+int end_server(server_t *server);
+
+/**
+ * @brief Replaces the global stop variable.
+ *
+ * This function is responsible for replacing the global stop variable.
+ * It is used to control the server loop, stopping it when necessary.
+ *
+ * @param change The new value for the stop variable.
+ * @warning if change is -1, the function will return the current
+ * value of the stop variable. And will not change it.
+ * @return The new value of the stop variable.
+ */
+sig_atomic_t replace_stop(int change);
+
+void client_already_connected(server_t *server);
+
+/**
+ * @brief Creates a list of drones for a specific tile.
+ *
+ * This function is responsible for creating a list of drones
+ * that are currently on a specific tile.
+ * It takes a tile and a drone as parameters,
+ * and adds the drone to the tile's list of drones.
+ *
+ * @param tile The tile to which the drone list is to be added.
+ * @param drone The drone to be added to the tile's drone list.
+ */
+void create_drone_list(tile_t *tile, drone_t *drone);

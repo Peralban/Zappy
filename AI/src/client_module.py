@@ -10,6 +10,7 @@ import socket
 import select
 import sys
 import AI.src.ai_zappy as ai_zappy
+import AI.src.parsing as parsing
 
 current_line = 0
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -58,7 +59,14 @@ def connect_to_server(host, port, name):
                         else:
                             print(message.strip())
                             parts = message.strip().split()
-                            if len(parts) == 2:
+                            if current_line == 2:
+                                if message.strip() == 'ko':
+                                    sys.exit(84)
+                                else:
+                                    nb_players = int(message.strip())
+                                    if nb_players != 0:
+                                        parsing.sub_process()
+                            if current_line == 3:
                                 LatLng = (int(parts[0]), int(parts[1]))
                                 Bot = ai_zappy.Bot(name, LatLng[0], LatLng[1])
                                 Bot.run()
@@ -70,6 +78,8 @@ def connect_to_server(host, port, name):
                     sys.stdout.write(message)
                     sys.stdout.flush()
     except KeyboardInterrupt:
+        send_instruction('quit')
+        sock.close()
         print("\nClient interrupted.")
     finally:
         sock.close()

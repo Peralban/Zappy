@@ -9,6 +9,7 @@
 #include "Game/game_command.h"
 #include "Game/game_functions.h"
 #include "Server/server.h"
+#include "GuiProtocol/gui_event.h"
 
 static int count_players_on_tile_at_lvl(int x, int y, int lvl,
     server_t *server)
@@ -42,12 +43,12 @@ bool check_incantation_prerequisites(client_t *client, server_t *server)
     return true;
 }
 
-static client_t *get_client_by_drone_id(int id, server_t *server)
+client_t *get_client_by_drone_id(int id, server_t *server)
 {
     client_list_t *tmp = server->list;
 
     while (tmp != NULL) {
-        if (tmp->client->drone->id == id)
+        if (tmp->client->drone != NULL && tmp->client->drone->id == id)
             return tmp->client;
         tmp = tmp->next;
     }
@@ -70,7 +71,7 @@ static void put_everyone_on_tile_to_incantation_lvl(int x, int y, int lvl,
 }
 
 bool check_incantation_condition(client_t *client, server_t *server,
-    __attribute__((unused))char *args)
+    __attribute__((unused))char **args)
 {
     bool ret = check_incantation_prerequisites(client, server);
 
@@ -80,12 +81,13 @@ bool check_incantation_condition(client_t *client, server_t *server,
     } else {
         put_everyone_on_tile_to_incantation_lvl(client->drone->x,
             client->drone->y, client->drone->level, server);
+        gui_pic(server, client->drone);
         return true;
     }
 }
 
 void incantation(__attribute__((unused))client_t *client,
     __attribute__((unused))server_t *server,
-    __attribute__((unused))char *args)
+    __attribute__((unused))char **args)
 {
 }

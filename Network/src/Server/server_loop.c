@@ -8,15 +8,19 @@
 #include "Server/server.h"
 #include "ClientList/client_list.h"
 #include "Game/game_functions.h"
-#include "Game/game_command.h"
-#include "Game/game.h"
+#include "GuiProtocol/gui.h"
+#include "GuiProtocol/gui_event.h"
+#include "Admin/admin.h"
 #include "lib/my.h"
 #include <stdio.h>
-#include <sys/time.h>
 
 static void start_communication_with_client(client_t *client,
     server_t *server, char *buffer)
 {
+    if (strcmp(buffer, "GRAPHIC") == 0 || strcmp(buffer, "ADMIN") == 0) {
+        client->state = buffer[0] == 'G' ? GRAPHIC : ADMIN;
+        return;
+    }
     for (int i = 0; server->info_game.team_names[i] != NULL; i++) {
         if (strcmp(buffer, server->info_game.team_names[i]) == 0 &&
             server->game->teams[i].nb_egg > 0) {
@@ -27,25 +31,11 @@ static void start_communication_with_client(client_t *client,
             send(client->socket, buffer, strlen(buffer), 0);
             client->state = PLAYING;
             create_player(server, client, server->info_game.team_names[i]);
+            gui_pnw(server, client->drone);
             return;
         }
     }
     send(client->socket, "ko\n", 3, 0);
-}
-
-static void new_client(server_t *server)
-{
-    struct sockaddr_in client_address;
-    socklen_t client_address_length = sizeof(client_address);
-    int client_socket = accept(server->socket,
-    (struct sockaddr *) &client_address, &client_address_length);
-
-    if (!check_return_value(client_socket, ACCEPT))
-        return;
-    add_client_to_list(server->list, create_client(client_socket));
-    FD_SET(client_socket, &server->readfds);
-    FD_SET(client_socket, &server->writefds);
-    send(client_socket, "WELCOME\n", 8, 0);
 }
 
 static void push_command(client_t *client, char *buffer)
@@ -66,32 +56,84 @@ static void push_command(client_t *client, char *buffer)
     my_free_array(commands_arr);
 }
 
-// the send is temporary, it will be deplaced in another function.
-// the "quit" command may be temporary.
-static void recv_command(client_t *client, server_t *server)
+static void exec_one_gui_command(client_t *client, server_t *server,
+    char *command)
+{
+    char **command_args = my_str_to_word_array(command, " ");
+    int len = my_array_len(command_args);
+
+    for (int j = 0; commands_gui[j].name != NULL; j++) {
+        if (strcmp(command_args[0], commands_gui[j].name) != 0)
+            continue;
+        if (len == 1 + commands_gui[j].nb_args)
+            commands_gui[j].function(client, server, command_args + 1);
+        else
+            gui_sbp(client->socket);
+        my_free_array(command_args);
+        return;
+    }
+    gui_suc(client->socket);
+    my_free_array(command_args);
+}
+
+static void exec_gui_commands(client_t *client, server_t *server, char *buffer)
+{
+    char **commands_arr = my_str_to_word_array(buffer, "\n");
+
+    for (int i = 0; commands_arr[i] != NULL; i++)
+        exec_one_gui_command(client, server, commands_arr[i]);
+    my_free_array(commands_arr);
+}
+
+static void client_state_switch(client_t *client, server_t *server,
+    char *buffer)
+{
+    switch (client->state) {
+        case WAITING:
+            start_communication_with_client(client, server, buffer);
+            break;
+        case PLAYING:
+            push_command(client, buffer);
+            break;
+        case GRAPHIC:
+            exec_gui_commands(client, server, buffer);
+            break;
+        case ADMIN:
+            exec_admin_commands(client, server, buffer);
+            break;
+    }
+}
+
+static int recv_command(client_t *client, server_t *server)
 {
     char buffer[1024];
     int buffer_length;
 
     buffer_length = (int)recv(client->socket, buffer, 1024, 0);
     if (!check_return_value(buffer_length, RECV))
-        return;
-    buffer[buffer_length - 2] = '\0';
-    printf("Received: %s\n", buffer);
-    if (strcmp(buffer, "quit") == 0)
-        eject_client_from_server(client, server);
-    else if (client->state == WAITING)
-        start_communication_with_client(client, server, buffer);
+        return 0;
+    if (buffer[buffer_length - 2] == '\r')
+        buffer[buffer_length - 2] = '\0';
     else
-        push_command(client, buffer);
+        buffer[buffer_length - 1] = '\0';
+    printf("Received: %s\n", buffer);
+    if (strcmp(buffer, "quit") == 0) {
+        reset_client(client, server);
+        eject_client_from_server(client, server);
+        client_already_connected(server);
+        return 1;
+    } else
+        client_state_switch(client, server, buffer);
+    return 0;
 }
 
-static void client_already_connected(server_t *server)
+void client_already_connected(server_t *server)
 {
     for (client_list_t *tmp = server->list;
     tmp->client != NULL; tmp = tmp->next) {
-        if (FD_ISSET(tmp->client->socket, &server->readfds))
-            recv_command(tmp->client, server);
+        if (FD_ISSET(tmp->client->socket, &server->readfds) &&
+        recv_command(tmp->client, server))
+            break;
         if (tmp->next == NULL || tmp->client == NULL)
             break;
     }
@@ -115,47 +157,10 @@ static void set_all_in_fd(server_t *server, int *max_fd)
     }
 }
 
-uint64_t get_time(void)
+static void inthand(int signum)
 {
-    struct timeval tv;
-
-    gettimeofday(&tv, NULL);
-    return tv.tv_sec * (uint64_t)1000000 + tv.tv_usec;
-}
-
-static void spawn_resources(server_t *server)
-{
-    int x;
-    int y;
-
-    for (int k = 0; k < MAX_ITEMS; k++) {
-        for (int i = 0; i < server->game->picked_up_items[k] &&
-        server->game->picked_up_items[k] > 0; i++) {
-            x = rand() % server->info_game.width;
-            y = rand() % server->info_game.height;
-            server->game->map[x][y].inventory[k]++;
-        }
-        if (server->game->picked_up_items[k] > 0) {
-            server->game->picked_up_items[k] = 0;
-        }
-    }
-}
-
-static void game_tick(server_t *server)
-{
-    static uint64_t last_tick_time = 0;
-    uint64_t current_time = get_time();
-
-    if (current_time - last_tick_time >=
-    (1000000 / (uint64_t)server->info_game.freq)) {
-        update_players(server);
-        server->game->spawn_tick++;
-        last_tick_time = current_time;
-    }
-    if (server->game->spawn_tick >= 20) {
-        server->game->spawn_tick = 0;
-        spawn_resources(server);
-    }
+    (void)signum;
+    replace_stop(1);
 }
 
 int server_loop(server_t *server)
@@ -165,7 +170,8 @@ int server_loop(server_t *server)
     struct timeval timeout = {0, 0};
 
     server->list = create_client_list();
-    while (1) {
+    while (!replace_stop(-1)) {
+        signal(SIGINT, inthand);
         if (FD_ISSET(server->socket, &server->readfds))
             new_client(server);
         FD_ZERO(&server->readfds);
@@ -178,4 +184,5 @@ int server_loop(server_t *server)
         client_already_connected(server);
         game_tick(server);
     }
+    return end_server(server);
 }

@@ -9,7 +9,7 @@
 #include "Game/game.h"
 #include <stdlib.h>
 
-static void create_drone_list(tile_t *tile, drone_t *drone)
+void create_drone_list(tile_t *tile, drone_t *drone)
 {
     tile->drone_list = malloc(sizeof(linked_list_drone_t));
     if (tile->drone_list == NULL)
@@ -82,10 +82,15 @@ static linked_list_drone_t *get_last_node(linked_list_drone_t *list)
     return tmp;
 }
 
-static void remove_drone_in_list(linked_list_drone_t **list, drone_t *drone)
+void remove_drone_in_list(linked_list_drone_t **list, drone_t *drone)
 {
     linked_list_drone_t *tmp = *list;
 
+    if ((*list)->next == NULL && (*list)->prev == NULL) {
+        free(*list);
+        *list = NULL;
+        return;
+    }
     while (tmp != NULL && tmp->drone != drone)
         tmp = tmp->next;
     if (tmp == NULL)
@@ -115,11 +120,11 @@ static void exchange_drone(server_t *server, linked_list_drone_t *src,
     src->prev = dest;
 }
 
-void move(drone_t *drone, server_t *server, orientation_t orientation)
+void move(drone_t *drone, server_t *server, orientation_t ori)
 {
-    int movement[] = {1, -1, 1, -1};
-    int *coord[] = {&drone->y, &drone->y,
-    &drone->x, &drone->x};
+    int movement[] = {-1, -1, 1, 1};
+    int *coord[] = {&drone->y, &drone->x,
+    &drone->y, &drone->x};
     int max[] = {server->info_game.height, server->info_game.height,
     server->info_game.width, server->info_game.width};
     linked_list_drone_t *src = found_drone(server->game, drone);
@@ -127,9 +132,7 @@ void move(drone_t *drone, server_t *server, orientation_t orientation)
 
     if (src == NULL)
         return;
-    *coord[orientation] = (*coord[orientation] +
-    movement[orientation] +
-    max[orientation]) % max[orientation];
+    *coord[ori] = (*coord[ori] + movement[ori] + max[ori]) % max[ori];
     remove_drone_in_list(&server->game->map[old[X]][old[Y]].drone_list, drone);
     exchange_drone(server, src, drone);
 }

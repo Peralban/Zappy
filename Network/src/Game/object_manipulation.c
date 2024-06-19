@@ -7,6 +7,7 @@
 
 #include "Server/server.h"
 #include "Game/game.h"
+#include "GuiProtocol/gui_event.h"
 
 bool drop_object(client_t *client, server_t *server, char *args)
 {
@@ -26,6 +27,8 @@ bool drop_object(client_t *client, server_t *server, char *args)
         return false;
     client->drone->inventory[i] -= 1;
     tile->inventory[i] += 1;
+    server->game->picked_up_items[i] -= 1;
+    gui_pdr(server, client->drone->id, i);
     return true;
 }
 
@@ -47,5 +50,7 @@ bool take_object(client_t *client, server_t *server, char *args)
         return false;
     client->drone->inventory[i] += 1;
     tile->inventory[i] -= 1;
+    server->game->picked_up_items[i] += 1;
+    gui_pgt(server, client->drone->id, i);
     return true;
 }

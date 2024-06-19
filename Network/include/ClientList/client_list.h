@@ -47,7 +47,7 @@ int add_client_to_list(client_list_t *list, client_t *client);
  * @param list A pointer to the client list.
  * @param client A pointer to the client to be removed.
  */
-void remove_client_from_list(client_list_t *list, client_t *client);
+void remove_client_from_list(client_list_t **list, client_t *client);
 
 /**
  * @brief Retrieves a client from a client list by socket.
