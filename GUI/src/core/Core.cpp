@@ -65,5 +65,5 @@ void Core::initialize(int ac, char **av)
 void Core::run()
 {
     std::cout << " -------------- RUNNING WINDOW -------------- " << std::endl;
-    m_window.runWindow();
+    m_window.runWindow(m_zappy, m_client);
 }
