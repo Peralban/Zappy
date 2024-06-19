@@ -87,9 +87,15 @@ bool check_incantation_condition(client_t *client, server_t *server,
     }
 }
 
-void incantation(__attribute__((unused))client_t *client,
-    __attribute__((unused))server_t *server,
+void incantation(client_t *client, server_t *server,
     __attribute__((unused))char **args)
 {
-    printf("Incantation  yoyo\n");
+    static int highest_lvl = 1;
+
+    if (client->drone->level > highest_lvl) {
+        highest_lvl = client->drone->level;
+        server->game->winning_team = client->drone->team_name;
+        if (highest_lvl == 8)
+            gui_seg(server);
+    }
 }

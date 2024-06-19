@@ -8,6 +8,7 @@
 #include "Server/server.h"
 #include <unistd.h>
 #include "Parsing/parse_args.h"
+#include "ClientList/client_list.h"
 
 static void setup_server_address(server_t *server)
 {
@@ -48,5 +49,6 @@ int zappy_network(char **args)
         return EXIT_FAIL;
     setup_server_address(server);
     bind_and_listen(server);
+    server->list = create_client_list();
     return server_loop(server);
 }
