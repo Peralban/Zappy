@@ -19,7 +19,7 @@ static void start_communication_with_client(client_t *client,
 {
     if (strcmp(buffer, "GRAPHIC") == 0 || strcmp(buffer, "ADMIN") == 0) {
         client->state = buffer[0] == 'G' ? GRAPHIC : ADMIN;
-        return;
+        return start_gui_client(server, client);
     }
     for (int i = 0; server->info_game.team_names[i] != NULL; i++) {
         if (strcmp(buffer, server->info_game.team_names[i]) == 0 &&
