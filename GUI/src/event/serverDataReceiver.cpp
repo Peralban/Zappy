@@ -68,9 +68,16 @@ void ServerDataParser::HandleServerMessage(std::string message)
         irrActiveCam->setPosition(irr::core::vector3df(-15, (this->getParentGame()->getPlatformWidth() + this->getParentGame()->getPlatformHeight()) * 3 + 25, -15));
         this->getParentGame()->getChessBoard()->createBoard();
         this->_Command_msz = true;
+        this->getParentGame()->getChessBoard()->InitMap(std::stoi(serverMessage.args[0]), std::stoi(serverMessage.args[1]));
     } else if (serverMessage.command == "sgt") {
             this->getParentGame()->setTimeUnit(std::stoi(serverMessage.args[0]));
             std::cout << "Time unit: " << this->getParentGame()->getTimeUnit() << std::endl;
+    } else if (serverMessage.command == "bct") {
+        if (serverMessage.args.size() != 9) {
+            std::cerr << "HandleServerMessage: Error: bct command should have 9 arguments" << std::endl;
+            exit(EXIT_FAILURE);
+        }
+        this->getParentGame()->getChessBoard()->updateMapBtc(message);
     }
 }
 
