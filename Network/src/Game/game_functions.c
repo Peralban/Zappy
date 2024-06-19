@@ -9,7 +9,7 @@
 #include "Game/game.h"
 #include <stdlib.h>
 
-static void create_drone_list(tile_t *tile, drone_t *drone)
+void create_drone_list(tile_t *tile, drone_t *drone)
 {
     tile->drone_list = malloc(sizeof(linked_list_drone_t));
     if (tile->drone_list == NULL)

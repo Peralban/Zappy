@@ -24,12 +24,6 @@ void new_client(server_t *server)
     send(client_socket, "WELCOME\n", 8, 0);
 }
 
-static void free_client_gui(client_t *client)
-{
-    for (int i = 0; client->command[i] != NULL; i++)
-        free(client->command[i]);
-}
-
 static void free_egg_list(linked_list_egg_t *egg_list)
 {
     linked_list_egg_t *tmp = egg_list;
@@ -67,8 +61,6 @@ static void remove_any_client(server_t *server, client_list_t *tmp)
 {
     if (tmp->client->state == PLAYING)
         reset_client(tmp->client, server);
-    if (tmp->client->state == GRAPHIC)
-        free_client_gui(tmp->client);
     eject_client_from_server(tmp->client, server);
 }
 
