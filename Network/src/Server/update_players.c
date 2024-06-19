@@ -20,7 +20,7 @@ static void exec_command(char *command, client_t *client, server_t *server)
         return;
     for (int i = 0; commands_opt[i].name != NULL; i++) {
         if (strcmp(command_args[0], "Broadcast") == 0) {
-            broadcast(client, server, (char*[2]){command + 10, NULL});
+            broadcast(client, server, (char *[2]){command + 10, NULL});
             return my_free_array(command_args);
         }
         if (strcmp(command_args[0], commands_opt[i].name) == 0 &&
