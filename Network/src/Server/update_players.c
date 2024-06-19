@@ -19,7 +19,6 @@ static void exec_command(char *command, client_t *client, server_t *server)
     if (command_args == NULL)
         return;
     for (int i = 0; commands_opt[i].name != NULL; i++) {
-        printf("Command: |%s|\n", command_args[0]);
         if (strcmp(command_args[0], "Broadcast") == 0) {
             broadcast(client, server, (char *[2]){command + 10, NULL});
             return my_free_array(command_args);
@@ -31,7 +30,6 @@ static void exec_command(char *command, client_t *client, server_t *server)
             return;
         }
     }
-    printf("Command not found: |%s|\n", command_args[0]);
     my_free_array(command_args);
     send(client->socket, "ko\n", 3, 0);
 }
