@@ -55,12 +55,6 @@ void ServerDataParser::SetParentClient(guiNetworkClient *parentClient)
 void ServerDataParser::HandleServerMessage(std::string message)
 {
     serverMessage serverMessage = parseServerMessage(message);
-    // std::cout << "NEW Command: " << serverMessage.command;
-    // std::cout << " Args: ";
-    // for (std::string arg : serverMessage.args) {
-    //     std::cout << arg << " ; ";
-    // }
-    // std::cout << std::endl;
 
     if (serverMessage.command == "msz" && !_Command_msz) {
         if (serverMessage.args.size() != 2) {
