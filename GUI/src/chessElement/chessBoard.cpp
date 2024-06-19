@@ -107,3 +107,56 @@ void chessBoard::createBoard()
         }
     }
 }
+
+void chessBoard::InitMap(int width, int height)
+{
+    for (int i = 0; i < width; i++) {
+        std::vector<Tile *> tmp;
+        for (int j = 0; j < height; j++) {
+            tmp.push_back(new Tile());
+        }
+        _map.push_back(tmp);
+    }
+}
+
+static std::vector<std::string> split(const std::string &s, char delimiter)
+{
+    std::vector<std::string> tokens;
+    std::string token;
+    std::istringstream tokenStream(s);
+    while (std::getline(tokenStream, token, delimiter)) {
+        tokens.push_back(token);
+    }
+    return tokens;
+}
+
+void chessBoard::updateMapBtc(std::string response)
+{
+    std::vector<std::string> lines = split(response, ' ');
+
+    int x = std::stoi(lines[1]);
+    int y = std::stoi(lines[2]);
+    int food = std::stoi(lines[3]);
+    int linemate = std::stoi(lines[4]);
+    int deraumere = std::stoi(lines[5]);
+    int sibur = std::stoi(lines[6]);
+    int mendiane = std::stoi(lines[7]);
+    int phiras = std::stoi(lines[8]);
+    int thystame = std::stoi(lines[9]);
+    _map[x][y]->setInventory(food, linemate, deraumere, sibur, mendiane, phiras, thystame);
+}
+
+void chessBoard::printMap()
+{
+    for (int i = 0; i < _Width; i++) {
+        for (int j = 0; j < _Height; j++) {
+            _map[i][j]->printInventory();
+        }
+        std::cout << std::endl;
+    }
+}
+
+void chessBoard::printMapAtPos(int x, int y)
+{
+    _map[x][y]->printInventory();
+}

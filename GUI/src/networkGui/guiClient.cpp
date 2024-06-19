@@ -54,7 +54,6 @@ void guiNetworkClient::handleRead()
 
 void guiNetworkClient::handleWrite(std::string message)
 {
-    std::cout << "Sending message: |" << message << "|" << std::endl;
     send(_Sockfd, message.c_str(), message.size(), 0);
 }
 
@@ -74,7 +73,8 @@ void guiNetworkClient::askInitData()
     _HandleServerMessage(getServerResponse());
     handleWrite("sgt\n");
     _HandleServerMessage(getServerResponse());
-
+    handleWrite("mct\n");
+    _HandleServerMessage(getServerResponse());
 }
 
 void guiNetworkClient::makeNonBlocking()
