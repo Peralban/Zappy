@@ -16,6 +16,7 @@ SRC		=       chessElement/chessBoard.cpp 		\
 				zappyIrrlicht/irrlichtWindow.cpp    \
 				networkGui/guiClient.cpp			\
 				player/team.cpp     				\
+				core/Core.cpp						\
 				player/player.cpp   				\
 				player/playerPosition.cpp   		\
 				game/ZappyGame.cpp					\
