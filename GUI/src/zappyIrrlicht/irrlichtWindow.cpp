@@ -11,20 +11,15 @@
 
 irrlichtWindow::irrlichtWindow(
     int width, int height,
-    int platformX, int platformY,
-    float tileSize, irr::video::E_DRIVER_TYPE driverType = irr::video::EDT_OPENGL,
+    irr::video::E_DRIVER_TYPE driverType = irr::video::EDT_OPENGL,
     quality selectedQuality = MID, bool debug = false)
 {
     this->_Width = width;
     this->_Height = height;
-    this->_PlatformX = platformX;
-    this->_PlatformY = platformY;
-    this->_TileSize = tileSize;
     this->_DriverType = driverType;
     this->_Device = nullptr;
     this->_Driver = nullptr;
     this->_SceneManager = nullptr;
-    this->_chessBoard = nullptr;
     this->_EventReceiver = nullptr;
     this->_LinkedZappyGame = nullptr;
     this->_Quality = selectedQuality;
@@ -84,7 +79,7 @@ void irrlichtWindow::initLoader()
 void irrlichtWindow::initCamera()
 {
     //making the height of the camera relative to the platform size
-    int height = (this->_PlatformX + this->_PlatformY) * 3 + 25;
+    int height = 25;
 
 	this->_Device->getCursorControl()->setVisible(false);
 
@@ -114,18 +109,6 @@ void irrlichtWindow::initEventReceiver()
     this->_Device->setEventReceiver(this->_EventReceiver);
 }
 
-void irrlichtWindow::initChessBoard()
-{
-    this->_chessBoard = new chessBoard(this, this->_PlatformX, this->_PlatformY, this->_TileSize);
-    if (this->_chessBoard == nullptr) {
-        std::cerr << "initChessBoard: Error: Could not create chess board" << std::endl;
-        exit(EXIT_FAILURE);
-    }
-    this->_chessBoard->createBoard();
-    if (this->_Debug)
-	    std::cout << "chessBoard created" << std::endl;
-}
-
 char *irrlichtWindow::getServerAdress()
 {
     if (!this->_ServerAdress) {
@@ -144,12 +127,31 @@ int irrlichtWindow::getServerPort()
     return this->_ServerPort;
 }
 
-int irrlichtWindow::runWindow()
+int irrlichtWindow::runWindow(ZappyGame *game, guiNetworkClient *client)
 {
+    (void) game;
+    (void) client;
+    int count = 0;
     while(this->_Device->run()) {
-        // for (int i = 0; i < 100; i++)
-        //     this->_LinkedGuiClient->selectSocket();
+        for (int i = 0; i < 100; i++)
+            this->_LinkedGuiClient->selectSocket();
         if (this->_Device->isWindowActive()) {
+            // make the player rotate
+            float orientation = this->getLinkedZappyGame()->getPlayer("player1")->getPlayerPosition()->getConvOrientationX();
+            if (orientation >= 359)
+                this->getLinkedZappyGame()->getPlayer("player1")->getPlayerPosition()->setConvertedOrientationX(0);
+            else
+                this->getLinkedZappyGame()->getPlayer("player1")->getPlayerPosition()->setConvertedOrientationX(orientation + 1);
+
+            // update the player position BUT NOT THE CONV POSITION
+            this->getLinkedZappyGame()->getPlayer("player1")->updatePlayerPos();
+            if (count < 100) {
+                count++;
+            } else {
+
+                this->getLinkedZappyGame()->getPlayer("player1")->getPlayerPosition()->setPos(rand() % this->getLinkedZappyGame()->getPlatformWidth(), rand() % this->getLinkedZappyGame()->getPlatformHeight(), 3);
+                count = 0;
+            }
         	this->_Driver->beginScene(true, true, irr::video::SColor(255, 100, 101, 140));
             this->_SceneManager->drawAll();
             this->_Driver->endScene();
@@ -157,6 +159,15 @@ int irrlichtWindow::runWindow()
             this->_Device->yield();
     }
     return 0;
+}
+
+irr::scene::ICameraSceneNode *irrlichtWindow::getActiveCamera()
+{
+    if (!this->_ActiveCamera) {
+        std::cerr << "getActiveCamera: Error: Camera not initialized" << std::endl;
+        exit(EXIT_FAILURE);
+    }
+    return this->_ActiveCamera;
 }
 
 irr::IrrlichtDevice *irrlichtWindow::getDevice()
@@ -269,21 +280,6 @@ int irrlichtWindow::getWidth()
 int irrlichtWindow::getHeight()
 {
     return this->_Height;
-}
-
-int irrlichtWindow::getPlatformX()
-{
-    return this->_PlatformX;
-}
-
-int irrlichtWindow::getPlatformY()
-{
-    return this->_PlatformY;
-}
-
-float irrlichtWindow::getTileSize()
-{
-    return this->_TileSize;
 }
 
 bool irrlichtWindow::getDebugState()

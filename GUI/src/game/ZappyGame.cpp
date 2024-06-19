@@ -13,6 +13,12 @@ ZappyGame::ZappyGame()
 {
     this->_chessPieces = nullptr;
     this->_ParentDevice = nullptr;
+    this->_chessBoard = nullptr;
+    this->_serverDataParser = nullptr;
+    this->_PlatformX = 0;
+    this->_PlatformY = 0;
+    this->_TileSize = 0;
+    this->_TimeUnit = 0;
 }
 
 ZappyGame::~ZappyGame()
@@ -26,6 +32,8 @@ void ZappyGame::linkWithDevice(irrlichtWindow *parentDevice)
         exit(EXIT_FAILURE);
     }
     this->_ParentDevice = parentDevice;
+    this->_chessBoard = new chessBoard(this);
+    this->_chessBoard->setParentWindow(parentDevice);
 }
 
 void ZappyGame::setServerDataParser(ServerDataParser *serverDataParser)
@@ -72,15 +80,6 @@ irrlichtWindow *ZappyGame::getParentDevice()
     return this->_ParentDevice;
 }
 
-int ZappyGame::getTimeUnit()
-{
-    if (this->_TimeUnit == 0) {
-        std::cout << "getTimeUnit: Warning: TimeUnit is not setted returning default 100" << std::endl;
-        return 100;
-    }
-    return this->_TimeUnit;
-}
-
 void ZappyGame::addPlayer(std::string name)
 {    
     if (this->getPlayer(name) != nullptr)
@@ -94,9 +93,78 @@ void ZappyGame::addPlayer(std::string name)
     this->_playerList.push_back(std::make_pair(name, player));
 }
 
+void ZappyGame::setPlatformSize(int x, int y)
+{
+    this->_PlatformX = x;
+    this->_PlatformY = y;
+}
+
+void ZappyGame::setPlatformWidth(int x)
+{
+    this->_PlatformX = x;
+    if (this->_chessBoard != nullptr)
+        this->_chessBoard->setWidth(x);
+    else
+        std::cout << "setPlatformWidth: Warning: ChessBoard is not setted so platform with only settend on zappygame" << std::endl;
+}
+
+void ZappyGame::setPlatformHeight(int y)
+{
+    this->_PlatformY = y;
+    if (this->_chessBoard != nullptr)
+        this->_chessBoard->setHeight(y);
+    else
+        std::cout << "setPlatformHeight: Warning: ChessBoard is not setted so platform height only settend on zappygame" << std::endl;
+}
+
+void ZappyGame::setTileSize(float tileSize)
+{
+    this->_TileSize = tileSize;
+    if (this->_chessBoard != nullptr)
+        this->_chessBoard->setTileSize(tileSize);
+    else
+        std::cout << "setTileSize: Warning: ChessBoard is not setted so tileSize only settend on zappygame" << std::endl;
+}
+
 void ZappyGame::setTimeUnit(int timeUnit)
 {
     this->_TimeUnit = timeUnit;
+}
+
+int ZappyGame::getTimeUnit()
+{
+    if (this->_TimeUnit == 0) {
+        std::cout << "getTimeUnit: Warning: TimeUnit is not setted returning default 100" << std::endl;
+        return 100;
+    }
+    return this->_TimeUnit;
+}
+
+int ZappyGame::getPlatformWidth()
+{
+    if (this->_PlatformX == 0) {
+        std::cout << "getPlatformWidth: Warning: PlatformWidth is not setted returning default 10" << std::endl;
+        return 10;
+    }
+    return this->_PlatformX;
+}
+
+int ZappyGame::getPlatformHeight()
+{
+    if (this->_PlatformY == 0) {
+        std::cout << "getPlatformHeight: Warning: PlatformHeight is not setted returning default 10" << std::endl;
+        return 10;
+    }
+    return this->_PlatformY;
+}
+
+float ZappyGame::getTileSize()
+{
+    if (this->_TileSize == 0) {
+        std::cout << "getTileSize: Warning: TileSize is not setted returning default 10" << std::endl;
+        return 10;
+    }
+    return this->_TileSize;
 }
 
 std::vector<std::pair<std::string, Player*>> *ZappyGame::getPlayerList()
@@ -127,4 +195,9 @@ ServerDataParser *ZappyGame::getServerDataParser()
         exit(EXIT_FAILURE);
     }
     return this->_serverDataParser;
+}
+
+chessBoard *ZappyGame::getChessBoard()
+{
+    return this->_chessBoard;
 }

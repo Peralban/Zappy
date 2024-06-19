@@ -19,6 +19,7 @@ _PlayerPosition(PlayerPos(this))
     this->_ParentGame = nullptr;
     this->_Name = name;
     this->_PieceType = PAWN;
+    this->_UUID = generateUUID();
 }
 
 Player::Player(ZappyGame *parentGame, std::string name) :
@@ -33,16 +34,8 @@ _PlayerPosition(PlayerPos(this))
 
 Player::~Player()
 {
+    this->_chessPieceNode->remove();
     std::cout << "\nPlayer destroyed\n" << std::endl;
-}
-
-ZappyGame *Player::getParentGame()
-{
-    if (this->_ParentGame == nullptr) {
-        std::cerr << "getParentGame: Error: ParentGame is not setted" << std::endl;
-        exit(EXIT_FAILURE);
-    }
-    return this->_ParentGame;
 }
 
 void Player::setParentGame(ZappyGame *parentGame)
@@ -81,15 +74,6 @@ void Player::setTeam(Team *team)
     this->_PlayerTeam = team;
 }
 
-std::string Player::getName()
-{
-    return this->_Name;
-}
-
-PlayerPos *Player::getPlayerPosition()
-{
-    return &this->_PlayerPosition;
-}
 
 void Player::setPlayerPosition(PlayerPos *pos)
 {
@@ -141,3 +125,52 @@ void Player::updateLevel()
         this->_PlayerPosition.getVecRotConverted(),
         WHITE);
 }
+
+std::string Player::getUUID()
+{
+    return this->_UUID;
+}
+
+std::string Player::generateUUID()
+{
+    std::string uuid = "";
+    const std::string characters = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+    const int length = 16;
+
+    for (int i = 0; i < length; i++) {
+        int randomIndex = rand() % characters.length();
+        uuid += characters[randomIndex];
+    }
+
+    return uuid;
+}
+
+Team *Player::getTeam()
+{
+    return this->_PlayerTeam;
+}
+
+int Player::getLevel()
+{
+    return this->_Level;
+}
+
+std::string Player::getName()
+{
+    return this->_Name;
+}
+
+PlayerPos *Player::getPlayerPosition()
+{
+    return &this->_PlayerPosition;
+}
+
+ZappyGame *Player::getParentGame()
+{
+    if (this->_ParentGame == nullptr) {
+        std::cerr << "getParentGame: Error: ParentGame is not setted" << std::endl;
+        exit(EXIT_FAILURE);
+    }
+    return this->_ParentGame;
+}
+
