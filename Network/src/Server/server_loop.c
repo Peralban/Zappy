@@ -8,18 +8,17 @@
 #include "Server/server.h"
 #include "ClientList/client_list.h"
 #include "Game/game_functions.h"
-#include "Game/game_command.h"
-#include "Game/game.h"
 #include "GuiProtocol/gui.h"
 #include "GuiProtocol/gui_event.h"
+#include "Admin/admin.h"
 #include "lib/my.h"
 #include <stdio.h>
 
 static void start_communication_with_client(client_t *client,
     server_t *server, char *buffer)
 {
-    if (strcmp(buffer, "GRAPHIC") == 0) {
-        client->state = GRAPHIC;
+    if (strcmp(buffer, "GRAPHIC") == 0 || strcmp(buffer, "ADMIN") == 0) {
+        client->state = buffer[0] == 'G' ? GRAPHIC : ADMIN;
         return;
     }
     for (int i = 0; server->info_game.team_names[i] != NULL; i++) {
@@ -98,6 +97,9 @@ static void client_state_switch(client_t *client, server_t *server,
             break;
         case GRAPHIC:
             exec_gui_commands(client, server, buffer);
+            break;
+        case ADMIN:
+            exec_admin_commands(client, server, buffer);
             break;
     }
 }
