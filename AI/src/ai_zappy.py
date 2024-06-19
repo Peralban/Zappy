@@ -33,8 +33,14 @@ class Bot:
         self.level = 1
         self.alive = True
         self.waiting_command = []
+        self.nb_message = 0
+        self.key = 0
+        for i in range(len(self.team_name)):
+            self.key += ord(self.team_name[i]) - 65
+        self.key %= 91
 
     def run(self):
+        self.create_broadcast("hey les boys")
         while self.alive == True:
             self.get_result()        
         return
@@ -269,8 +275,39 @@ class Bot:
         self.level += 1
         return
 
-    def create_broadcast(self):
+    def create_broadcast(self, message):
+        broadcast = self.team_name + " " + str(self.nb_message) + ":" + message
+        encrypted_broadcast = ""
+        
+        for i in range(len(broadcast)):
+            encrypted_char = ord(broadcast[i]) + self.key
+            if encrypted_char > 122:
+                encrypted_char -= 91
+            encrypted_broadcast += chr(encrypted_char)
+
+        self.send_instruction("Broadcast " + encrypted_broadcast)
+
+        self.nb_message += 1
         return
 
     def broadcast_analyse(self, message):
+        decrypted_broadcast = ""
+        temp = str(message).split(' ', 2)
+        direction = int(str(temp[1][0]))
+        broadcast = str(temp[2])
+
+        for i in range(len(broadcast)):
+            encrypted_char = ord(str(broadcast[i])) - self.key
+            if encrypted_char < 32:
+                encrypted_char += 91
+
+            decrypted_broadcast += str(chr(int(encrypted_char)))
+
+        team  = decrypted_broadcast.split(' ')[0]
+        nb_message = int(decrypted_broadcast.split(' ')[1].split(':')[0])
+
+        self.nb_message += 1
+
+        print(decrypted_broadcast)
+
         return
