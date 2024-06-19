@@ -56,6 +56,8 @@ void create_player(server_t *server, client_t *client, char *team_name)
     client->drone = drone;
     spawn_on_egg(server, drone, team_name);
     add_drone_at_pos(server->game, drone);
+    if (server->game->winning_team == NULL)
+        server->game->winning_team = team_name;
 }
 
 static linked_list_drone_t *found_drone(in_game_t *game, drone_t *drone)
