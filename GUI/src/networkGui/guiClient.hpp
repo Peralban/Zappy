@@ -76,6 +76,11 @@ public:
     void initIdentification();
 
     /**
+     * @brief Asks the server for the initial data for example the map size.
+     */
+    void askInitData();
+
+    /**
      * @brief Selects the socket for reading.
      * 
      * if the socket is ready to read, it will call handleRead.
@@ -93,18 +98,6 @@ public:
      * @return The server response as a string.
      */
     std::string getServerResponse();
-
-    /**
-     * @brief Retrieves the map size.
-     * @return The map size as a string.
-     */
-    std::string getMapSize();
-
-    /**
-     * @brief Retrieves the time unit.
-     * @return The time unit as a string.
-     */
-    std::string getTimeUnit();
 
     /**
      * @brief Retrieves the socket file descriptor.

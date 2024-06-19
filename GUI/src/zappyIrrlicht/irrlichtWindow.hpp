@@ -9,7 +9,6 @@
 
 #include <irrlicht/irrlicht.h>
 #include "game/ZappyGame.hpp"
-#include "chessElement/chessBoard.hpp"
 #include "event/irrlichtEventHandler.hpp"
 #include "event/serverDataReceiver.hpp"
 #include "networkGui/guiClient.hpp"
@@ -32,17 +31,13 @@ public:
      * 
      * @param width The width of the window.
      * @param height The height of the window.
-     * @param platformX The X position of the platform.
-     * @param platformY The Y position of the platform.
-     * @param tileSize The size of each tile.
      * @param driverType The type of video driver to use.
      * @param selectedQuality The selected quality settings.
      * @param debug Whether to enable debug mode.
      */
     irrlichtWindow(
         int width, int height,
-        int platformX, int platformY,
-        float tileSize, irr::video::E_DRIVER_TYPE driverType,
+        irr::video::E_DRIVER_TYPE driverType,
         quality selectedQuality, bool debug);
 
     /**
@@ -80,13 +75,6 @@ public:
      * this will create the ObjLoader and TextureLoader objects.
      */
     void initLoader();
-
-    /**
-     * @brief Initializes the chess board.
-     * 
-     * this will create the chess board object.
-     */
-    void initChessBoard();
 
     /**
      * @brief Initializes the event receiver.
@@ -136,10 +124,14 @@ public:
 
     /**
      * @brief Runs the window and returns the exit code.
-     * 
+     *
+     * @param game The ZappyGame object.
+     * @param client The guiNetworkClient object.
      * @return The exit code of the window.
      */
-    int runWindow();
+    int runWindow(ZappyGame *game, guiNetworkClient *client);
+
+    irr::scene::ICameraSceneNode *getActiveCamera();
 
     /**
      * @brief Returns the Irrlicht device.
@@ -212,27 +204,6 @@ public:
     int getHeight();
 
     /**
-     * @brief Returns the Width X of the platform.
-     * 
-     * @return The width of the platform.
-     */
-    int getPlatformX();
-
-    /**
-     * @brief Returns the Height Y of the platform.
-     * 
-     * @return The height of the platform.
-     */
-    int getPlatformY();
-
-    /**
-     * @brief Returns the size of each tile.
-     * 
-     * @return The size of each tile.
-     */
-    float getTileSize();
-
-    /**
      * @brief Returns the debug state.
      * 
      * @return The debug state.
@@ -242,9 +213,6 @@ public:
 private:
     int _Width; /** < The width of the window */
     int _Height; /** < The height of the window */
-    int _PlatformX; /** < The Width X of the platform */
-    int _PlatformY; /** < The Height Y of the platform */
-    float _TileSize; /** < The size of each tile of the platform */
 
     char *_ServerAdress; /** < The server address under the form : 255.255.255.255 */
     int _ServerPort; /** < The server port */
@@ -257,7 +225,6 @@ private:
     irr::scene::ISceneManager *_SceneManager; /** < The scene manager */
     irr::video::E_DRIVER_TYPE _DriverType; /** < The video driver type */
     irr::scene::ICameraSceneNode *_ActiveCamera; /** < The camera */
-    chessBoard *_chessBoard; /** < The chess board Object */
     myEventReceiver *_EventReceiver; /** < The event receiver Object */
     ZappyGame *_LinkedZappyGame; /** < The linked ZappyGame Object */
     guiNetworkClient *_LinkedGuiClient; /** < The linked guiNetworkClient Object */
