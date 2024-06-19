@@ -124,10 +124,12 @@ public:
 
     /**
      * @brief Runs the window and returns the exit code.
-     * 
+     *
+     * @param game The ZappyGame object.
+     * @param client The guiNetworkClient object.
      * @return The exit code of the window.
      */
-    int runWindow();
+    int runWindow(ZappyGame *game, guiNetworkClient *client);
 
     irr::scene::ICameraSceneNode *getActiveCamera();
 
