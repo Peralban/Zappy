@@ -153,7 +153,7 @@ static bool update_incantation(client_t *client, server_t *server)
             update_incantation_tile(client->drone->x, client->drone->y,
                 client->drone->level, server);
         } else {
-            sprintf(buffer, "Current level: %d\n", client->drone->level);
+            sprintf(buffer, "ko\n");
             send(client->socket, buffer, strlen(buffer), 0);
             gui_pie(server, client->drone);
         }
