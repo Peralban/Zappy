@@ -136,9 +136,12 @@ static void update_incantation_tile(int x, int y, int lvl, server_t *server)
             gui_pie(server, tmp->drone);
         }
     }
-    for (int i = 1; i < 7; i++)
+    for (int i = 1; i < 7; i++) {
         server->game->map[x][y].inventory[i] -=
-            incantation_level_prerequisites[lvl - 1][i];
+                incantation_level_prerequisites[lvl - 1][i];
+        server->game->picked_up_items[i] +=
+                incantation_level_prerequisites[lvl - 1][i];
+    }
 }
 
 static bool update_incantation(client_t *client, server_t *server)
