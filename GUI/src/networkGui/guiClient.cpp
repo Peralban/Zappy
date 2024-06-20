@@ -7,14 +7,18 @@
 
 #include "guiClient.hpp"
 #include "zappyIrrlicht/irrlichtWindow.hpp"
+#include "../event/serverDataReceiver.hpp"
 
 guiNetworkClient::guiNetworkClient()
-{
-}
+    : _ServerDataParser(nullptr), _HandleServerMessage(nullptr) {}
 
 guiNetworkClient::guiNetworkClient(irrlichtWindow *linkedWindow)
-{
+    : _ServerDataParser(nullptr), _HandleServerMessage(nullptr) {
     setLinkedGame(linkedWindow);
+    _ServerDataParser = new ServerDataParser();
+    _ServerDataParser->setParentGame(_LinkedGame);
+    _ServerDataParser->SetParentClient(this);
+    _HandleServerMessage = std::bind(&ServerDataParser::HandleServerMessage, _ServerDataParser, std::placeholders::_1);
 }
 
 guiNetworkClient::~guiNetworkClient()
@@ -104,8 +108,7 @@ void guiNetworkClient::selectSocket()
     if (selectResult < 0) { 
         std::cerr << "selectSocket: Error: select failed" << std::endl;
         exit(EXIT_FAILURE);
-    }
-    else if (selectResult > 0) {
+    } else if (selectResult > 0) {
         if (FD_ISSET(_Sockfd, &readFds)) {
             char buffer[1024];
             int bytesRead = recv(_Sockfd, buffer, sizeof(buffer), 0);
@@ -118,7 +121,7 @@ void guiNetworkClient::selectSocket()
                 exit(EXIT_FAILURE);
             } else {
                 buffer[bytesRead] = '\0';
-                std::cout << buffer << std::endl;
+                _HandleServerMessage(buffer);
             }
         }
     }
