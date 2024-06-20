@@ -10,6 +10,18 @@ import random
 import AI.src.client_module as client_module
 import time
 
+ressources_types = ['food', 'linemate', 'deraumere', 'sibur', 'mendiane', 'phiras', 'thystame']
+incantation_prerequisites = {
+    1: {'player': 1, 'linemate': 1, 'deraumere': 0, 'sibur': 0, 'mendiane': 0, 'phiras': 0, 'thystame': 0},
+    2: {'player': 2, 'linemate': 1, 'deraumere': 1, 'sibur': 1, 'mendiane': 0, 'phiras': 0, 'thystame': 0},
+    3: {'player': 2, 'linemate': 2, 'deraumere': 0, 'sibur': 1, 'mendiane': 0, 'phiras': 2, 'thystame': 0},
+    4: {'player': 4, 'linemate': 1, 'deraumere': 1, 'sibur': 2, 'mendiane': 0, 'phiras': 1, 'thystame': 0},
+    5: {'player': 4, 'linemate': 1, 'deraumere': 2, 'sibur': 1, 'mendiane': 3, 'phiras': 0, 'thystame': 0},
+    6: {'player': 6, 'linemate': 1, 'deraumere': 2, 'sibur': 3, 'mendiane': 0, 'phiras': 1, 'thystame': 0},
+    7: {'player': 6, 'linemate': 2, 'deraumere': 2, 'sibur': 2, 'mendiane': 2, 'phiras': 2, 'thystame': 1}
+}
+
+
 class Bot:
     def __init__(self, team_name, x, y):
         self.team_name = team_name
@@ -34,7 +46,7 @@ class Bot:
             self.send_commands()
             self.change_mode()
             self.do_action()
-            self.print_stuff(seconds=3, mode=True, inventory=True)
+            self.print_stuff(seconds=3, mode=True, inventory=True, lvl=True, command=True)
         return
 
     def move_to(self, x, y):
@@ -65,6 +77,12 @@ class Bot:
             move_to_x(x)
         else:
             move_to_x(x)
+        return
+
+    def take_all_stone_on_tile(self):
+        for stone in ressources_types[1:]:
+            for _ in range(self.world[self.mid_y][self.mid_x][stone]):
+                self.push_command(f"Take {stone}")
         return
 
     # mode functions
@@ -112,6 +130,8 @@ class Bot:
     def do_action(self):
         if self.doing_action:
             return
+        if self.level == 1 and self.world[self.mid_y][self.mid_x]['linemate'] >= 1 and self.inventory['food'] >= 10:
+            self.push_command("Incantation")
         if self.mode == "survive":
             self.survive()
         if self.mode == "other":
@@ -134,9 +154,14 @@ class Bot:
     def get_result(self):
         results = client_module.get_next_instruction()
         for result in results:
-            if "dead" in result:
+            if "Elevation underway" in result:
+                self.doing_action = True
+                for e in self.waiting_command:
+                    if e == "Incantation":
+                        self.waiting_command.remove(e)
+                self.waiting_command = ["Incantation"] + self.waiting_command
+            elif "dead" in result:
                 self.alive = False
-                return
             elif "message" in result:
                 self.broadcast_analyse(result)
             else:
@@ -196,7 +221,7 @@ class Bot:
         return
 
     ctime = time.time()
-    def print_stuff(self, seconds=1, mode=False, inventory=False):
+    def print_stuff(self, seconds=1, mode=False, inventory=False, lvl=False, command=False):
         if time.time() - self.ctime < seconds:
             return
         self.ctime = time.time()
@@ -204,6 +229,10 @@ class Bot:
             print(self.mode)
         if inventory:
             print(self.inventory)
+        if lvl:
+            print(f"lvl: {self.level}")
+        if command:
+            print(self.waiting_command)
         return
 
     # End of debugging functions
@@ -278,6 +307,8 @@ class Bot:
         return
 
     def incantation(self):
+        for stone in incantation_prerequisites[self.level]:
+            self.world[self.mid_y][self.mid_x][stone] -= incantation_prerequisites[self.level][stone]
         self.level += 1
         return
 
