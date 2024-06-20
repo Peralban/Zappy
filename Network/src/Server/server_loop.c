@@ -19,7 +19,7 @@ static void start_communication_with_client(client_t *client,
 {
     if (strcmp(buffer, "GRAPHIC") == 0 || strcmp(buffer, "ADMIN") == 0) {
         client->state = buffer[0] == 'G' ? GRAPHIC : ADMIN;
-        return;
+        return start_gui_client(server, client);
     }
     for (int i = 0; server->info_game.team_names[i] != NULL; i++) {
         if (strcmp(buffer, server->info_game.team_names[i]) == 0 &&
@@ -166,10 +166,9 @@ static void inthand(int signum)
 int server_loop(server_t *server)
 {
     int max_fd = server->socket;
-    int select_status;
+    int status;
     struct timeval timeout = {0, 0};
 
-    server->list = create_client_list();
     while (!replace_stop(-1)) {
         signal(SIGINT, inthand);
         if (FD_ISSET(server->socket, &server->readfds))
@@ -177,12 +176,13 @@ int server_loop(server_t *server)
         FD_ZERO(&server->readfds);
         FD_ZERO(&server->writefds);
         set_all_in_fd(server, &max_fd);
-        select_status = select(
-            max_fd + 1, &server->readfds, NULL, NULL, &timeout);
-        if (!check_return_value(select_status, SELECT))
+        status = select(max_fd + 1, &server->readfds, NULL, NULL, &timeout);
+        if (!check_return_value(status, SELECT))
             continue;
         client_already_connected(server);
         game_tick(server);
     }
+    gui_smg(server, "Server shutting down");
+    gui_seg(server);
     return end_server(server);
 }

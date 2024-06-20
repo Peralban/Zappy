@@ -7,11 +7,17 @@
 
 #include "GuiProtocol/gui_event.h"
 
-void gui_seg(server_t *server, char *team_name)
+void gui_seg(server_t *server)
 {
+    static bool already_sent = false;
     char buffer[1024] = {0};
 
-    sprintf(buffer, "seg %s\n", team_name);
+    if (server->game->winning_team == NULL)
+        return;
+    if (already_sent)
+        return;
+    already_sent = true;
+    sprintf(buffer, "seg %s\n", server->game->winning_team);
     send_all_graphics(server, buffer);
 }
 

@@ -111,6 +111,7 @@ typedef struct drone_s {
     int life_ticks;
     int incantation_ticks;
     bool condition;
+    bool incantation_master;
 } drone_t;
 
 /**
@@ -152,4 +153,5 @@ typedef struct in_game_s {
     bool paused;
     inventory_t picked_up_items;
     linked_list_egg_t *egg_list;
+    char *winning_team;
 } in_game_t;

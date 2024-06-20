@@ -9,14 +9,14 @@
 #include "Game/game.h"
 #include <math.h>
 
-static int *get_distance(drone_t *drone, drone_t *target, info_game_t *info)
+static int *get_distance(drone_t *drone, drone_t *target, info_game_t info)
 {
     int *return_distance = malloc(sizeof(int) * 2);
     int tmp_dist[4][2] = {
-        {target->x - drone->x, target->y - drone->y - info->height},
-        {target->x - drone->x, target->y - drone->y + info->height},
-        {target->x - drone->x - info->width, target->y - drone->y},
-        {target->x - drone->x + info->width, target->y - drone->y}
+        {target->x - drone->x, target->y - drone->y - info.height},
+        {target->x - drone->x, target->y - drone->y + info.height},
+        {target->x - drone->x - info.width, target->y - drone->y},
+        {target->x - drone->x + info.width, target->y - drone->y}
     };
 
     if (return_distance == NULL)
@@ -63,26 +63,32 @@ static char *form_message(char *args, int first_square)
     return message;
 }
 
-bool launch_broadcast(drone_t *drone, server_t *server, char *args)
+static void send_broadcast(drone_t *drone, const server_t *server,
+    char *args, client_t *tmp)
 {
-    int *distance;
-    int angle_from_launcher;
-    orientation_t ori = drone->orientation;
-    int first_square = 0;
+    int *distance = get_distance(drone, tmp->drone, server->info_game);
+    int angle_from_launcher =
+        (int)(atan2(distance[1], distance[0]) * 180 / M_PI);
+    int first_square = get_square(angle_from_launcher, drone->orientation);
     char *message;
 
+    if (distance[0] == 0 && distance[1] == 0)
+        message = form_message(args, 0);
+    else
+        message = form_message(args, first_square);
+    send(tmp->socket, message, strlen(message), 0);
+    free(distance);
+    free(message);
+}
+
+bool launch_broadcast(drone_t *drone, server_t *server, char *args)
+{
     if (args == NULL)
         return false;
     for (client_list_t *tmp = server->list; tmp; tmp = tmp->next) {
         if (tmp->client->drone == NULL || tmp->client->drone->id == drone->id)
             continue;
-        distance = get_distance(drone, tmp->client->drone, &server->info_game);
-        angle_from_launcher = atan2(distance[1], distance[0]) * 180 / M_PI;
-        first_square = get_square(angle_from_launcher, ori);
-        message = form_message(args, first_square);
-        send(tmp->client->socket, message, strlen(message), 0);
-        free(distance);
-        free(message);
+        send_broadcast(drone, server, args, tmp->client);
     }
     return true;
 }

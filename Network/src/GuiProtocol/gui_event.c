@@ -12,7 +12,7 @@ void send_all_graphics(server_t *server, char *str)
     client_list_t *tmp = server->list;
 
     while (tmp != NULL) {
-        if (tmp->client->state == GRAPHIC)
+        if (tmp->client && tmp->client->state == GRAPHIC)
             send(tmp->client->socket, str, strlen(str), 0);
         tmp = tmp->next;
     }
