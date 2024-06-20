@@ -73,17 +73,6 @@ static linked_list_drone_t *found_drone(in_game_t *game, drone_t *drone)
     return NULL;
 }
 
-static linked_list_drone_t *get_last_node(linked_list_drone_t *list)
-{
-    linked_list_drone_t *tmp = list;
-
-    if (tmp == NULL)
-        return NULL;
-    while (tmp->next != NULL)
-        tmp = tmp->next;
-    return tmp;
-}
-
 void remove_drone_in_list(linked_list_drone_t **list, drone_t *drone)
 {
     linked_list_drone_t *tmp = *list;
