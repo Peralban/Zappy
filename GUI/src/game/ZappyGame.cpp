@@ -41,7 +41,7 @@ void ZappyGame::createTeam(std::string teams, int Red, int Green, int Blue, int 
 {
     Team *team = new Team();
     std::string teamName = teams + "_color";
-    team->setColor(this->_ParentDevice->getTextureLoader()->createGetTexture(Red, Green, Blue, Alpha), teamName);
+    team->setColor(this->_ParentDevice->getTextureLoader()->createGetTexture(Red, Green, Blue, Alpha, teamName), teamName);
     team->setTeamName(teams);
     this->_teamsList[teams] = team;
 }

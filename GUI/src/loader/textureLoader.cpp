@@ -77,7 +77,7 @@ irr::video::ITexture* TextureLoader::createTexture(int Red, int Green, int Blue,
     {
         for (irr::u32 x = 0; x < width; ++x)
         {
-            irr::video::SColor color(Red, Green, Blue, Alpha);
+            irr::video::SColor color(Alpha, Red, Green, Blue);
             tmpImage->setPixel(x, y, color);
         }
     }

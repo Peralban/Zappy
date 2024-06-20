@@ -13,7 +13,6 @@
 #include "event/serverDataReceiver.hpp"
 #include "chessElement/chessBoard.hpp"
 #include <iostream>
-#include <vector>
 
 class irrlichtWindow;
 
