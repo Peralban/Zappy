@@ -56,6 +56,8 @@ void create_player(server_t *server, client_t *client, char *team_name)
     client->drone = drone;
     spawn_on_egg(server, drone, team_name);
     add_drone_at_pos(server->game, drone);
+    if (server->game->winning_team == NULL)
+        server->game->winning_team = team_name;
 }
 
 static linked_list_drone_t *found_drone(in_game_t *game, drone_t *drone)
@@ -69,17 +71,6 @@ static linked_list_drone_t *found_drone(in_game_t *game, drone_t *drone)
         tmp = tmp->next;
     }
     return NULL;
-}
-
-static linked_list_drone_t *get_last_node(linked_list_drone_t *list)
-{
-    linked_list_drone_t *tmp = list;
-
-    if (tmp == NULL)
-        return NULL;
-    while (tmp->next != NULL)
-        tmp = tmp->next;
-    return tmp;
 }
 
 void remove_drone_in_list(linked_list_drone_t **list, drone_t *drone)
@@ -104,22 +95,6 @@ void remove_drone_in_list(linked_list_drone_t **list, drone_t *drone)
     free(tmp);
 }
 
-static void exchange_drone(server_t *server, linked_list_drone_t *src,
-    drone_t *drone)
-{
-    linked_list_drone_t *dest =
-    get_last_node(server->game->map[drone->x][drone->y].drone_list);
-
-    if (dest == NULL) {
-        create_drone_list(&server->game->map[drone->x][drone->y], drone);
-        return;
-    }
-    if (src->prev != NULL)
-        src->prev->next = NULL;
-    dest->next = src;
-    src->prev = dest;
-}
-
 void move(drone_t *drone, server_t *server, orientation_t ori)
 {
     int movement[] = {-1, -1, 1, 1};
@@ -134,7 +109,7 @@ void move(drone_t *drone, server_t *server, orientation_t ori)
         return;
     *coord[ori] = (*coord[ori] + movement[ori] + max[ori]) % max[ori];
     remove_drone_in_list(&server->game->map[old[X]][old[Y]].drone_list, drone);
-    exchange_drone(server, src, drone);
+    add_drone_at_pos(server->game, drone);
 }
 
 void turn(drone_t *drone, side_t side)

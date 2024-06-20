@@ -20,6 +20,8 @@ void get_player_inventory(client_t *client, server_t *server, char **args);
 void time_request(client_t *client, server_t *server, char **args);
 void time_modification(client_t *client, server_t *server, char **args);
 
+void start_gui_client(server_t *server, client_t *client);
+
 typedef struct {
     char *name;
     void (*function)(client_t *client, server_t *server, char **args);

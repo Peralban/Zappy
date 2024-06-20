@@ -42,6 +42,7 @@ SRC		= 		main.c								\
 				GuiProtocol/game_info_cmd.c			\
 				GuiProtocol/player_info_cmd.c		\
 				GuiProtocol/time_cmd.c				\
+				GuiProtocol/start_gui_client.c		\
 				Admin/admin_command.c				\
 				Admin/admin_function.c				\
 				Admin/admin_function_bis.c			\

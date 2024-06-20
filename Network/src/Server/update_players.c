@@ -69,27 +69,6 @@ void set_ticks(client_t *client)
     my_free_array(command_args);
 }
 
-void reset_client(client_t *client, server_t *server)
-{
-    linked_list_drone_t **list;
-
-    if (client->drone == NULL)
-        return;
-    list = &server->game->map[client->drone->x][client->drone->y].drone_list;
-    for (linked_list_drone_t *tmp = *list; tmp != NULL; tmp = tmp->next) {
-        if (tmp->drone == client->drone) {
-            remove_drone_in_list(list, tmp->drone);
-            break;
-        }
-    }
-    free(client->drone);
-    client->drone = NULL;
-    for (int i = 0; i < MAX_COMMAND; i++) {
-        free(client->command[i]);
-        client->command[i] = NULL;
-    }
-}
-
 static bool update_life(client_t *client, server_t *server)
 {
     drone_t *drone = client->drone;
@@ -121,6 +100,16 @@ static bool check_conditions(char *command, client_t *client, server_t *server)
     return condition(client, server, NULL);
 } //the NULL is supposed to be args, but it is not used in the function atm.
 
+static void update_incantation_master(drone_t *drone, server_t *server,
+    int lvl)
+{
+    if (drone->level == lvl && drone->incantation_master) {
+        drone->incantation_master = false;
+        incantation(get_client_by_drone_id(drone->id, server), server, NULL);
+        shift_commands(get_client_by_drone_id(drone->id, server));
+    }
+}
+
 static void update_incantation_tile(int x, int y, int lvl, server_t *server)
 {
     char buffer[1024];
@@ -128,6 +117,7 @@ static void update_incantation_tile(int x, int y, int lvl, server_t *server)
     sprintf(buffer, "Current level: %d\n", lvl + 1);
     for (linked_list_drone_t *tmp = server->game->map[x][y].drone_list;
     tmp != NULL; tmp = tmp->next) {
+        update_incantation_master(tmp->drone, server, lvl);
         if (tmp->drone->level == lvl) {
             tmp->drone->level++;
             tmp->drone->incantation_ticks = 0;
@@ -136,15 +126,16 @@ static void update_incantation_tile(int x, int y, int lvl, server_t *server)
             gui_pie(server, tmp->drone);
         }
     }
-    for (int i = 1; i < 7; i++)
+    for (int i = 1; i < 7; i++) {
         server->game->map[x][y].inventory[i] -=
-            incantation_level_prerequisites[lvl - 1][i];
+                incantation_level_prerequisites[lvl - 1][i];
+        server->game->picked_up_items[i] +=
+                incantation_level_prerequisites[lvl - 1][i];
+    }
 }
 
 static bool update_incantation(client_t *client, server_t *server)
 {
-    char buffer[1024];
-
     if (client->drone->incantation_ticks == 0)
         return false;
     client->drone->incantation_ticks--;
@@ -153,8 +144,7 @@ static bool update_incantation(client_t *client, server_t *server)
             update_incantation_tile(client->drone->x, client->drone->y,
                 client->drone->level, server);
         } else {
-            sprintf(buffer, "Current level: %d\n", client->drone->level);
-            send(client->socket, buffer, strlen(buffer), 0);
+            send(client->socket, "ko\n", 3, 0);
             gui_pie(server, client->drone);
         }
     }

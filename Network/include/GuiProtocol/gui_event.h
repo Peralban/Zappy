@@ -23,7 +23,7 @@ void gui_pdi(server_t *server, int id);
 void gui_enw(server_t *server, drone_t *drone, egg_t *egg);
 void gui_ebo(server_t *server, egg_t *egg);
 void gui_edi(server_t *server, egg_t *egg);
-void gui_seg(server_t *server, char *team_name);
+void gui_seg(server_t *server);
 void gui_smg(server_t *server, char *msg);
 void gui_suc(int socket);
 void gui_sbp(int socket);

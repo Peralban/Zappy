@@ -62,7 +62,7 @@ static void put_everyone_on_tile_to_incantation_lvl(int x, int y, int lvl,
 
     while (tmp != NULL) {
         if (tmp->drone->level == lvl) {
-            tmp->drone->incantation_ticks = 300;
+            tmp->drone->incantation_ticks = 299;
             send(get_client_by_drone_id(tmp->drone->id, server)->socket,
                 "Elevation underway\n", 19, 0);
         }
@@ -79,6 +79,7 @@ bool check_incantation_condition(client_t *client, server_t *server,
         send(client->socket, "ko\n", 3, 0);
         return false;
     } else {
+        client->drone->incantation_master = true;
         put_everyone_on_tile_to_incantation_lvl(client->drone->x,
             client->drone->y, client->drone->level, server);
         gui_pic(server, client->drone);
@@ -86,8 +87,15 @@ bool check_incantation_condition(client_t *client, server_t *server,
     }
 }
 
-void incantation(__attribute__((unused))client_t *client,
-    __attribute__((unused))server_t *server,
+void incantation(client_t *client, server_t *server,
     __attribute__((unused))char **args)
 {
+    static int highest_lvl = 1;
+
+    if (client->drone->level > highest_lvl) {
+        highest_lvl = client->drone->level;
+        server->game->winning_team = client->drone->team_name;
+        if (highest_lvl == 8)
+            gui_seg(server);
+    }
 }
