@@ -30,6 +30,8 @@ _PlayerPosition(PlayerPos(this))
     this->_ParentGame = parentGame;
     this->_Name = name;
     this->_PieceType = PAWN;
+    this->_PlayerTeam = nullptr;
+    this->_UUID = generateUUID();
 }
 
 Player::~Player()
@@ -65,18 +67,52 @@ void Player::playerInit()
         _chessPieces->getPiece(_PieceType),
         this->_PlayerPosition.getVecPosConverted(),
         this->_PlayerPosition.getVecRotConverted(),
-        WHITE
+        this
     );
 }
 
 void Player::setTeam(Team *team)
 {
+    if (team == nullptr) {
+        std::cout << "setTeam: Warning: Team is not setted" << std::endl;
+    }
+    if (this->_PlayerTeam != nullptr) {
+        std::cout << "setTeam: Warning: Player already has a team" << std::endl;
+    }
     this->_PlayerTeam = team;
+    if (team->getColor() != nullptr) {
+        this->_chessPieceNode->setMaterialTexture(0, team->getColor());
+    } else {
+        std::cout << "setTeam: Warning: Team has no color" << std::endl;
+    }
+}
+
+void Player::setTeamFromName(std::string teamName)
+{
+    if (this->_ParentGame == nullptr) {
+        std::cout << "setTeamFromName: Warning: ParentGame is not setted setting team to null" << std::endl;
+        this->_PlayerTeam = nullptr;
+        return;
+    }
+    if (this->_ParentGame->getTeamFromName(teamName) == nullptr) {
+        std::cout << "setTeamFromName: Warning: Team not found setting team to null" << std::endl;
+        this->_PlayerTeam = nullptr;
+        return;
+    }
+    this->_PlayerTeam = this->_ParentGame->getTeamFromName(teamName);
+    if (this->_PlayerTeam->getColor() != nullptr) {
+        this->_chessPieceNode->setMaterialTexture(0, this->_PlayerTeam->getColor());
+    } else {
+        std::cout << "setTeamFromName: Warning: Team has no color" << std::endl;
+    }
 }
 
 
 void Player::setPlayerPosition(PlayerPos *pos)
 {
+    if (pos == nullptr) {
+        std::cout << "setPlayerPosition: waning: pos is null" << std::endl;
+    }
     this->_PlayerPosition = *pos;
 }
 
@@ -123,7 +159,7 @@ void Player::updateLevel()
         _chessPieces->getPiece(_PieceType),
         this->_PlayerPosition.getVecPosConverted(),
         this->_PlayerPosition.getVecRotConverted(),
-        WHITE);
+        this);
 }
 
 std::string Player::getUUID()
@@ -147,6 +183,9 @@ std::string Player::generateUUID()
 
 Team *Player::getTeam()
 {
+    if (this->_PlayerTeam == nullptr) {
+        std::cout << "getTeam: Warning: PlayerTeam is not setted" << std::endl;
+    }
     return this->_PlayerTeam;
 }
 

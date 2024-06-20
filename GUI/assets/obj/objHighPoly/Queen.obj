@@ -1,6 +1,5 @@
 # This file uses centimeters as units for non-parametric coordinates.
 
-mtllib Queen_hi.mtl
 g default
 v 0.960896 33.721645 -0.960897
 v -0.000002 33.621948 -1.546173

@@ -1,6 +1,5 @@
 # This file uses centimeters as units for non-parametric coordinates.
 
-mtllib Knight_low.mtl
 g default
 v 0.000206 25.987917 0.206656
 v 0.000206 26.086561 -1.496549

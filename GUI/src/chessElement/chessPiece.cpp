@@ -7,6 +7,7 @@
 
 #include "chessPiece.hpp"
 #include "../zappyIrrlicht/irrlichtWindow.hpp"
+#include "player/player.hpp"
 #include <iostream>
 
 chessPiece::chessPiece(irrlichtWindow *window)
@@ -19,12 +20,7 @@ chessPiece::chessPiece(irrlichtWindow *window)
     _SceneManager = window->getSceneManager();
     _Device = window->getDevice();
     _Driver = window->getDriver();
-    _WhiteTexture = window->getTextureLoader()->loadTexture("./GUI/assets/White.png");
-    _BlackTexture = window->getTextureLoader()->loadTexture("./GUI/assets/Black.png");
-    if (!_WhiteTexture || !_BlackTexture) {
-        std::cerr << "Error: Could not load textures" << std::endl;
-        exit(84);
-    }
+    _DefaultTexture = window->getTextureLoader()->createGetTexture(155, 155, 155, 255, "Default");
 }
 
 chessPiece::~chessPiece()
@@ -36,7 +32,7 @@ chessPiece::~chessPiece()
     this->_Queen->drop();
     this->_Rook->drop();
     this->_Piece->drop();
-    this->_WhiteTexture->drop();
+    this->_DefaultTexture->drop();
 }
 
 void chessPiece::loadPiece(quality choosedQuality)
@@ -78,7 +74,7 @@ void chessPiece::setCurrentQuality(quality newQuality)
     loadPiece(newQuality);
 }
 
-irr::scene::IAnimatedMeshSceneNode *chessPiece::placePiece(irr::scene::IAnimatedMesh *pieceToPlace, irr::core::vector3df position, irr::core::vector3df rotation, teamColor color = DEFAULT)
+irr::scene::IAnimatedMeshSceneNode *chessPiece::placePiece(irr::scene::IAnimatedMesh *pieceToPlace, irr::core::vector3df position, irr::core::vector3df rotation, Player *Player)
 {
     if (_SceneManager == nullptr) {
         std::cerr << "placePiece: Error: Scene manager is not set." << std::endl;
@@ -93,15 +89,15 @@ irr::scene::IAnimatedMeshSceneNode *chessPiece::placePiece(irr::scene::IAnimated
         pawnNode->setPosition(position); // Adjust position as needed
         pawnNode->setRotation(rotation);
         pawnNode->setMaterialFlag(irr::video::EMF_LIGHTING, false);
-        if (color == WHITE) {
-            std::cout << "white" << std::endl;
-            pawnNode->setMaterialTexture(0, _WhiteTexture);
-        } else {
-            std::cout << "black" << std::endl;
-            pawnNode->setMaterialTexture(0, _BlackTexture);
-        }
         pawnNode->setMaterialType(irr::video::EMT_SOLID);
         pawnNode->setMaterialFlag(irr::video::EMF_BACK_FACE_CULLING, false);
+        if (Player != nullptr && Player->getTeam() != nullptr && Player->getTeam()->getColor() != nullptr) {
+            pawnNode->setMaterialTexture(0, Player->getTeam()->getColor());
+        } else {
+            pawnNode->setMaterialTexture(0, _DefaultTexture);
+            std::cerr << "placePiece: Warning: Player or team is null, using default texture." << std::endl;
+        }
+
     } else {
         std::cerr << "placePiece: Error: Could not create mesh scene node for pawn." << std::endl;
         _Device->drop();

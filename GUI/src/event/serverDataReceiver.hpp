@@ -82,6 +82,4 @@ class ServerDataParser {
         ZappyGame *_ParentGame; /**< A pointer to the parent ZappyGame object. */
         irrlichtWindow *_ParentDevice; /**< A pointer to the parent irrlichtWindow object. */
         guiNetworkClient *_ParentClient; /**< A pointer to the parent guiNetworkClient object. */
-
-        bool _Command_msz; /**< A boolean to check if the command msz has already been called. */
 };
