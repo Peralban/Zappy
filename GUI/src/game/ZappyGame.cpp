@@ -138,6 +138,23 @@ void ZappyGame::broadcastMessage(std::string cmd)
     player->setBroadcastMessage(args[2]);
 }
 
+void ZappyGame::playerDie(std::string cmd)
+{
+    //pdi #n\n
+    std::vector<std::string> args = split(cmd, ' ');
+
+    if (args.size() != 2) {
+        std::cerr << "playerDie: Error: pdi command should have 2 arguments" << std::endl;
+        exit(EXIT_FAILURE);
+    }
+    Player *player = this->getPlayer(args[1]);
+    Tile *tile = this->_chessBoard->getMap()[player->getPlayerPosition()->getX()][player->getPlayerPosition()->getY()];
+    tile->setPlayer(tile->getPlayer() - 1);
+    this->_playerList.erase(std::remove_if(this->_playerList.begin(), this->_playerList.end(), [args](std::pair<std::string, Player*> playeur) {
+        return playeur.first == args[1];
+    }), this->_playerList.end());
+}
+
 void ZappyGame::newEgg(std::string cmd)
 {
     //enw #e #n X Y\n

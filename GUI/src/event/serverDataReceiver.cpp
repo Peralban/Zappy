@@ -55,6 +55,7 @@ void ServerDataParser::SetParentClient(guiNetworkClient *parentClient)
 void ServerDataParser::HandleServerMessage(std::string message)
 {
     serverMessage serverMessage = parseServerMessage(message);
+    std::cout << "Server message: " << message << std::endl;
 
     if (serverMessage.command == "msz" && !_Command_msz) {
         if (serverMessage.args.size() != 2) {
@@ -126,12 +127,6 @@ void ServerDataParser::HandleServerMessage(std::string message)
             exit(EXIT_FAILURE);
         }
         this->getParentGame()->playerDie(message);
-    } else if (serverMessage.command == "edi") {
-        if (serverMessage.args.size() != 1) {
-            std::cerr << "HandleServerMessage: Error: ppo command should have 1 arguments" << std::endl;
-            exit(EXIT_FAILURE);
-        }
-        this->getParentGame()->eggDie(message);
     }
 }
 

@@ -132,9 +132,14 @@ int irrlichtWindow::runWindow(ZappyGame *game, guiNetworkClient *client)
     (void) game;
     (void) client;
     //int count = 0;
+    std::cout << "Running window 1" << std::endl;
+    auto map = game->getChessBoard()->getMap();
+    for (auto tile : map)
+        for (auto cell : tile)
+            cell->printInventory();
+    std::cout << "Running window 2" << std::endl;
     while(this->_Device->run()) {
-        for (int i = 0; i < 100; i++)
-            this->_LinkedGuiClient->selectSocket();
+        this->_LinkedGuiClient->selectSocket();
         if (this->_Device->isWindowActive()) {
             client->updateAllPlayers();
             std::cout << game->getPlayerList()->size() << std::endl;

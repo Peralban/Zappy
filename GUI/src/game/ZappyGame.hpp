@@ -241,6 +241,8 @@ class ZappyGame {
          */
         void broadcastMessage(std::string cmd);
 
+        void playerDie(std::string cmd);
+
     private:
         irrlichtWindow *_ParentDevice; /**< The parent irrlichtWindow object. */
 
