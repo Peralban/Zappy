@@ -57,12 +57,12 @@ void set_ticks(client_t *client)
         if (command_args[0] == NULL)
             return;
         if (strcmp(command_args[0], "Broadcast") == 0) {
-            client->drone->ticks = 7;
+            client->drone->ticks = 6;
             return my_free_array(command_args);
         }
         if (strcmp(command_args[0], commands_opt[i].name) == 0 &&
         len == 1 + commands_opt[i].nb_args) {
-            client->drone->ticks = commands_opt[i].duration;
+            client->drone->ticks = commands_opt[i].duration - 1;
             return my_free_array(command_args);
         }
     }
@@ -163,11 +163,11 @@ static bool update_incantation(client_t *client, server_t *server)
 
 static void update_drone_action(client_t *client, server_t *server)
 {
-    client->drone->ticks--;
     if (client->drone->ticks == 0) {
         exec_command(client->command[0], client, server);
         shift_commands(client);
     }
+    client->drone->ticks--;
 }
 
 void update_players(server_t *server)

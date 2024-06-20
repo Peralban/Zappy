@@ -161,7 +161,7 @@ static const command_t commands_opt[] = {
     {"Left", &left, NULL, 7, 0},
     {"Look", &look, NULL, 7, 0},
     {"Inventory", &inventory, NULL, 1, 0},
-    {"Broadcast", &broadcast, NULL, 7, 1},
+    {"Broadcast", &broadcast, NULL, 7, 0},
     {"Fork", &fork_player, &fork_condition, 42, 0},
     {"Connect_nbr", &connect_nbr, NULL, 7, 0},
     {"Eject", &eject, NULL, 7, 0},

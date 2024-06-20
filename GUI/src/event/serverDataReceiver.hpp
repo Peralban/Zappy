@@ -8,10 +8,22 @@
 #pragma once
 #include <iostream>
 #include <string>
+#include <vector>
 
 class ZappyGame;
 class irrlichtWindow;
 class guiNetworkClient;
+class chessBoard;
+
+/**
+ * @struct serverMessage
+ * @brief Represents a server message with a command and arguments.
+ */
+class serverMessage {
+    public:
+        std::string command; /**< The command of the server message. */
+        std::vector<std::string> args; /**< The arguments of the server message. */
+};
 
 /**
  * @class ServerDataParser
@@ -54,6 +66,13 @@ class ServerDataParser {
         void SetParentClient(guiNetworkClient *parentClient);
 
         /**
+         * @brief Parses the server message.
+         * @param message The server message to be parsed.
+         * @return a server message struct made of the command and its arguments.
+         */
+        serverMessage parseServerMessage(std::string message);
+
+        /**
          * @brief Gets the parent ZappyGame object.
          * @return A pointer to the parent ZappyGame object.
          */
@@ -63,4 +82,6 @@ class ServerDataParser {
         ZappyGame *_ParentGame; /**< A pointer to the parent ZappyGame object. */
         irrlichtWindow *_ParentDevice; /**< A pointer to the parent irrlichtWindow object. */
         guiNetworkClient *_ParentClient; /**< A pointer to the parent guiNetworkClient object. */
+
+        bool _Command_msz; /**< A boolean to check if the command msz has already been called. */
 };

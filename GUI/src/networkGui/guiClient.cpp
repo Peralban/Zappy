@@ -29,10 +29,11 @@ void guiNetworkClient::createSocket()
         std::cerr << "createSocket: Error: socket creation failed" << std::endl;
         exit(EXIT_FAILURE);
     }
+    std::cout << "--------------------- Socket created ---------------------" << std::endl;
 
     _ServerAddr.sin_family = AF_INET;
     _ServerAddr.sin_port = htons(_ServerPort);
-
+    std::cout << "--------------------- Connecting to " << _ServerAdress << ":" << _ServerPort << " ---------------------" << std::endl;
     if (inet_pton(AF_INET, _ServerAdress.c_str(), &_ServerAddr.sin_addr) <= 0) {
         std::cerr << "createSocket: Error: Invalid address/ Address not supported" << std::endl;
         exit(EXIT_FAILURE);
@@ -62,6 +63,18 @@ void guiNetworkClient::initIdentification()
     std::string response = getServerResponse();
     if (response.size() > 0 && response.find("WELCOME") != std::string::npos)
         std::cout << "------- Successfully registered as GRAPHIC -----------"<< std::endl;
+}
+
+void guiNetworkClient::askInitData()
+{
+    initIdentification();
+
+    handleWrite("msz\n");
+    _HandleServerMessage(getServerResponse());
+    handleWrite("sgt\n");
+    _HandleServerMessage(getServerResponse());
+    handleWrite("mct\n");
+    _HandleServerMessage(getServerResponse());
 }
 
 void guiNetworkClient::makeNonBlocking()
@@ -97,26 +110,16 @@ void guiNetworkClient::selectSocket()
             handleRead();
 }
 
-std::string guiNetworkClient::getMapSize()
-{
-    handleWrite("msz\n");
-    return getServerResponse();
-}
-
-std::string guiNetworkClient::getTimeUnit()
-{
-    handleWrite("sgt\n");
-    return getServerResponse();
-}
-
 std::string guiNetworkClient::getServerResponse()
 {
     std::string response = getServerData();
-    if (response.size() > 0)
+    if (response.size() > 0) {
         _ServData.append(response);
+    }
     if (response == "\n") {
         std::string data = _ServData;
         _ServData.clear();
+        std::cout << "Server response: " << data << std::endl;
         return data;
     }
     return getServerResponse();

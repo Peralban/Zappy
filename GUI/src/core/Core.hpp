@@ -2,9 +2,8 @@
 ** EPITECH PROJECT, 2024
 ** GUI
 ** File description:
-** eventHandler
+** Core
 */
-
 #pragma once
 
 #include "zappyIrrlicht/irrlichtWindow.hpp"
@@ -19,15 +18,32 @@ public:
     /**
      * @brief Constructor for Core.
      * 
-     * @param argc Number of command line arguments.
-     * @param argv Array of command line argument strings.
+     * Initializes the Core with the specified dimensions and settings.
+     * 
+     * @param width Width of the window.
+     * @param height Height of the window.
+     * @param platformX X dimension of the game platform.
+     * @param platformY Y dimension of the game platform.
+     * @param tileSize Size of the game tiles.
+     * @param gameQuality Quality setting for the game.
+     * @param debug Whether to enable debug mode.
      */
-    Core(int argc, char **argv);
+    Core(int width, int height, int platformX, int platformY, float tileSize, quality gameQuality, bool debug);
+
+    /**
+     * @brief Destructor for Core.
+     * 
+     * Cleans up resources allocated by Core.
+     */
+    ~Core();
 
     /**
      * @brief Initializes the Core and sets up necessary components.
+     * 
+     * @param ac Number of command line arguments.
+     * @param av Array of command line argument strings.
      */
-    void initialize();
+    void initialize(int ac, char **av);
 
     /**
      * @brief Runs the main loop of the game.
@@ -35,9 +51,7 @@ public:
     void run();
 
 private:
-    int m_argc; /**< Number of command line arguments. */
-    char **m_argv; /**< Array of command line argument strings. */
+    irrlichtWindow m_window; /**< Instance of Irrlicht window for graphical display. */
     guiNetworkClient *m_client; /**< Pointer to the network client for GUI interaction. */
     ZappyGame *m_zappy; /**< Pointer to the main Zappy game instance. */
-    irrlichtWindow m_window; /**< Instance of Irrlicht window for graphical display. */
 };

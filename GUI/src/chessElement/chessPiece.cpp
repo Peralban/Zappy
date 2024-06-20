@@ -29,6 +29,14 @@ chessPiece::chessPiece(irrlichtWindow *window)
 
 chessPiece::~chessPiece()
 {
+    this->_Bishop->drop();
+    this->_King->drop();
+    this->_Knight->drop();
+    this->_Pawn->drop();
+    this->_Queen->drop();
+    this->_Rook->drop();
+    this->_Piece->drop();
+    this->_WhiteTexture->drop();
 }
 
 void chessPiece::loadPiece(quality choosedQuality)

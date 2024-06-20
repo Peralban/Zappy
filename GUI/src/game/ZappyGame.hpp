@@ -11,6 +11,7 @@
 #include "chessElement/chessPiece.hpp"
 #include "player/player.hpp"
 #include "event/serverDataReceiver.hpp"
+#include "chessElement/chessBoard.hpp"
 #include <iostream>
 #include <vector>
 
@@ -41,6 +42,11 @@ class ZappyGame {
          */
         void linkWithDevice(irrlichtWindow *parentDevice);
 
+        /**
+         * @brief Sets the server data parser object.
+         * 
+         * @param serverDataParser The server data parser object to set.
+         */
         void setServerDataParser(ServerDataParser *serverDataParser);
 
         /**
@@ -67,6 +73,35 @@ class ZappyGame {
          * The time unit is the number of action per second.
          */
         void setTimeUnit(int timeUnit);
+
+        /**
+         * @brief Sets the size of the platform.
+         * 
+         * @param x The width of the platform.
+         * @param y The height of the platform.
+        */
+        void setPlatformSize(int x, int y);
+
+        /**
+         * @brief Sets the size of each tile of the platform.
+         * 
+         * @param tileSize The size of each tile.
+        */
+        void setTileSize(float tileSize);
+
+        /**
+         * @brief Sets the width of the platform.
+         * 
+         * @param width The width of the platform.
+        */
+        void setPlatformWidth(int width);
+
+        /**
+         * @brief Sets the height of the platform.
+         * 
+         * @param height The height of the platform.
+        */
+        void setPlatformHeight(int height);
 
         /**
          * @brief Initializes the server events for the game.
@@ -97,6 +132,27 @@ class ZappyGame {
         int getTimeUnit();
 
         /**
+         * @brief Gets the width of the platform.
+         * 
+         * @return The width of the platform.
+        */
+        int getPlatformWidth();
+
+        /**
+         * @brief Gets the height of the platform.
+         * 
+         * @return The height of the platform.
+        */
+        int getPlatformHeight();
+
+        /**
+         * @brief Gets the size of each tile of the platform.
+         *  
+         * @return The size of each tile.
+        */
+        float getTileSize();
+
+        /**
          * @brief Gets the list of players in the game.
          * 
          * @return A pointer to the list of players.
@@ -111,14 +167,32 @@ class ZappyGame {
          */
         Player *getPlayer(std::string name);;
 
+        /**
+         * @brief Gets the server data parser object.
+         * 
+         * @return A pointer to the server data parser object.
+        */
         ServerDataParser *getServerDataParser();
+
+        /**
+         * @brief Gets the chess board object.
+         * 
+         * @return A pointer to the chess board object.
+         */
+        chessBoard *getChessBoard();
 
     private:
         irrlichtWindow *_ParentDevice; /**< The parent irrlichtWindow object. */
 
         chessPiece *_chessPieces; /**< The chess pieces Object. */
 
+        int _PlatformX; /** < The Width X of the platform */
+        int _PlatformY; /** < The Height Y of the platform */
+        float _TileSize; /** < The size of each tile of the platform */
+
         ServerDataParser *_serverDataParser; /**< The server data parser object. */
+
+        chessBoard *_chessBoard; /**< The chess board object. */
     
         std::vector<std::pair<std::string, Player*>> _playerList; /**< The list of players in the game. */
 
