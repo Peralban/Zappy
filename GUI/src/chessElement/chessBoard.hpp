@@ -132,6 +132,8 @@ class chessBoard {
 
         void printMapAtPos(int x, int y);
 
+        std::vector<std::vector<Tile *>> getMap() { return _map; }
+
     private:
         int _Width; ///< The width of the chess board in number of tiles.
         int _Height; ///< The height of the chess board in number of tiles.

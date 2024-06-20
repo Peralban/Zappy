@@ -181,6 +181,66 @@ class ZappyGame {
          */
         chessBoard *getChessBoard();
 
+        /**
+         * @brief Adds a new player to the game.
+         *
+         * This function is called when a new player connects to the server.
+         * The command string should contain the necessary information to create a new player.
+         *
+         * @param cmd The command string received from the server.
+         */
+        void newPlayer(std::string cmd);
+
+        /**
+         * @brief Updates the position of a player in the game.
+         *
+         * This function is called when a player moves in the game.
+         * The command string should contain the necessary information to update the player's position.
+         *
+         * @param cmd The command string received from the server.
+         */
+        void updatePlayerPos(std::string cmd);
+
+        /**
+         * @brief Updates the level of a player in the game.
+         *
+         * This function is called when a player levels up in the game.
+         * The command string should contain the necessary information to update the player's level.
+         *
+         * @param cmd The command string received from the server.
+         */
+        void updatePlayerLevel(std::string cmd);
+
+        /**
+         * @brief Updates the inventory of a player in the game.
+         *
+         * This function is called when a player's inventory changes in the game.
+         * The command string should contain the necessary information to update the player's inventory.
+         *
+         * @param cmd The command string received from the server.
+         */
+        void updatePlayerInventory(std::string cmd);
+
+        /**
+         * @brief Adds a new egg to the game.
+         *
+         * This function is called when a player lays an egg in the game.
+         * The command string should contain the necessary information to create a new egg.
+         *
+         * @param cmd The command string received from the server.
+         */
+        void newEgg(std::string cmd);
+
+        /**
+         * @brief Handles a broadcast message in the game.
+         *
+         * This function is called when a player sends a broadcast message in the game.
+         * The command string should contain the necessary information to handle the broadcast message.
+         *
+         * @param cmd The command string received from the server.
+         */
+        void broadcastMessage(std::string cmd);
+
     private:
         irrlichtWindow *_ParentDevice; /**< The parent irrlichtWindow object. */
 

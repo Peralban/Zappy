@@ -78,6 +78,60 @@ void ServerDataParser::HandleServerMessage(std::string message)
             exit(EXIT_FAILURE);
         }
         this->getParentGame()->getChessBoard()->updateMapBtc(message);
+    } else if (serverMessage.command == "pnw") {
+        if (serverMessage.args.size() != 6) {
+            std::cerr << "HandleServerMessage: Error: pnw command should have 6 arguments" << std::endl;
+            exit(EXIT_FAILURE);
+        }
+        this->getParentGame()->newPlayer(message);
+    } else if (serverMessage.command == "ppo") {
+        if (serverMessage.args.size() != 4) {
+            std::cerr << "HandleServerMessage: Error: ppo command should have 4 arguments" << std::endl;
+            exit(EXIT_FAILURE);
+        }
+        this->getParentGame()->updatePlayerPos(message);
+    } else if (serverMessage.command == "plv") {
+        if (serverMessage.args.size() != 6) {
+            std::cerr << "HandleServerMessage: Error: pnw command should have 6 arguments" << std::endl;
+            exit(EXIT_FAILURE);
+        }
+        this->getParentGame()->updatePlayerLevel(message);
+    } else if (serverMessage.command == "pin") {
+        if (serverMessage.args.size() != 4) {
+            std::cerr << "HandleServerMessage: Error: ppo command should have 4 arguments" << std::endl;
+            exit(EXIT_FAILURE);
+        }
+        this->getParentGame()->updatePlayerInventory(message);
+    } else if (serverMessage.command == "pnw") {
+        if (serverMessage.args.size() != 4) {
+            std::cerr << "HandleServerMessage: Error: ppo command should have 4 arguments" << std::endl;
+            exit(EXIT_FAILURE);
+        }
+        this->getParentGame()->newPlayer(message);
+    } else if (serverMessage.command == "enw") {
+        if (serverMessage.args.size() != 4) {
+            std::cerr << "HandleServerMessage: Error: ppo command should have 4 arguments" << std::endl;
+            exit(EXIT_FAILURE);
+        }
+        this->getParentGame()->newEgg(message);
+    } else if (serverMessage.command == "pbc") {
+        if (serverMessage.args.size() != 2) {
+            std::cerr << "HandleServerMessage: Error: ppo command should have 2 arguments" << std::endl;
+            exit(EXIT_FAILURE);
+        }
+        this->getParentGame()->broadcastMessage(message);
+    } else if (serverMessage.command == "pdi") {
+        if (serverMessage.args.size() != 1) {
+            std::cerr << "HandleServerMessage: Error: ppo command should have 1 arguments" << std::endl;
+            exit(EXIT_FAILURE);
+        }
+        this->getParentGame()->playerDie(message);
+    } else if (serverMessage.command == "edi") {
+        if (serverMessage.args.size() != 1) {
+            std::cerr << "HandleServerMessage: Error: ppo command should have 1 arguments" << std::endl;
+            exit(EXIT_FAILURE);
+        }
+        this->getParentGame()->eggDie(message);
     }
 }
 

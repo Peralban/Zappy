@@ -77,6 +77,18 @@ void guiNetworkClient::askInitData()
     _HandleServerMessage(getServerResponse());
 }
 
+void guiNetworkClient::updateAllPlayers()
+{
+    for (auto &player : *_ServerDataParser->getParentGame()->getPlayerList()) {
+        handleWrite("ppo " + (std::to_string(player.second->getID())) + "\n");
+        _HandleServerMessage(getServerResponse());
+        handleWrite("pin " + (std::to_string(player.second->getID())) + "\n");
+        _HandleServerMessage(getServerResponse());
+        handleWrite("plv " + (std::to_string(player.second->getID())) + "\n");
+        _HandleServerMessage(getServerResponse());
+    }
+}
+
 void guiNetworkClient::makeNonBlocking()
 {
     int flags = fcntl(_Sockfd, F_GETFL, 0);

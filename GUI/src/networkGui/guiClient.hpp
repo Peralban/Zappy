@@ -111,6 +111,7 @@ public:
      */
     struct sockaddr_in getServerAddr();
 
+    void updateAllPlayers();
 private:
     std::string _ServerAdress; // The server address
     int _ServerPort; // The server port

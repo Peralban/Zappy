@@ -131,26 +131,16 @@ int irrlichtWindow::runWindow(ZappyGame *game, guiNetworkClient *client)
 {
     (void) game;
     (void) client;
-    int count = 0;
+    //int count = 0;
     while(this->_Device->run()) {
         for (int i = 0; i < 100; i++)
             this->_LinkedGuiClient->selectSocket();
         if (this->_Device->isWindowActive()) {
-            // make the player rotate
-            float orientation = this->getLinkedZappyGame()->getPlayer("player1")->getPlayerPosition()->getConvOrientationX();
-            if (orientation >= 359)
-                this->getLinkedZappyGame()->getPlayer("player1")->getPlayerPosition()->setConvertedOrientationX(0);
-            else
-                this->getLinkedZappyGame()->getPlayer("player1")->getPlayerPosition()->setConvertedOrientationX(orientation + 1);
-
-            // update the player position BUT NOT THE CONV POSITION
-            this->getLinkedZappyGame()->getPlayer("player1")->updatePlayerPos();
-            if (count < 100) {
-                count++;
-            } else {
-
-                this->getLinkedZappyGame()->getPlayer("player1")->getPlayerPosition()->setPos(rand() % this->getLinkedZappyGame()->getPlatformWidth(), rand() % this->getLinkedZappyGame()->getPlatformHeight(), 3);
-                count = 0;
+            client->updateAllPlayers();
+            std::cout << game->getPlayerList()->size() << std::endl;
+            if (game->getPlayerList()->size() > 0) {
+                std::cout << game->getPlayerList()->at(0).second->getPlayerPosition()->getX() << std::endl;
+                std::cout << game->getPlayerList()->at(0).second->getPlayerPosition()->getY() << std::endl;
             }
         	this->_Driver->beginScene(true, true, irr::video::SColor(255, 100, 101, 140));
             this->_SceneManager->drawAll();
