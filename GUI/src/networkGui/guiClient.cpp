@@ -54,6 +54,7 @@ void guiNetworkClient::handleRead()
 
 void guiNetworkClient::handleWrite(std::string message)
 {
+    std::cout << "Sending message: |" << message << "|" << std::endl;
     send(_Sockfd, message.c_str(), message.size(), 0);
 }
 
@@ -73,8 +74,7 @@ void guiNetworkClient::askInitData()
     _HandleServerMessage(getServerResponse());
     handleWrite("sgt\n");
     _HandleServerMessage(getServerResponse());
-    handleWrite("mct\n");
-    _HandleServerMessage(getServerResponse());
+
 }
 
 void guiNetworkClient::makeNonBlocking()
@@ -93,21 +93,35 @@ void guiNetworkClient::makeNonBlocking()
 
 void guiNetworkClient::selectSocket()
 {
-    int _Select;
-    fd_set _ReadFds;
-    struct timeval _TimeOut;
-    FD_ZERO(&_ReadFds);
-    FD_SET(_Sockfd, &_ReadFds);
-    _TimeOut.tv_sec = 0;
-    _TimeOut.tv_usec = 0;
-    _Select = select(_Sockfd + 1, &_ReadFds, NULL, NULL, &_TimeOut);
-    if (_Select < 0) {
+    fd_set readFds;
+    struct timeval timeOut;
+    FD_ZERO(&readFds);
+    FD_SET(_Sockfd, &readFds);
+    timeOut.tv_sec = 0;
+    timeOut.tv_usec = 0;
+
+    int selectResult = select(_Sockfd + 1, &readFds, NULL, NULL, &timeOut);
+    if (selectResult < 0) { 
         std::cerr << "selectSocket: Error: select failed" << std::endl;
         exit(EXIT_FAILURE);
     }
-    if (_Select > 0)
-        if (FD_ISSET(_Sockfd, &_ReadFds))
-            handleRead();
+    else if (selectResult > 0) {
+        if (FD_ISSET(_Sockfd, &readFds)) {
+            char buffer[1024];
+            int bytesRead = recv(_Sockfd, buffer, sizeof(buffer), 0);
+            if (bytesRead <= 0) {
+                if (bytesRead == 0) {
+                    std::cerr << "Connection closed by peer." << std::endl;
+                } else {
+                    std::cerr << "recv error: " << strerror(errno) << std::endl;
+                }
+                exit(EXIT_FAILURE);
+            } else {
+                buffer[bytesRead] = '\0';
+                std::cout << buffer << std::endl;
+            }
+        }
+    }
 }
 
 std::string guiNetworkClient::getServerResponse()
