@@ -1,6 +1,5 @@
 # This file uses centimeters as units for non-parametric coordinates.
 
-mtllib King_low.mtl
 g default
 v -1.127188 40.782322 0.000000
 v 1.122160 40.782322 0.000000

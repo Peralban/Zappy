@@ -8,6 +8,7 @@
 #pragma once
 
 #include <string>
+#include <iostream>
 #include "chessElement/chessPiece.hpp"
 
 /**
@@ -30,7 +31,7 @@ class Team {
          * @brief Sets the color of the team.
          * @param color The color of the team.
          */
-        void setColor(teamColor color);
+        void setColor(irr::video::ITexture *texture, std::string colorName);
 
         /**
          * @brief Sets the name of the team.
@@ -42,7 +43,7 @@ class Team {
          * @brief Gets the color of the team.
          * @return The color of the team.
          */
-        teamColor getColor();
+        irr::video::ITexture *getColor();
 
         /**
          * @brief Gets the name of the team.
@@ -51,6 +52,7 @@ class Team {
         std::string getTeamName();
 
     private:
-        teamColor _Color; /**< The color of the team. */
+        std::string _ColorName; /**< The name of the color of the team. */
+        irr::video::ITexture *_TeamTexture; /**< The color of the team. */
         std::string _TeamName; /**< The name of the team. */
 };

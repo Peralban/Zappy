@@ -1,6 +1,5 @@
 # This file uses centimeters as units for non-parametric coordinates.
 
-mtllib Bishop_hi.mtl
 g default
 v 0.968121 29.094559 -0.968119
 v 0.000000 28.995089 -1.534002

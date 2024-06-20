@@ -212,7 +212,6 @@ void irrlichtWindow::linkZappyGame(ZappyGame *gameToLink)
     }
     this->_LinkedZappyGame = gameToLink;
     gameToLink->linkWithDevice(this);
-    this->_LinkedZappyGame->initServerEvents();
 }
 
 void irrlichtWindow::linkGuiClient(guiNetworkClient *clientToLink)

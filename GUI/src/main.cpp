@@ -35,8 +35,11 @@ int main(int ac, char **av)
 
 	std::cout << " -------------- LINKING CLIENT AND ZAPPY -------------- "	<< std::endl;
 	window.linkZappyGame(zappy);
+	std::cout << " -------------- LINKING GUI CLIENT -------------- "	<< std::endl;
 	window.linkGuiClient(client);
+	std::cout << " -------------- SETTING PLATFORM SIZE -------------- "	<< std::endl;
 	zappy->setPlatformSize(platformX, platformY);
+	std::cout << " -------------- SETTING TILE SIZE -------------- "	<< std::endl;
 	zappy->setTileSize(tileSize);
 	std::cout << " -------------- CREATING SOCKET -------------- "	<< std::endl;
 	window.getGuiClient()->createSocket();
@@ -52,6 +55,8 @@ int main(int ac, char **av)
 	window.getLinkedZappyGame()->getPlayer("player1")->getPlayerPosition()->setZ(2);
 	window.getLinkedZappyGame()->getPlayer("player1")->getPlayerPosition()->setOrientation(0, 0, 2);
 	window.getLinkedZappyGame()->getPlayer("player1")->updatePlayerPos();
+	window.getLinkedZappyGame()->createTeam("team1", 255, 0, 0, 255);
+	window.getLinkedZappyGame()->getPlayer("player1")->setTeamFromName("team1");
 	window.getLinkedZappyGame()->getPlayer("player1")->setLevel(2);
 
 	std::cout << " -------------- RUNNING WINDOW -------------- "	<< std::endl;

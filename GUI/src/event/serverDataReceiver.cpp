@@ -14,7 +14,6 @@
 
 ServerDataParser::ServerDataParser()
 {
-    this->_Command_msz= false;
     this->_ParentClient = nullptr;
     this->_ParentGame = nullptr;
     this->_ParentDevice = nullptr;
@@ -55,25 +54,21 @@ void ServerDataParser::SetParentClient(guiNetworkClient *parentClient)
 void ServerDataParser::HandleServerMessage(std::string message)
 {
     serverMessage serverMessage = parseServerMessage(message);
-    // std::cout << "NEW Command: " << serverMessage.command;
-    // std::cout << " Args: ";
-    // for (std::string arg : serverMessage.args) {
-    //     std::cout << arg << " ; ";
-    // }
-    // std::cout << std::endl;
+    std::cout << "NEW Command: " << serverMessage.command << std::endl;
 
-    if (serverMessage.command == "msz" && !_Command_msz) {
-        if (serverMessage.args.size() != 2) {
-            std::cerr << "HandleServerMessage: Error: msz command should have 2 arguments" << std::endl;
-            exit(EXIT_FAILURE);
+    if (serverMessage.command == "msz") {
+        if (this->getParentGame()->getChessBoard() != nullptr && this->getParentGame()->getChessBoard()->isCreated() == false) {
+            if (serverMessage.args.size() != 2) {
+                std::cout << "HandleServerMessage: Warning: msz command should have 2 arguments" << std::endl;
+                return;
+            }
+            this->getParentGame()->setPlatformWidth(std::stoi(serverMessage.args[0]));
+            this->getParentGame()->setPlatformHeight(std::stoi(serverMessage.args[1]));
+            std::cout << "Platform size: " << this->getParentGame()->getPlatformWidth() << "x" << this->getParentGame()->getPlatformHeight() << std::endl;
+            irr::scene::ICameraSceneNode *irrActiveCam = this->getParentGame()->getParentDevice()->getActiveCamera();
+            irrActiveCam->setPosition(irr::core::vector3df(-15, (this->getParentGame()->getPlatformWidth() + this->getParentGame()->getPlatformHeight()) * 3 + 25, -15));
+            this->getParentGame()->getChessBoard()->createBoard();
         }
-        this->getParentGame()->setPlatformWidth(std::stoi(serverMessage.args[0]));
-        this->getParentGame()->setPlatformHeight(std::stoi(serverMessage.args[1]));
-        std::cout << "Platform size: " << this->getParentGame()->getPlatformWidth() << "x" << this->getParentGame()->getPlatformHeight() << std::endl;
-        irr::scene::ICameraSceneNode *irrActiveCam = this->getParentGame()->getParentDevice()->getActiveCamera();
-        irrActiveCam->setPosition(irr::core::vector3df(-15, (this->getParentGame()->getPlatformWidth() + this->getParentGame()->getPlatformHeight()) * 3 + 25, -15));
-        this->getParentGame()->getChessBoard()->createBoard();
-        this->_Command_msz = true;
     } else if (serverMessage.command == "sgt") {
             this->getParentGame()->setTimeUnit(std::stoi(serverMessage.args[0]));
             std::cout << "Time unit: " << this->getParentGame()->getTimeUnit() << std::endl;
