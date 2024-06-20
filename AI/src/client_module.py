@@ -66,8 +66,8 @@ def connect_to_server(host, port, name):
                                     sys.exit(84)
                                 else:
                                     nb_players = int(message.strip())
-                                    if nb_players != 0:
-                                        parsing.sub_process()
+                                    #if nb_players != 0:
+                                    #    parsing.sub_process()
                             if current_line == 3:
                                 LatLng = (int(parts[0]), int(parts[1]))
                                 Bot = ai_zappy.Bot(name, LatLng[0], LatLng[1])
