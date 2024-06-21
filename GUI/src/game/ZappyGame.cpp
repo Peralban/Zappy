@@ -120,7 +120,8 @@ void ZappyGame::newPlayer(std::string cmd)
     player->getPlayerPosition()->setPos(std::stoi(args[2]), std::stoi(args[3]));
     player->setOrientation(std::stoi(args[4]));
     player->setLevel(std::stoi(args[5]));
-    player->getTeam()->setTeamName(args[6]);
+    Team *newteam = this->createGetTeam(args[6], 255, 255, 255, 255);
+    player->setTeam(newteam);
     Tile *tile = this->_chessBoard->getMap()[std::stoi(args[2])][std::stoi(args[3])];
     tile->setPlayer(tile->getPlayer() + 1);
     tile->setEgg(tile->getEgg() - 1);
@@ -143,9 +144,13 @@ void ZappyGame::playerDie(std::string cmd)
     Player *player = this->getPlayer(args[1]);
     Tile *tile = this->_chessBoard->getMap()[player->getPlayerPosition()->getX()][player->getPlayerPosition()->getY()];
     tile->setPlayer(tile->getPlayer() - 1);
-    this->_playerList.erase(std::remove_if(this->_playerList.begin(), this->_playerList.end(), [args](std::pair<std::string, Player*> playeur) {
-        return playeur.first == args[1];
-    }), this->_playerList.end());
+    for(auto it = this->_playerList.begin(); it != this->_playerList.end(); ) {
+        if(it->first == args[1]) {
+            it = this->_playerList.erase(it);
+        } else {
+            ++it;
+        }
+    }
 }
 
 void ZappyGame::newEgg(std::string cmd)

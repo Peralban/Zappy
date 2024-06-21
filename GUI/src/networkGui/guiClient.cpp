@@ -76,10 +76,8 @@ std::string readUntilNewline(int sockfd) {
 
     while (true) {
         int bytesRead = recv(sockfd, buffer, sizeof(buffer), 0);
-        if (bytesRead <= 0) {
-            // Handle error or connection closed by peer
-            break;
-        }
+        if (bytesRead <= 0)
+            throw guiNetworkClient::SelectError();
         result += buffer[0];
         if (buffer[0] == '\n') {
             break;
@@ -102,18 +100,17 @@ void guiNetworkClient::selectSocket()
         throw SelectError();
     } else if (selectResult > 0) {
         if (FD_ISSET(_Sockfd, &readFds)) {
-            std::string buffer = readUntilNewline(_Sockfd);
-            if (buffer.empty()) {
+            std::string message = readUntilNewline(_Sockfd);
+            if (message.empty()) {
                 if (errno == EWOULDBLOCK)
                     std::cerr << "Connection closed by peer." << std::endl;
                 else
                     std::cerr << "recv error: " << strerror(errno) << std::endl;
-                }
                 throw SelectError();
             } else {
-                buffer.pop_back();
-                std::cout << "MESSAGES: " << buffer << std::endl;
-                _HandleServerMessage(buffer);
+                message.pop_back();
+                std::cout << "MESSAGES: " << message << std::endl;
+                _HandleServerMessage(message);
             }
         } else
             std::cerr << "selectSocket: Error: socket not set in readFds" << std::endl;

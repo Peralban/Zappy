@@ -30,8 +30,7 @@ void Core::initialize(int ac, char **av)
         m_window.parseArgs(ac, av);
         m_window.windowCreateDevice();
 
-        if (m_window.getDevice() == nullptr)
-        {
+        if (m_window.getDevice() == nullptr) {
             std::cerr << "Failed to create Irrlicht device!" << std::endl;
             std::exit(1);
         }
@@ -49,9 +48,13 @@ void Core::initialize(int ac, char **av)
         m_client->createSocket();
 
 
-    std::cout << " -------------- INITIALIZING CHESS BOARD -------------- " << std::endl;
+        std::cout << " -------------- INITIALIZING CHESS BOARD -------------- " << std::endl;
 
-    m_zappy->loadChessPieces();
+        m_zappy->loadChessPieces();
+    } catch (const std::exception &e) {
+        std::cerr << "Error: " << e.what() << std::endl;
+        std::exit(1);
+    }
 
 }
 

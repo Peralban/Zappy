@@ -139,13 +139,9 @@ int irrlichtWindow::runWindow(ZappyGame *game, guiNetworkClient *client)
             this->_LinkedGuiClient->selectSocket();
         }
         if (this->_Device->isWindowActive() && (game->getPlatformWidth() != 0 && game->getPlatformHeight() != 0)) {
-        	std::cout << "1" << std::endl;
             this->_Driver->beginScene(true, true, irr::video::SColor(255, 100, 101, 140));
-            std::cout << "2" << std::endl;
             this->_SceneManager->drawAll();
-            std::cout << "3" << std::endl;
             this->_Driver->endScene();
-            std::cout << "4" << std::endl;
         } else {
             this->_Device->yield();
         }

@@ -58,13 +58,8 @@ void ServerDataParser::HandleServerMessage(std::string message)
     if ((this->getParentGame()->getPlatformWidth() == 0 && this->getParentGame()->getPlatformHeight() == 0) && message.find("msz") == std::string::npos) {
         std::cerr << "HandleServerMessage: Error: Platform size is not setted, put args in buffer" << std::endl;
         buffer.push_back(message);
-        std::cout << "Buffer size: " << buffer.size() << std::endl;
-        for (std::string msg : buffer) {
-            std::cout << "Buffer: " << msg << "|" << std::endl;
-        }
-        std::cout << "\n\n\n" << std::endl;
         return;
-    } else if (buffer.empty()) {
+    } else if (buffer.empty() && message.find("msz") == std::string::npos) {
         for (std::string msg : buffer) {
             this->HandleServerMessage(msg);
         }
@@ -73,13 +68,19 @@ void ServerDataParser::HandleServerMessage(std::string message)
     std::cout << this->getParentGame()->getPlatformWidth() << std::endl;
     std::cout << this->getParentGame()->getPlatformHeight() << std::endl;
     serverMessage serverMessage = parseServerMessage(message);
-    std::cout << "Server message: " << message << "|" << std::endl;
 
-    if (serverMessage.command == "msz" && !_Command_msz) {
+    if (serverMessage.command == "msz") {
         if (serverMessage.args.size() != 2) {
             std::cerr << "HandleServerMessage: Error: msz command should have 2 arguments" << std::endl;
             exit(EXIT_FAILURE);
         }
+        this->getParentGame()->setPlatformWidth(std::stoi(serverMessage.args[0]));
+        this->getParentGame()->setPlatformHeight(std::stoi(serverMessage.args[1]));
+        irr::scene::ICameraSceneNode *irrActiveCam = this->getParentGame()->getParentDevice()->getActiveCamera();
+        irrActiveCam->setPosition(irr::core::vector3df(-15, (this->getParentGame()->getPlatformWidth() + this->getParentGame()->getPlatformHeight()) * 3 + 25, -15));
+        this->getParentGame()->getChessBoard()->createBoard();
+        this->getParentGame()->getChessBoard()->InitMap(std::stoi(serverMessage.args[0]), std::stoi(serverMessage.args[1]));
+        std::cout << "-----------------------------------------" << std::endl;
     } else if (serverMessage.command == "sgt") {
         this->getParentGame()->setTimeUnit(std::stoi(serverMessage.args[0]));
         std::cout << "Time unit: " << this->getParentGame()->getTimeUnit() << std::endl;
@@ -88,7 +89,9 @@ void ServerDataParser::HandleServerMessage(std::string message)
             std::cerr << "HandleServerMessage: Error: bct command should have 9 arguments" << std::endl;
             exit(EXIT_FAILURE);
         }
+        std::cout << "Updating map" << std::endl;
         this->getParentGame()->getChessBoard()->updateMapBtc(message);
+        std::cout << "Map updated" << std::endl;
     } else if (serverMessage.command == "pnw") {
         if (serverMessage.args.size() != 6) {
             std::cerr << "HandleServerMessage: Error: pnw command should have 6 arguments" << std::endl;
