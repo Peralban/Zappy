@@ -42,6 +42,7 @@ class Bot:
         self.queen_direction = None
         self.queen_exists = False
         self.is_queen = False
+        self.nb_player = 1
         self.mode = "survive"
 
     def run(self):
@@ -110,6 +111,9 @@ class Bot:
                 self.mode = "find queen"
                 return
         else:
+            if self.nb_player < 6:
+                self.mode = "lay egg"
+                return
             self.mode = "queen"
             return
         return
@@ -183,6 +187,11 @@ class Bot:
         self.queen_direction = None
         return
 
+    def lay_egg(self):
+        self.push_command("Fork")
+        self.push_command("Connect_nbr")
+        return
+
     # end of mode functions
 
     def do_action(self):
@@ -201,8 +210,11 @@ class Bot:
             if self.mode == "find queen":
                 self.find_queen()
         else:
+            self.push_command("Take food")
             if self.mode == "queen":
                 self.queen()
+            if self.mode == "lay egg":
+                self.lay_egg()
             return
         return
 
@@ -254,7 +266,7 @@ class Bot:
         if "Set" in self.waiting_command[0] and "ok" in result:
             self.set(self.waiting_command[0][4:])
         if self.waiting_command[0] == "Connect_nbr":
-            self.connect_nbr(result)
+            self.connect_nbr(int(result))
         if self.waiting_command[0] == "Fork" and "ok" in result:
             self.fork()
         if self.waiting_command[0] == "Incantation" and not "ko" in result:
@@ -374,9 +386,11 @@ class Bot:
         return
 
     def connect_nbr(self, nb):
-        if int(nb) > 0:
-            for i in range(int(nb)):
-                client_module.parsing.sub_process()
+        if self.is_queen:
+            self.nb_player += nb
+            if nb > 0:
+                for i in range(nb):
+                    client_module.parsing.sub_process()
         return
 
     def fork(self):

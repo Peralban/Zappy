@@ -132,8 +132,10 @@ void client_already_connected(server_t *server)
     for (client_list_t *tmp = server->list;
     tmp->client != NULL; tmp = tmp->next) {
         if (FD_ISSET(tmp->client->socket, &server->readfds) &&
-        recv_command(tmp->client, server))
+        recv_command(tmp->client, server)) {
+            client_already_connected(server);
             break;
+        }
         if (tmp->next == NULL || tmp->client == NULL)
             break;
     }
