@@ -85,7 +85,6 @@ void chessBoard::createBoard()
         throw NoTexturesSet();
     }
 
-    std::cout << "Creating chess board... with width: " << _Width << " and height: " << _Height << std::endl;
     for (x = 0; x < _Width; ++x) {
         for (y = 0; y < _Height; ++y) {
 			irr::video::ITexture* _TileTexture = ((x + y) % 2 == 0) ? _WhiteTexture : _BlackTexture;
@@ -99,6 +98,12 @@ void chessBoard::createBoard()
             }
         }
     }
+    _IsCreated = true;
+}
+
+bool chessBoard::isCreated()
+{
+    return _IsCreated;
 }
 
 void chessBoard::InitMap(int width, int height)

@@ -1,7 +1,5 @@
 # This file uses centimeters as units for non-parametric coordinates.
 
-mtllib Pawn.mtl
-g default
 v 1.476740 18.530436 -1.476739
 v 0.000000 18.530436 -2.088428
 v -1.476740 18.530436 -1.476739
