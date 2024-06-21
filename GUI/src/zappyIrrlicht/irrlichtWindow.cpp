@@ -132,8 +132,9 @@ int irrlichtWindow::runWindow(ZappyGame *game, guiNetworkClient *client)
     (void) game;
     (void) client;
     int count = 0;
+    std::cout << "Running window..." << std::endl;
     while(this->_Device->run()) {
-        for (int i = 0; i < 100; i++)
+        for (int i = 0; i < game->getTimeUnit(); i++)
             this->_LinkedGuiClient->selectSocket();
         if (this->_Device->isWindowActive()) {
             // make the player rotate

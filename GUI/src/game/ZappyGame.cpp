@@ -93,6 +93,121 @@ void ZappyGame::addPlayer(std::string name)
     this->_playerList.push_back(std::make_pair(name, player));
 }
 
+static std::vector<std::string> split(const std::string &s, char delimiter)
+{
+    std::vector<std::string> tokens;
+    std::string token;
+    std::istringstream tokenStream(s);
+    while (std::getline(tokenStream, token, delimiter)) {
+        tokens.push_back(token);
+    }
+    return tokens;
+}
+
+
+void ZappyGame::newPlayer(std::string cmd)
+{
+    //pnw #n X Y O L N\n
+    std::vector<std::string> args = split(cmd, ' ');
+
+    if (args.size() != 8) {
+        std::cerr << "newPlayer: Error: pnw command should have 8 arguments" << std::endl;
+        exit(EXIT_FAILURE);
+    }
+    this->addPlayer(args[1]);
+    Player *player = this->getPlayer(args[1]);
+    player->getPlayerPosition()->setPos(std::stoi(args[2]), std::stoi(args[3]));
+    player->setOrientation(std::stoi(args[4]));
+    player->setLevel(std::stoi(args[5]));
+    player->getTeam()->setTeamName(args[6]);
+    Tile *tile = this->_chessBoard->getMap()[std::stoi(args[2])][std::stoi(args[3])];
+    tile->setPlayer(tile->getPlayer() + 1);
+    tile->setEgg(tile->getEgg() - 1);
+}
+
+void ZappyGame::broadcastMessage(std::string cmd)
+{
+    //pbc #n message\n
+    std::vector<std::string> args = split(cmd, ' ');
+
+    if (args.size() != 3) {
+        std::cerr << "broadcastMessage: Error: pbc command should have 3 arguments" << std::endl;
+        exit(EXIT_FAILURE);
+    }
+    Player *player = this->getPlayer(args[1]);
+    player->setBroadcastMessage(args[2]);
+}
+
+void ZappyGame::playerDie(std::string cmd)
+{
+    //pdi #n\n
+    std::vector<std::string> args = split(cmd, ' ');
+
+    if (args.size() != 2) {
+        std::cerr << "playerDie: Error: pdi command should have 2 arguments" << std::endl;
+        exit(EXIT_FAILURE);
+    }
+    Player *player = this->getPlayer(args[1]);
+    Tile *tile = this->_chessBoard->getMap()[player->getPlayerPosition()->getX()][player->getPlayerPosition()->getY()];
+    tile->setPlayer(tile->getPlayer() - 1);
+    this->_playerList.erase(std::remove_if(this->_playerList.begin(), this->_playerList.end(), [args](std::pair<std::string, Player*> playeur) {
+        return playeur.first == args[1];
+    }), this->_playerList.end());
+}
+
+void ZappyGame::newEgg(std::string cmd)
+{
+    //enw #e #n X Y\n
+    std::vector<std::string> args = split(cmd, ' ');
+
+    if (args.size() != 5) {
+        std::cerr << "newEgg: Error: enw command should have 5 arguments" << std::endl;
+        exit(EXIT_FAILURE);
+    }
+    Tile *tile = this->_chessBoard->getMap()[std::stoi(args[3])][std::stoi(args[4])];
+    tile->setEgg(tile->getEgg() + 1);
+}
+
+void ZappyGame::updatePlayerPos(std::string cmd)
+{
+    //ppo #n X Y O\n
+    std::vector<std::string> args = split(cmd, ' ');
+
+    if (args.size() != 5) {
+        std::cerr << "updatePlayerPos: Error: ppo command should have 5 arguments" << std::endl;
+        exit(EXIT_FAILURE);
+    }
+    Player *player = this->getPlayer(args[1]);
+    player->getPlayerPosition()->setPos(std::stoi(args[2]), std::stoi(args[3]));
+    player->setOrientation(std::stoi(args[4]));
+}
+
+void ZappyGame::updatePlayerLevel(std::string cmd)
+{
+    //plv #n L\n
+    std::vector<std::string> args = split(cmd, ' ');
+
+    if (args.size() != 3) {
+        std::cerr << "updatePlayerLevel: Error: plv command should have 3 arguments" << std::endl;
+        exit(EXIT_FAILURE);
+    }
+    Player *player = this->getPlayer(args[1]);
+    player->setLevel(std::stoi(args[2]));
+}
+
+void ZappyGame::updatePlayerInventory(std::string cmd)
+{
+    //pin #n X Y T1 T2 T3 T4 T5 T6 T7\n
+    std::vector<std::string> args = split(cmd, ' ');
+
+    if (args.size() != 12) {
+        std::cerr << "updatePlayerInventory: Error: pin command should have 12 arguments" << std::endl;
+        exit(EXIT_FAILURE);
+    }
+    Player *player = this->getPlayer(args[1]);
+    player->setInventory(std::stoi(args[4]), std::stoi(args[5]), std::stoi(args[6]), std::stoi(args[7]), std::stoi(args[8]), std::stoi(args[9]), std::stoi(args[10]));
+}
+
 void ZappyGame::setPlatformSize(int x, int y)
 {
     this->_PlatformX = x;
@@ -134,8 +249,8 @@ void ZappyGame::setTimeUnit(int timeUnit)
 int ZappyGame::getTimeUnit()
 {
     if (this->_TimeUnit == 0) {
-        std::cout << "getTimeUnit: Warning: TimeUnit is not setted returning default 100" << std::endl;
-        return 100;
+        std::cout << "getTimeUnit: Warning: TimeUnit is not setted returning default 10" << std::endl;
+        return 10;
     }
     return this->_TimeUnit;
 }

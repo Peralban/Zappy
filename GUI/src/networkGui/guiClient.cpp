@@ -75,10 +75,8 @@ void guiNetworkClient::askInitData()
     initIdentification();
 
     handleWrite("msz\n");
-    _HandleServerMessage(getServerResponse());
     handleWrite("sgt\n");
-    _HandleServerMessage(getServerResponse());
-
+    handleWrite("mtc\n");
 }
 
 void guiNetworkClient::makeNonBlocking()
