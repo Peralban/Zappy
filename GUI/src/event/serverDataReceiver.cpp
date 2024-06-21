@@ -62,8 +62,13 @@ void ServerDataParser::HandleServerMessage(std::string message)
             std::cout << "Platform size: " << this->getParentGame()->getPlatformWidth() << "x" << this->getParentGame()->getPlatformHeight() << std::endl;
             irr::scene::ICameraSceneNode *irrActiveCam = this->getParentGame()->getParentDevice()->getActiveCamera();
             irrActiveCam->setPosition(irr::core::vector3df(-15, (this->getParentGame()->getPlatformWidth() + this->getParentGame()->getPlatformHeight()) * 3 + 25, -15));
-            this->getParentGame()->getChessBoard()->createBoard();
+            std::cout << "creating board..." << std::endl;
             this->getParentGame()->getChessBoard()->InitMap(std::stoi(serverMessage.args[0]), std::stoi(serverMessage.args[1]));
+
+            std::cout << "board created" << std::endl;
+            this->getParentGame()->getChessBoard()->createBoard();
+
+            std::cout << "Map initialized" << std::endl;
         }
     } else if (serverMessage.command == "sgt") {
             this->getParentGame()->setTimeUnit(std::stoi(serverMessage.args[0]));

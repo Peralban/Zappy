@@ -17,6 +17,7 @@
 #include "../interface/AError.hpp"
 
 class guiNetworkClient;
+class myEventReceiver;
 
 /**
  * @class irrlichtWindow
@@ -82,7 +83,7 @@ public:
      * 
      * this will create the event receiver object.
      */
-    void initEventReceiver();
+    void LinkEventReceiver();
 
     /**
      * @brief Initializes the camera.
@@ -90,6 +91,41 @@ public:
      * this will set the camera position, rotation, target, fov and other settings.
      */
     void initCamera();
+
+    /**
+     * @brief Initializes the cursor with a length and RGB color.
+     * 
+     * this will set the cursor length and color.
+     */
+    void initCursor(int length, int thickness, int R, int G, int B);
+
+    /**
+     * @brief Initializes the cursor with a irr::video::SColor.
+     * 
+     * this will set the cursor length and color.
+     */
+    void initCursor(int length, int thickness, irr::video::SColor color);
+
+    /**
+     * @brief set the cursor length.
+     * 
+     * this will set or change the cursor length.
+     */
+    void setCursorLength(int length);
+
+    /**
+     * @brief set the cursor thickness.
+     * 
+     * this will set or change the cursor thickness.
+     */
+    void setCursorThickness(int thickness);
+
+    /**
+     * @brief Creates the cursor.
+     * 
+     * this will create the cursor object.
+     */
+    void drawCursor();
 
     /**
      * @brief Links the ZappyGame object to the irrlichtWindow.
@@ -132,6 +168,11 @@ public:
      */
     int runWindow(ZappyGame *game, guiNetworkClient *client);
 
+    /**
+     * @brief Returns the active camera.
+     * 
+     * @return The active camera.
+     */
     irr::scene::ICameraSceneNode *getActiveCamera();
 
     /**
@@ -189,6 +230,13 @@ public:
      * @return The TextureLoader object.
      */
     TextureLoader *getTextureLoader();
+
+    /**
+     * @brief Returns the event receiver object.
+     * 
+     * @return The event receiver object.
+     */
+    myEventReceiver *getEventReceiver();
 
     /**
      * @brief Returns the width of the window.
@@ -375,9 +423,22 @@ public:
         UninitializedZappyGame() : AError("ZappyGame not initialized.") {}
     };
 
+    class UnableToCreateCamera : public AError {
+    public:
+        /**
+         * @brief Display an error message.
+         * @param message The error message to display. Defaults to "Could not create camera.".
+         */
+        UnableToCreateCamera() : AError("Could not create camera.") {}
+    };
+
 private:
     int _Width; /** < The width of the window */
     int _Height; /** < The height of the window */
+
+    int _CursorLength; /** < The cursor length */
+    int _CursorThickness; /** < The cursor thickness */
+    irr::video::SColor _CursorColor; /** < The cursor color */
 
     char *_ServerAdress; /** < The server address under the form : 255.255.255.255 */
     int _ServerPort; /** < The server port */
