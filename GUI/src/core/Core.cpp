@@ -30,8 +30,7 @@ void Core::initialize(int ac, char **av)
         m_window.parseArgs(ac, av);
         m_window.windowCreateDevice();
 
-        if (m_window.getDevice() == nullptr)
-        {
+        if (m_window.getDevice() == nullptr) {
             std::cerr << "Failed to create Irrlicht device!" << std::endl;
             std::exit(1);
         }
@@ -49,24 +48,15 @@ void Core::initialize(int ac, char **av)
         std::cout << " -------------- CREATING SOCKET -------------- " << std::endl;
         m_client->createSocket();
 
-        std::cout << " -------------- INITIALIZING IDENTIFICATION -------------- " << std::endl;
-        m_client->askInitData();
 
         std::cout << " -------------- INITIALIZING CHESS BOARD -------------- " << std::endl;
-        m_client->makeNonBlocking();
 
         m_zappy->loadChessPieces();
-        m_zappy->addPlayer("player1");
-        m_zappy->getPlayer("player1")->getPlayerPosition()->setPos(5, 3);
-        m_zappy->getPlayer("player1")->getPlayerPosition()->setZ(2);
-        m_zappy->getPlayer("player1")->getPlayerPosition()->setOrientation(0, 0, 2);
-        m_zappy->getPlayer("player1")->updatePlayerPos();
-        m_zappy->createTeam("team1", 0, 0, 255, 255);
-      	m_zappy->getPlayer("player1")->setTeamFromName("team1");
-        m_zappy->getPlayer("player1")->setLevel(2);
-    } catch (std::exception &e) {
-        exit(84);
+    } catch (const std::exception &e) {
+        std::cerr << "Error: " << e.what() << std::endl;
+        std::exit(1);
     }
+
 }
 
 void Core::run()

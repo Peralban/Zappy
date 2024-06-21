@@ -50,7 +50,25 @@ void ServerDataParser::SetParentClient(guiNetworkClient *parentClient)
 
 void ServerDataParser::HandleServerMessage(std::string message)
 {
+    static std::vector<std::string> buffer;
+    if (message == "WELCOME") {
+        std::cout << "|---- WELCOME ----|" << std::endl;
+        return;
+    }
+    if ((this->getParentGame()->getPlatformWidth() == 0 && this->getParentGame()->getPlatformHeight() == 0) && message.find("msz") == std::string::npos) {
+        std::cerr << "HandleServerMessage: Error: Platform size is not setted, put args in buffer" << std::endl;
+        buffer.push_back(message);
+        return;
+    } else if (buffer.empty() && message.find("msz") == std::string::npos) {
+        for (std::string msg : buffer) {
+            this->HandleServerMessage(msg);
+        }
+        buffer.clear();
+    }
+    std::cout << this->getParentGame()->getPlatformWidth() << std::endl;
+    std::cout << this->getParentGame()->getPlatformHeight() << std::endl;
     serverMessage serverMessage = parseServerMessage(message);
+
     if (serverMessage.command == "msz") {
         if (this->getParentGame()->getChessBoard() != nullptr && this->getParentGame()->getChessBoard()->isCreated() == false) {
             if (serverMessage.args.size() != 2) {
@@ -71,14 +89,64 @@ void ServerDataParser::HandleServerMessage(std::string message)
             std::cout << "Map initialized" << std::endl;
         }
     } else if (serverMessage.command == "sgt") {
-            this->getParentGame()->setTimeUnit(std::stoi(serverMessage.args[0]));
-            std::cout << "Time unit: " << this->getParentGame()->getTimeUnit() << std::endl;
+        this->getParentGame()->setTimeUnit(std::stoi(serverMessage.args[0]));
+        std::cout << "Time unit: " << this->getParentGame()->getTimeUnit() << std::endl;
     } else if (serverMessage.command == "bct") {
-        // -> commenting this because it crash each time bc the ref server doesn't send 9 args 
-        // if (serverMessage.args.size() != 9) {
-        //     std::cerr << "HandleServerMessage: Error: bct command should have 9 arguments" << std::endl;
-        // }
-        // this->getParentGame()->getChessBoard()->updateMapBtc(message);
+        if (serverMessage.args.size() != 9) {
+            std::cerr << "HandleServerMessage: Error: bct command should have 9 arguments" << std::endl;
+            exit(EXIT_FAILURE);
+        }
+        std::cout << "Updating map" << std::endl;
+        this->getParentGame()->getChessBoard()->updateMapBtc(message);
+        std::cout << "Map updated" << std::endl;
+    } else if (serverMessage.command == "pnw") {
+        if (serverMessage.args.size() != 6) {
+            std::cerr << "HandleServerMessage: Error: pnw command should have 6 arguments" << std::endl;
+            exit(EXIT_FAILURE);
+        }
+        this->getParentGame()->newPlayer(message);
+    } else if (serverMessage.command == "ppo") {
+        if (serverMessage.args.size() != 4) {
+            std::cerr << "HandleServerMessage: Error: ppo command should have 4 arguments" << std::endl;
+            exit(EXIT_FAILURE);
+        }
+        this->getParentGame()->updatePlayerPos(message);
+    } else if (serverMessage.command == "plv") {
+        if (serverMessage.args.size() != 2) {
+            std::cerr << "HandleServerMessage: Error: pnw command should have 6 arguments" << std::endl;
+            exit(EXIT_FAILURE);
+        }
+        this->getParentGame()->updatePlayerLevel(message);
+    } else if (serverMessage.command == "pin") {
+        if (serverMessage.args.size() != 10) {
+            std::cerr << "HandleServerMessage: Error: ppo command should have 4 arguments" << std::endl;
+            exit(EXIT_FAILURE);
+        }
+        this->getParentGame()->updatePlayerInventory(message);
+    } else if (serverMessage.command == "pnw") {
+        if (serverMessage.args.size() != 6) {
+            std::cerr << "HandleServerMessage: Error: ppo command should have 4 arguments" << std::endl;
+            exit(EXIT_FAILURE);
+        }
+        this->getParentGame()->newPlayer(message);
+    } else if (serverMessage.command == "enw") {
+        if (serverMessage.args.size() != 4) {
+            std::cerr << "HandleServerMessage: Error: ppo command should have 4 arguments" << std::endl;
+            exit(EXIT_FAILURE);
+        }
+        this->getParentGame()->newEgg(message);
+    } else if (serverMessage.command == "pbc") {
+        if (serverMessage.args.size() != 2) {
+            std::cerr << "HandleServerMessage: Error: ppo command should have 2 arguments" << std::endl;
+            exit(EXIT_FAILURE);
+        }
+        this->getParentGame()->broadcastMessage(message);
+    } else if (serverMessage.command == "pdi") {
+        if (serverMessage.args.size() != 1) {
+            std::cerr << "HandleServerMessage: Error: ppo command should have 1 arguments" << std::endl;
+            exit(EXIT_FAILURE);
+        }
+        this->getParentGame()->playerDie(message);
     }
 }
 
@@ -95,7 +163,13 @@ serverMessage ServerDataParser::parseServerMessage(std::string message)
         args.push_back(arg);
     }
     serverMessage.command = command;
+    std::cout << "Command: " << command << std::endl;
     serverMessage.args = args;
+    std::cout << "Args: ";
+    for (std::string A : args) {
+        std::cout << A << " ";
+    }
+    std::cout << std::endl;
     return serverMessage;
 }
 

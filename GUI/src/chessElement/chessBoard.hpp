@@ -87,6 +87,8 @@ class chessBoard {
 
         void printMapAtPos(int x, int y);
 
+        std::vector<std::vector<Tile *>> getMap() { return _map; }
+
         class NoParentWindow : public AError {
         public:
             /**

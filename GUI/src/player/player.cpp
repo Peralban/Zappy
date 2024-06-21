@@ -208,3 +208,33 @@ ZappyGame *Player::getParentGame()
     return this->_ParentGame;
 }
 
+int Player::getID()
+{
+    return this->_Id;
+}
+
+void Player::setID(int id)
+{
+    this->_Id = id;
+}
+
+int Player::getOrientation()
+{
+    return this->_Orientation;
+}
+
+void Player::setOrientation(int orientation)
+{
+    this->_Orientation = orientation;
+}
+
+void Player::setInventory(int food, int linemate, int deraumere, int sibur, int mendiane, int phiras, int thystame)
+{
+    this->_food = food;
+    this->_linemate = linemate;
+    this->_deraumere = deraumere;
+    this->_sibur = sibur;
+    this->_mendiane = mendiane;
+    this->_phiras = phiras;
+    this->_thystame = thystame;
+}
