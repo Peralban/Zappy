@@ -12,6 +12,7 @@
 #include "playerPosition.hpp"
 #include "chessElement/chessPiece.hpp"
 #include <string>
+#include "../interface/AError.hpp"
 
 class ZappyGame;
 class chessPiece;
@@ -153,6 +154,33 @@ class Player {
          * @return A pointer to the PlayerPos object representing the player's position.
          */
         PlayerPos *getPlayerPosition();
+
+        class NullableParentGame : public AError {
+        public:
+            /**
+             * @brief Display an error message.
+             * @param message The error message to display. Defaults to "Trying to set ParentGame but given parentGame is null".
+             */
+            NullableParentGame() : AError("Trying to set ParentGame but given parentGame is null") {}
+        };
+
+        class ChessPieceUnset : public AError {
+        public:
+            /**
+             * @brief Display an error message.
+             * @param message The error message to display. Defaults to "ChessPieceNode is not setted".
+             */
+            ChessPieceUnset() : AError("ChessPieceNode is not setted") {}
+        };
+
+        class UnsetParentGame : public AError {
+        public:
+            /**
+             * @brief Display an error message.
+             * @param message The error message to display. Defaults to "Trying to get ParentGame but ParentGame is not setted.".
+             */
+            UnsetParentGame() : AError("Trying to get ParentGame but ParentGame is not setted.") {}
+        };
 
     private:
         std::string _Name; /**< The name of the player. */

@@ -43,8 +43,7 @@ Player::~Player()
 void Player::setParentGame(ZappyGame *parentGame)
 {
     if (parentGame == nullptr) {
-        std::cerr << "setParentGame: Error: trying to set ParentGame but given parentGame is null" << std::endl;
-        exit(EXIT_FAILURE);
+        throw NullableParentGame();
     }
     this->_ParentGame = parentGame;
     this->_PlayerPosition.initPos();
@@ -119,8 +118,7 @@ void Player::setPlayerPosition(PlayerPos *pos)
 void Player::updatePlayerPos()
 {
     if (this->_chessPieceNode == nullptr) {
-        std::cerr << "updatePlayerPos: Error: ChessPieceNode is not setted" << std::endl;
-        exit(EXIT_FAILURE);
+        throw ChessPieceUnset();
     }
     if (this->_PlayerPosition.getVecPosConverted() == irr::core::vector3df(0, 0, 0))
         std::cout << "updatePlayerPos: Warning: PlayerPosition is not setted" << std::endl;
@@ -207,8 +205,7 @@ PlayerPos *Player::getPlayerPosition()
 ZappyGame *Player::getParentGame()
 {
     if (this->_ParentGame == nullptr) {
-        std::cerr << "getParentGame: Error: ParentGame is not setted" << std::endl;
-        exit(EXIT_FAILURE);
+        throw UnsetParentGame();
     }
     return this->_ParentGame;
 }
