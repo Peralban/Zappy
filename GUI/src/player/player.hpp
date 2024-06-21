@@ -168,9 +168,27 @@ class Player {
         public:
             /**
              * @brief Display an error message.
+             * @param message The error message to display. Defaults to "ChessPiece is not setted".
+             */
+            ChessPieceUnset() : AError("ChessPiece is not setted") {}
+        };
+
+        class ChessPieceNotGetted : public AError {
+        public:
+            /**
+             * @brief Display an error message.
+             * @param message The error message to display. Defaults to "ChessPieces wasn't correctly getted".
+             */
+            ChessPieceNotGetted() : AError("ChessPieces wasn't correctly getted") {}
+        };
+
+        class ChessPieceNodeUnset : public AError {
+        public:
+            /**
+             * @brief Display an error message.
              * @param message The error message to display. Defaults to "ChessPieceNode is not setted".
              */
-            ChessPieceUnset() : AError("ChessPieceNode is not setted") {}
+            ChessPieceNodeUnset() : AError("ChessPieceNode is not setted") {}
         };
 
         class UnsetParentGame : public AError {

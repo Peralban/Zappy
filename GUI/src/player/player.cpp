@@ -144,14 +144,12 @@ void Player::setLevel(int level)
 void Player::updateLevel()
 {
     if (this->_chessPieceNode == nullptr) {
-        std::cerr << "updateLevel: Error: ChessPieceNode is not setted" << std::endl;
-        exit(EXIT_FAILURE);
+        throw ChessPieceNodeUnset();
     }
     this->_chessPieceNode->remove();
     chessPiece *_chessPieces = this->_ParentGame->getChessPieces();
     if (_chessPieces == nullptr) {
-        std::cerr << "updateLevel: Error: ChessPieces wasn't correctly getted" << std::endl;
-        exit(EXIT_FAILURE);
+        throw ChessPieceNotGetted();
     }
     this-> _chessPieceNode = _chessPieces->placePiece(
         _chessPieces->getPiece(_PieceType),
