@@ -13,7 +13,6 @@
 #include "event/serverDataReceiver.hpp"
 #include "chessElement/chessBoard.hpp"
 #include <iostream>
-#include <vector>
 
 class irrlichtWindow;
 
@@ -109,6 +108,13 @@ class ZappyGame {
          * This function initializes the server data parser object.
          */
         void initServerEvents();
+
+        /**
+         * @brief Creates a team with the specified name.
+         * 
+         * @param teams The name of the team to create.
+         */
+        void createTeam(std::string teams, int Red, int Green, int Blue, int Alpha);
         
         /**
          * @brief Gets the chess pieces of the game.
@@ -157,7 +163,7 @@ class ZappyGame {
          * 
          * @return A pointer to the list of players.
          */
-        std::vector<std::pair<std::string, Player*>> *getPlayerList();
+        std::map<std::string, Player*> *getPlayerList();
 
         /**
          * @brief Gets a player by name.
@@ -181,6 +187,33 @@ class ZappyGame {
          */
         chessBoard *getChessBoard();
 
+        /**
+         * @brief Gets the team object from the team name.
+         * 
+         * @param teamName The name of the team to get.
+         * @return A pointer to the team object.
+         */
+        Team *getTeamFromName(std::string teamName);
+
+        /**
+         * @brief Gets the list of teams in the game.
+         * 
+         * @return A pointer to the list of teams.
+         */
+        std::map<std::string, Team*> *getTeamsList();
+
+        /**
+         * @brief Creates a team with the specified name.
+         * 
+         * @param teamName The name of the team to create.
+         * @param Red The red color of the team.
+         * @param Green The green color of the team.
+         * @param Blue The blue color of the team.
+         * @param Alpha The alpha color of the team.
+         * @return A pointer to the team object.
+         */
+        Team *createGetTeam(std::string teamName, int Red, int Green, int Blue, int Alpha);
+
     private:
         irrlichtWindow *_ParentDevice; /**< The parent irrlichtWindow object. */
 
@@ -194,7 +227,9 @@ class ZappyGame {
 
         chessBoard *_chessBoard; /**< The chess board object. */
     
-        std::vector<std::pair<std::string, Player*>> _playerList; /**< The list of players in the game. */
+        std::map<std::string, Player*> _playerList; /**< The list of players in the game. */
 
         int _TimeUnit; /**< The time unit of the game. */
+
+        std::map<std::string, Team*> _teamsList; /**< A map of Teams names to Teams objects. */
 };

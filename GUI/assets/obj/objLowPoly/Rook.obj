@@ -1,6 +1,5 @@
 # This file uses centimeters as units for non-parametric coordinates.
 
-mtllib Rook_low.mtl
 g default
 v -0.000003 -0.000000 -0.000000
 v 1.805282 13.595387 -1.805286

@@ -32,8 +32,18 @@ void ZappyGame::linkWithDevice(irrlichtWindow *parentDevice)
         exit(EXIT_FAILURE);
     }
     this->_ParentDevice = parentDevice;
+    this->initServerEvents();
     this->_chessBoard = new chessBoard(this);
     this->_chessBoard->setParentWindow(parentDevice);
+}
+
+void ZappyGame::createTeam(std::string teams, int Red, int Green, int Blue, int Alpha)
+{
+    Team *team = new Team();
+    std::string teamName = teams + "_color";
+    team->setColor(this->_ParentDevice->getTextureLoader()->createGetTexture(Red, Green, Blue, Alpha, teamName), teamName);
+    team->setTeamName(teams);
+    this->_teamsList[teams] = team;
 }
 
 void ZappyGame::setServerDataParser(ServerDataParser *serverDataParser)
@@ -90,7 +100,7 @@ void ZappyGame::addPlayer(std::string name)
         exit(EXIT_FAILURE);
     }
     player->playerInit();
-    this->_playerList.push_back(std::make_pair(name, player));
+    this->_playerList[name] = player;
 }
 
 void ZappyGame::setPlatformSize(int x, int y)
@@ -167,7 +177,7 @@ float ZappyGame::getTileSize()
     return this->_TileSize;
 }
 
-std::vector<std::pair<std::string, Player*>> *ZappyGame::getPlayerList()
+std::map<std::string, Player*> *ZappyGame::getPlayerList()
 {
     if (this->_playerList.empty())
         std::cout << "getPlayerList: WARNING : PlayerList is empty" << std::endl;
@@ -180,12 +190,11 @@ Player *ZappyGame::getPlayer(std::string name)
         std::cout << "getPlayer: WARNING : PlayerList is empty but trying to get a player by name" << std::endl;
         return nullptr;
     }
-    for (auto &player : this->_playerList) {
-        if (player.first == name) {
-            return player.second;
-        }
+    if (this->_playerList.find(name) == this->_playerList.end()) {
+        std::cout << "getPlayer: WARNING : Player not found returning nullptr" << std::endl;
+        return nullptr;
     }
-    return nullptr;
+    return this->_playerList[name];
 }
 
 ServerDataParser *ZappyGame::getServerDataParser()
@@ -200,4 +209,26 @@ ServerDataParser *ZappyGame::getServerDataParser()
 chessBoard *ZappyGame::getChessBoard()
 {
     return this->_chessBoard;
+}
+
+Team *ZappyGame::getTeamFromName(std::string teamName)
+{
+    if (this->_teamsList.find(teamName) == this->_teamsList.end()) {
+        std::cout << "getTeam: Warning: Team not found returning nullptr" << std::endl;
+        return nullptr;
+    }
+    return this->_teamsList[teamName];
+}
+
+std::map<std::string, Team*> *ZappyGame::getTeamsList()
+{
+    return &this->_teamsList;
+}
+
+Team *ZappyGame::createGetTeam(std::string teamName, int Red, int Green, int Blue, int Alpha)
+{
+    if (this->_teamsList.find(teamName) == this->_teamsList.end()) {
+        this->createTeam(teamName, Red, Green, Blue, Alpha);
+    }
+    return this->_teamsList[teamName];
 }

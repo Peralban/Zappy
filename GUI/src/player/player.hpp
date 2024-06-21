@@ -66,6 +66,13 @@ class Player {
         void setTeam(Team *team = nullptr);
 
         /**
+         * @brief Sets the team of the player using the name of the team.
+         * 
+         * @param team string of the team name.
+         */
+        void setTeamFromName(std::string team = "undefined");
+
+        /**
          * @brief Sets the name of the player.
          * 
          * @param name The name of the player.

@@ -59,7 +59,11 @@ void Core::initialize(int ac, char **av)
     m_zappy->getPlayer("player1")->getPlayerPosition()->setZ(2);
     m_zappy->getPlayer("player1")->getPlayerPosition()->setOrientation(0, 0, 2);
     m_zappy->getPlayer("player1")->updatePlayerPos();
+    m_zappy->createTeam("team1", 0, 0, 255, 255);
+	m_zappy->getPlayer("player1")->setTeamFromName("team1");
     m_zappy->getPlayer("player1")->setLevel(2);
+
+
 }
 
 void Core::run()
