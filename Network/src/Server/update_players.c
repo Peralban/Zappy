@@ -83,8 +83,8 @@ static bool update_life(client_t *client, server_t *server)
             reset_client(client, server);
             return false;
         }
-    } else
-        drone->life_ticks--;
+    } //else
+      //  drone->life_ticks--;
     return true;
 }
 

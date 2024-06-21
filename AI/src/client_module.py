@@ -81,6 +81,15 @@ def connect_to_server(host, port, name):
                     sys.stdout.flush()
     except KeyboardInterrupt:
         print("\nClient interrupted.")
+        send_instruction('quit')
+        sock.close()
+        sys.exit(0)
+    except Exception as e:
+        print(f"An error occured: {e}")
+        send_instruction('quit')
+        sock.close()
+        sys.exit(84)
     finally:
         send_instruction('quit')
         sock.close()
+        sys.exit(0)
