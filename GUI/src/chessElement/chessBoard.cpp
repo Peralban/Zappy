@@ -59,17 +59,11 @@ void chessBoard::setTileSize(float tileSize)
 
 void chessBoard::setWidth(int width)
 {
-    if (width <= 0) {
-        throw InvalidWidth();
-    }
     _Width = width;
 }
 
 void chessBoard::setHeight(int height)
 {
-    if (height <= 0) {
-        throw InvalidHeight();
-    }
     _Height = height;
 }
 
