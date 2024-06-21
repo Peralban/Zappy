@@ -28,18 +28,15 @@ irrlichtWindow::irrlichtWindow(
 
 void irrlichtWindow::parseArgs(int ac, char **av)
 {
-   if (ac != 3) {
-        std::cerr << "Usage: " << av[0] << " <server_ip> <server_port>" << std::endl;
-        exit(EXIT_FAILURE);
+    if (ac != 3) {
+        throw WrongArgs();
     }
     std::regex ip_regex(R"(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})");
     if (!std::regex_match(av[1], ip_regex)) {
-        std::cerr << "Invalid server IP address" << std::endl;
-        exit(EXIT_FAILURE);
+        throw InvalidIP();
     }
     if (std::stoi(av[2]) < 1024 || std::stoi(av[2]) > 65535) {
-        std::cerr << "Invalid server port" << std::endl;
-        exit(EXIT_FAILURE);
+        throw InvalidPort();
     }
     this->_ServerAdress = av[1];
     this->_ServerPort = std::stoi(av[2]);
@@ -49,8 +46,7 @@ void irrlichtWindow::windowCreateDevice()
 {
     irr::IrrlichtDevice *device = irr::createDevice(this->_DriverType, irr::core::dimension2d<irr::u32>(this->_Width, this->_Height), 16, false, false, false, 0);
 	if (device == 0) {
-        std::cerr << "windowCreateDevice : Error: Could not create device" << std::endl;
-        exit(EXIT_FAILURE);
+        throw NotDeviceCreated();
     }
 	this->_Device = device;
 }
@@ -63,8 +59,7 @@ irrlichtWindow::~irrlichtWindow()
 void irrlichtWindow::initDrivers()
 {
     if (!this->_Device) {
-        std::cerr << "initDrivers : Error: Device not initialized, can't create driver" << std::endl;
-        exit(EXIT_FAILURE);
+        throw DeviceUninitialized();
     }
     this->_Driver = this->_Device->getVideoDriver();
     this->_SceneManager = this->_Device->getSceneManager();
@@ -103,8 +98,7 @@ void irrlichtWindow::initEventReceiver()
 {
     this->_EventReceiver = new myEventReceiver(this->_Device);
     if (this->_EventReceiver == nullptr) {
-        std::cerr << "initEventReceiver: Error: Could not create event receiver" << std::endl;
-        exit(EXIT_FAILURE);
+        throw UnableToCreateEvent();
     }
     this->_Device->setEventReceiver(this->_EventReceiver);
 }
@@ -112,17 +106,15 @@ void irrlichtWindow::initEventReceiver()
 char *irrlichtWindow::getServerAdress()
 {
     if (!this->_ServerAdress) {
-        std::cerr << "getServerAdress Error: Server adress not initialized" << std::endl;
-        exit(EXIT_FAILURE);
+        throw UninitializedServerAdress();
     }
     return this->_ServerAdress;
 }
 
 int irrlichtWindow::getServerPort()
 {
+        throw InvalidPort();
     if (this->_ServerPort < 1024 || this->_ServerPort > 65535) {
-        std::cerr << "getServerPort: Error: Invalid server port" << std::endl;
-        exit(EXIT_FAILURE);
     }
     return this->_ServerPort;
 }
@@ -164,8 +156,7 @@ int irrlichtWindow::runWindow(ZappyGame *game, guiNetworkClient *client)
 irr::scene::ICameraSceneNode *irrlichtWindow::getActiveCamera()
 {
     if (!this->_ActiveCamera) {
-        std::cerr << "getActiveCamera: Error: Camera not initialized" << std::endl;
-        exit(EXIT_FAILURE);
+        throw UninitializedCamera();
     }
     return this->_ActiveCamera;
 }
@@ -173,8 +164,7 @@ irr::scene::ICameraSceneNode *irrlichtWindow::getActiveCamera()
 irr::IrrlichtDevice *irrlichtWindow::getDevice()
 {
     if (!this->_Device) {
-        std::cerr << "getDevice: Error: Device not initialized" << std::endl;
-        exit(EXIT_FAILURE);
+        throw DeviceUnitialized();
     }
     return this->_Device;
 }
@@ -182,8 +172,7 @@ irr::IrrlichtDevice *irrlichtWindow::getDevice()
 irr::video::IVideoDriver *irrlichtWindow::getDriver()
 {
     if (!this->_Driver) {
-        std::cerr << "getDriver: Error: Driver not initialized" << std::endl;
-        exit(EXIT_FAILURE);
+        throw DriverUnitialized();
     }
     return this->_Driver;
 }
@@ -191,8 +180,7 @@ irr::video::IVideoDriver *irrlichtWindow::getDriver()
 irr::scene::ISceneManager *irrlichtWindow::getSceneManager()
 {
     if (!this->_SceneManager) {
-        std::cerr << "getSceneManager: Error: SceneManager not initialized" << std::endl;
-        exit(EXIT_FAILURE);
+        throw SceneManagerUnitialized();
     }
     return this->_SceneManager;
 }
@@ -209,8 +197,7 @@ quality irrlichtWindow::getQuality()
 void irrlichtWindow::linkZappyGame(ZappyGame *gameToLink)
 {
     if (!gameToLink) {
-        std::cerr << "linkZappyGame: Error: ZappyGame not linked" << std::endl;
-        exit(EXIT_FAILURE);
+        throw UnlinkedZappyGame();
     }
     this->_LinkedZappyGame = gameToLink;
     gameToLink->linkWithDevice(this);
@@ -219,18 +206,15 @@ void irrlichtWindow::linkZappyGame(ZappyGame *gameToLink)
 void irrlichtWindow::linkGuiClient(guiNetworkClient *clientToLink)
 {
     if (!this->_LinkedZappyGame) {
-        std::cerr << "Error: ZappyGame not linked" << std::endl;
-        exit(EXIT_FAILURE);
+        throw UnlinkedZappyGame();
     }
     if (!clientToLink) {
-        std::cerr << "Error: guiNetworkClient not linked" << std::endl;
-        exit(EXIT_FAILURE);
+        throw UnlinkedGuiNetworkClient();
     }
     this->_LinkedGuiClient = clientToLink;
     clientToLink->setLinkedGame(this);
     if (this->_LinkedZappyGame->getServerDataParser() == nullptr) {
-        std::cerr << "linkGuiClient: Error: ServerDataParser not initialized" << std::endl;
-        exit(EXIT_FAILURE);
+        throw UnlinkedServerDataParser();
     }
     this->_LinkedZappyGame->getServerDataParser()->SetParentClient(clientToLink);
 }
@@ -238,8 +222,7 @@ void irrlichtWindow::linkGuiClient(guiNetworkClient *clientToLink)
 ZappyGame *irrlichtWindow::getLinkedZappyGame()
 {
     if (!this->_LinkedZappyGame) {
-        std::cerr << "getLinkedZappyGame: Error: ZappyGame not initialized" << std::endl;
-        exit(EXIT_FAILURE);
+        throw UninitializedZappyGame();
     }
     return this->_LinkedZappyGame;
 }
@@ -247,8 +230,7 @@ ZappyGame *irrlichtWindow::getLinkedZappyGame()
 guiNetworkClient *irrlichtWindow::getGuiClient()
 {
     if (!this->_LinkedGuiClient) {
-        std::cerr << "getGuiClient: Error: guiNetworkClient not initialized" << std::endl;
-        exit(EXIT_FAILURE);
+        throw UninitializedGuiNetworkClient();
     }
     return this->_LinkedGuiClient;
 }
@@ -256,8 +238,7 @@ guiNetworkClient *irrlichtWindow::getGuiClient()
 ObjLoader *irrlichtWindow::getObjLoader()
 {
     if (this->_ObjLoader == nullptr) {
-        std::cerr << "getObjLoader: Error: ObjLoader not initialized" << std::endl;
-        exit(EXIT_FAILURE);
+        throw UninitializedObjLoader();
     }
     return this->_ObjLoader;
 }
@@ -265,8 +246,7 @@ ObjLoader *irrlichtWindow::getObjLoader()
 TextureLoader *irrlichtWindow::getTextureLoader()
 {
     if (!this->_TextureLoader) {
-        std::cerr << "getTextureLoader: Error: TextureLoader not initialized" << std::endl;
-        exit(EXIT_FAILURE);
+        throw ObjLoader();
     }
     return this->_TextureLoader;
 }
