@@ -11,8 +11,7 @@
 myEventReceiver::myEventReceiver(irr::IrrlichtDevice* device)
 {
     if (device == nullptr) {
-        std::cerr << "myEventReceiver: Error: trying to create myEventReceiver but given device is null" << std::endl;
-        exit(EXIT_FAILURE);
+        throw NullableDevice();
     }
     _Device = device;
 }
@@ -23,8 +22,7 @@ myEventReceiver::~myEventReceiver()
 
 bool myEventReceiver::OnEvent(const irr::SEvent& event) {
     if (_Device == nullptr) {
-        std::cerr << "OnEvent: Error: trying to handle an event but device is not setted" << std::endl;
-        exit(EXIT_FAILURE);
+        throw UnsetDevice();
     }
     if (event.EventType != irr::EET_KEY_INPUT_EVENT)
         return false;

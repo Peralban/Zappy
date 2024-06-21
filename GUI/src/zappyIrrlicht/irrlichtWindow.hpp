@@ -14,6 +14,7 @@
 #include "networkGui/guiClient.hpp"
 #include "loader/objLoader.hpp"
 #include "loader/textureLoader.hpp"
+#include "../interface/AError.hpp"
 
 class guiNetworkClient;
 
@@ -209,6 +210,170 @@ public:
      * @return The debug state.
      */
     bool getDebugState();
+
+    class WrongArgs : public AError {
+    public:
+        /**
+         * @brief Display an error message.
+         * @param message The error message to display. Defaults to "Usage: ./zappy_gui <server_ip> <server_port>.".
+         */
+        WrongArgs() : AError("Usage: ./zappy_gui <server_ip> <server_port>.") {}
+    };
+
+    class InvalidIP : public AError {
+    public:
+        /**
+         * @brief Display an error message.
+         * @param message The error message to display. Defaults to "Invalid server IP address.".
+         */
+        InvalidIP() : AError("Invalid server IP address.") {}
+    };
+
+    class InvalidPort : public AError {
+    public:
+        /**
+         * @brief Display an error message.
+         * @param message The error message to display. Defaults to "Invalid server port.".
+         */
+        InvalidPort() : AError("Invalid server port.") {}
+    };
+
+    class NotDeviceCreated : public AError {
+    public:
+        /**
+         * @brief Display an error message.
+         * @param message The error message to display. Defaults to "Could not create device.".
+         */
+        NotDeviceCreated() : AError("Could not create device.") {}
+    };
+
+
+    class DeviceUninitialized : public AError {
+    public:
+        /**
+         * @brief Display an error message.
+         * @param message The error message to display. Defaults to "Device not initialized, can't create driver.".
+         */
+        DeviceUninitialized() : AError("Device not initialized, can't create driver.") {}
+    };
+
+    class UnableToCreateEvent : public AError {
+    public:
+        /**
+         * @brief Display an error message.
+         * @param message The error message to display. Defaults to "Could not create event receiver.".
+         */
+        UnableToCreateEvent() : AError("Could not create event receiver.") {}
+    };
+
+    class UninitializedServerAdress : public AError {
+    public:
+        /**
+         * @brief Display an error message.
+         * @param message The error message to display. Defaults to "Server adress not initialized.".
+         */
+        UninitializedServerAdress() : AError("Server adress not initialized.") {}
+    };
+
+    class UninitializedCamera : public AError {
+    public:
+        /**
+         * @brief Display an error message.
+         * @param message The error message to display. Defaults to "Camera not initialized.".
+         */
+        UninitializedCamera() : AError("Camera not initialized.") {}
+    };
+
+    class DeviceUnitialized : public AError {
+    public:
+        /**
+         * @brief Display an error message.
+         * @param message The error message to display. Defaults to "Device not initialized.".
+         */
+        DeviceUnitialized() : AError("Device not initialized") {}
+    };
+
+    class DriverUnitialized : public AError {
+    public:
+        /**
+         * @brief Display an error message.
+         * @param message The error message to display. Defaults to "Driver not initialized.".
+         */
+        DriverUnitialized() : AError("Driver not initialized") {}
+    };
+
+    class SceneManagerUnitialized : public AError {
+    public:
+        /**
+         * @brief Display an error message.
+         * @param message The error message to display. Defaults to "SceneManager not initialized.".
+         */
+        SceneManagerUnitialized() : AError("SceneManager not initialized") {}
+    };
+
+    class UnlinkedZappyGame : public AError {
+    public:
+        /**
+         * @brief Display an error message.
+         * @param message The error message to display. Defaults to "ZappyGame not linked.".
+         */
+        UnlinkedZappyGame() : AError("ZappyGame not linked.") {}
+    };
+
+    class UnlinkedGuiNetworkClient : public AError {
+    public:
+        /**
+         * @brief Display an error message.
+         * @param message The error message to display. Defaults to "guiNetworkClient not linked.".
+         */
+        UnlinkedGuiNetworkClient() : AError("guiNetworkClient not linked.") {}
+    };
+
+
+    class UninitializedGuiNetworkClient : public AError {
+    public:
+        /**
+         * @brief Display an error message.
+         * @param message The error message to display. Defaults to "guiNetworkClient not initialized.".
+         */
+        UninitializedGuiNetworkClient() : AError("guiNetworkClient not initialized.") {}
+    };
+
+    class UninitializedObjLoader : public AError {
+    public:
+        /**
+         * @brief Display an error message.
+         * @param message The error message to display. Defaults to "Obj loader not initialized.".
+         */
+        UninitializedObjLoader() : AError("Obj loader not initialized.") {}
+    };
+
+    class UninitializedTextureLoader : public AError {
+    public:
+        /**
+         * @brief Display an error message.
+         * @param message The error message to display. Defaults to "Texture loader not initialized.".
+         */
+        UninitializedTextureLoader() : AError("Texture loader not initialized.") {}
+    };
+
+    class UnlinkedServerDataParser : public AError {
+    public:
+        /**
+         * @brief Display an error message.
+         * @param message The error message to display. Defaults to "ServerDataParser not linked.".
+         */
+        UnlinkedServerDataParser() : AError("ServerDataParser not linked.") {}
+    };
+
+    class UninitializedZappyGame : public AError {
+    public:
+        /**
+         * @brief Display an error message.
+         * @param message The error message to display. Defaults to "ZappyGame not initialized.".
+         */
+        UninitializedZappyGame() : AError("ZappyGame not initialized.") {}
+    };
 
 private:
     int _Width; /** < The width of the window */

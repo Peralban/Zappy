@@ -36,9 +36,8 @@ chessBoard::~chessBoard()
 
 void chessBoard::setParentWindow(irrlichtWindow *parentWindow)
 {
-   if (parentWindow == nullptr) {
-        std::cerr << "chessBoard: Error: No parent window set." << std::endl;
-        exit(EXIT_FAILURE);
+    if (parentWindow == nullptr) {
+        throw NoParentWindow();
     }
     this->_ParentWindow = parentWindow;
     this->_SceneManager = parentWindow->getSceneManager();
@@ -46,16 +45,14 @@ void chessBoard::setParentWindow(irrlichtWindow *parentWindow)
     _WhiteTexture = parentWindow->getTextureLoader()->loadTexture("./GUI/assets/White.png");
     _BlackTexture = parentWindow->getTextureLoader()->loadTexture("./GUI/assets/Black.png");
     if (!_WhiteTexture || !_BlackTexture) {
-        std::cerr << "chessBoard: Error: Could not load textures" << std::endl;
-        exit(84);
+        throw CouldNotLoadTexture();
     }
 }
 
 void chessBoard::setTileSize(float tileSize)
 {
     if (tileSize <= 0) {
-        std::cerr << "setTileSize: Error: Invalid tile size for chess board." << std::endl;
-        exit(EXIT_FAILURE);
+        throw InvalidTileSize();
     }
     _TileSize = tileSize;
 }
@@ -63,8 +60,7 @@ void chessBoard::setTileSize(float tileSize)
 void chessBoard::setWidth(int width)
 {
     if (width <= 0) {
-        std::cerr << "setWidth: Error: Invalid width for chess board." << std::endl;
-        exit(EXIT_FAILURE);
+        throw InvalidWidth();
     }
     _Width = width;
 }
@@ -72,8 +68,7 @@ void chessBoard::setWidth(int width)
 void chessBoard::setHeight(int height)
 {
     if (height <= 0) {
-        std::cerr << "setHeight: Error: Invalid height for chess board." << std::endl;
-        exit(EXIT_FAILURE);
+        throw InvalidHeight();
     }
     _Height = height;
 }
@@ -84,12 +79,10 @@ void chessBoard::createBoard()
     int y;
 
     if (_SceneManager == nullptr) {
-        std::cerr << "createBoard: Error: No scene manager set for chess board." << std::endl;
-        exit(EXIT_FAILURE);
+        throw NoSceneManager();
     }
     if (_WhiteTexture == nullptr || _BlackTexture == nullptr) {
-        std::cerr << "createBoard: Error: No textures set for chess board." << std::endl;
-        exit(EXIT_FAILURE);
+        throw NoTexturesSet();
     }
 
     for (x = 0; x < _Width; ++x) {

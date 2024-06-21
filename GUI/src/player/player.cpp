@@ -43,8 +43,7 @@ Player::~Player()
 void Player::setParentGame(ZappyGame *parentGame)
 {
     if (parentGame == nullptr) {
-        std::cerr << "setParentGame: Error: trying to set ParentGame but given parentGame is null" << std::endl;
-        exit(EXIT_FAILURE);
+        throw NullableParentGame();
     }
     this->_ParentGame = parentGame;
     this->_PlayerPosition.initPos();
@@ -119,8 +118,7 @@ void Player::setPlayerPosition(PlayerPos *pos)
 void Player::updatePlayerPos()
 {
     if (this->_chessPieceNode == nullptr) {
-        std::cerr << "updatePlayerPos: Error: ChessPieceNode is not setted" << std::endl;
-        exit(EXIT_FAILURE);
+        throw ChessPieceUnset();
     }
     if (this->_PlayerPosition.getVecPosConverted() == irr::core::vector3df(0, 0, 0))
         std::cout << "updatePlayerPos: Warning: PlayerPosition is not setted" << std::endl;
@@ -146,14 +144,12 @@ void Player::setLevel(int level)
 void Player::updateLevel()
 {
     if (this->_chessPieceNode == nullptr) {
-        std::cerr << "updateLevel: Error: ChessPieceNode is not setted" << std::endl;
-        exit(EXIT_FAILURE);
+        throw ChessPieceNodeUnset();
     }
     this->_chessPieceNode->remove();
     chessPiece *_chessPieces = this->_ParentGame->getChessPieces();
     if (_chessPieces == nullptr) {
-        std::cerr << "updateLevel: Error: ChessPieces wasn't correctly getted" << std::endl;
-        exit(EXIT_FAILURE);
+        throw ChessPieceNotGetted();
     }
     this-> _chessPieceNode = _chessPieces->placePiece(
         _chessPieces->getPiece(_PieceType),
@@ -207,8 +203,7 @@ PlayerPos *Player::getPlayerPosition()
 ZappyGame *Player::getParentGame()
 {
     if (this->_ParentGame == nullptr) {
-        std::cerr << "getParentGame: Error: ParentGame is not setted" << std::endl;
-        exit(EXIT_FAILURE);
+        throw UnsetParentGame();
     }
     return this->_ParentGame;
 }

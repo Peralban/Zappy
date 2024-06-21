@@ -22,8 +22,7 @@ Team::~Team()
 void Team::setColor(irr::video::ITexture *texture, std::string colorName)
 {
     if (!texture) {
-        std::cout << "setColor: Error: No texture set for team." << std::endl;
-        exit(EXIT_FAILURE);
+        throw NoTextureSet();
     }
     if (colorName == "undefined") {
         std::cout << "setColor: Warning: No color name set for team." << std::endl;

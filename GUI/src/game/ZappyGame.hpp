@@ -214,6 +214,60 @@ class ZappyGame {
          */
         Team *createGetTeam(std::string teamName, int Red, int Green, int Blue, int Alpha);
 
+        class NullableParentDevice : public AError {
+        public:
+            /**
+             * @brief Display an error message.
+             * @param message The error message to display. Defaults to "Trying to link with device but given parentDevice is null.".
+             */
+            NullableParentDevice() : AError("Trying to link with device but given parentDevice is null.") {}
+        };
+
+        class UnsetParentDevice : public AError {
+        public:
+            /**
+             * @brief Display an error message.
+             * @param message The error message to display. Defaults to "ParentDevice is not setted.".
+             */
+            UnsetParentDevice() : AError("ParentDevice is not setted") {}
+        };
+
+        class NullableServerDataParser : public AError {
+        public:
+            /**
+             * @brief Display an error message.
+             * @param message The error message to display. Defaults to "Trying to set ServerDataParser but given serverDataParser is null".
+             */
+            NullableServerDataParser() : AError("Trying to set ServerDataParser but given serverDataParser is null.") {}
+        };
+
+        class UnsetServerDataParser : public AError {
+        public:
+            /**
+             * @brief Display an error message.
+             * @param message The error message to display. Defaults to "ServerDataParser is not setted".
+             */
+            UnsetServerDataParser() : AError("ServerDataParser is not setted.") {}
+        };
+
+        class UnableCreateChessPiece : public AError {
+        public:
+            /**
+             * @brief Display an error message.
+             * @param message The error message to display. Defaults to "Couldn't create chessPieces".
+             */
+            UnableCreateChessPiece() : AError("Couldn't create chessPieces.") {}
+        };
+
+        class UnableCreatePlayer : public AError {
+        public:
+            /**
+             * @brief Display an error message.
+             * @param message The error message to display. Defaults to "Couldn't create player.".
+             */
+            UnableCreatePlayer() : AError("Couldn't create player.") {}
+        };
+
     private:
         irrlichtWindow *_ParentDevice; /**< The parent irrlichtWindow object. */
 

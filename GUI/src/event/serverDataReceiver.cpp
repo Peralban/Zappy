@@ -31,13 +31,11 @@ ServerDataParser::~ServerDataParser()
 void ServerDataParser::setParentGame(ZappyGame *parentGame)
 {
     if (parentGame == nullptr) {
-        std::cerr << "setParentGame: Error: trying to set ParentGame but given parentGame is null" << std::endl;
-        exit(EXIT_FAILURE);
+        throw NullableParentGame();
     }
     _ParentGame = parentGame;
     if (_ParentGame->getParentDevice() == nullptr) {
-        std::cerr << "setParentGame: Error: ParentDevice of parentGame is not setted" << std::endl;
-        exit(EXIT_FAILURE);
+        throw UnsetParentDevice();
     }
     _ParentDevice = parentGame->getParentDevice();
 }
@@ -45,8 +43,7 @@ void ServerDataParser::setParentGame(ZappyGame *parentGame)
 void ServerDataParser::SetParentClient(guiNetworkClient *parentClient)
 {
     if (parentClient == nullptr) {
-        std::cerr << "SetParentClient: Error: trying to set ParentClient but given parentClient is null" << std::endl;
-        exit(EXIT_FAILURE);
+        throw NullableParentClient();
     }
     this->_ParentClient = parentClient;
 }
@@ -100,8 +97,7 @@ serverMessage ServerDataParser::parseServerMessage(std::string message)
 ZappyGame *ServerDataParser::getParentGame()
 {
     if (_ParentGame == nullptr) {
-        std::cerr << "getParentGame: Error: trying to get ParentGame but ParentGame is not setted" << std::endl;
-        exit(EXIT_FAILURE);
+        throw UnsetParentGame();
     }
     return _ParentGame;
 }
