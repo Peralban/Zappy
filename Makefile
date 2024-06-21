@@ -42,16 +42,6 @@ zappy_gui:
 		printf "\033[1;31mProblem with GUI compilation ❌\033[0m\n"; \
 	fi
 
-re_zappy_gui:
-	@rm -f zappy_gui
-	@$(MAKE) -f $(GUI_MAKEFILE) -C GUI
-	@if [ -f GUI/zappy_gui ]; then \
-		  mv GUI/zappy_gui .; \
-		  printf "\033[1;32mGUI compiled & moved ✅\033[0m\n"; \
-	else \
-		printf "\033[1;31mProblem with GUI compilation ❌\033[0m\n"; \
-	fi
-
 clean:
 	@$(MAKE) -f $(NETWORK_MAKEFILE) -C Network clean
 	@$(MAKE) -f $(GUI_MAKEFILE) -C GUI clean
