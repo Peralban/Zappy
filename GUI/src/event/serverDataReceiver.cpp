@@ -54,8 +54,30 @@ void ServerDataParser::SetParentClient(guiNetworkClient *parentClient)
 
 void ServerDataParser::HandleServerMessage(std::string message)
 {
+    static std::vector<std::string> buffer;
+    if (message == "WELCOME") {
+        std::cout << "|---- WELCOME ----|" << std::endl;
+        return;
+    }
+    if ((this->getParentGame()->getPlatformWidth() == 0 && this->getParentGame()->getPlatformHeight() == 0) && message.find("msz") == std::string::npos) {
+        std::cerr << "HandleServerMessage: Error: Platform size is not setted, put args in buffer" << std::endl;
+        buffer.push_back(message);
+        std::cout << "Buffer size: " << buffer.size() << std::endl;
+        for (std::string msg : buffer) {
+            std::cout << "Buffer: " << msg << "|" << std::endl;
+        }
+        std::cout << "\n\n\n" << std::endl;
+        return;
+    } else if (buffer.empty()) {
+        for (std::string msg : buffer) {
+            this->HandleServerMessage(msg);
+        }
+        buffer.clear();
+    }
+    std::cout << this->getParentGame()->getPlatformWidth() << std::endl;
+    std::cout << this->getParentGame()->getPlatformHeight() << std::endl;
     serverMessage serverMessage = parseServerMessage(message);
-    std::cout << "Server message: " << message << std::endl;
+    std::cout << "Server message: " << message << "|" << std::endl;
 
     if (serverMessage.command == "msz" && !_Command_msz) {
         if (serverMessage.args.size() != 2) {
@@ -143,7 +165,13 @@ serverMessage ServerDataParser::parseServerMessage(std::string message)
         args.push_back(arg);
     }
     serverMessage.command = command;
+    std::cout << "Command: " << command << std::endl;
     serverMessage.args = args;
+    std::cout << "Args: ";
+    for (std::string A : args) {
+        std::cout << A << " ";
+    }
+    std::cout << std::endl;
     return serverMessage;
 }
 

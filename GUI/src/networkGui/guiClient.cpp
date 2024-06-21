@@ -62,23 +62,6 @@ void guiNetworkClient::handleWrite(std::string message)
     send(_Sockfd, message.c_str(), message.size(), 0);
 }
 
-void guiNetworkClient::initIdentification()
-{
-    handleWrite("GRAPHIC\n");
-    std::string response = getServerResponse();
-    if (response.size() > 0 && response.find("WELCOME") != std::string::npos)
-        std::cout << "------- Successfully registered as GRAPHIC -----------"<< std::endl;
-}
-
-void guiNetworkClient::askInitData()
-{
-    initIdentification();
-
-    handleWrite("msz\n");
-    handleWrite("sgt\n");
-    handleWrite("mtc\n");
-}
-
 void guiNetworkClient::makeNonBlocking()
 {
     int flags = fcntl(_Sockfd, F_GETFL, 0);
@@ -91,6 +74,24 @@ void guiNetworkClient::makeNonBlocking()
         exit(EXIT_FAILURE);
     }
     std::cout << "Socket is now non-blocking" << std::endl;
+}
+
+std::string readUntilNewline(int sockfd) {
+    char buffer[1];
+    std::string result;
+
+    while (true) {
+        int bytesRead = recv(sockfd, buffer, sizeof(buffer), 0);
+        if (bytesRead <= 0) {
+            // Handle error or connection closed by peer
+            break;
+        }
+        result += buffer[0];
+        if (buffer[0] == '\n') {
+            break;
+        }
+    }
+    return result;
 }
 
 void guiNetworkClient::selectSocket()
@@ -108,20 +109,20 @@ void guiNetworkClient::selectSocket()
         exit(EXIT_FAILURE);
     } else if (selectResult > 0) {
         if (FD_ISSET(_Sockfd, &readFds)) {
-            char buffer[1024];
-            int bytesRead = recv(_Sockfd, buffer, sizeof(buffer), 0);
-            if (bytesRead <= 0) {
-                if (bytesRead == 0) {
+            std::string buffer = readUntilNewline(_Sockfd);
+            if (buffer.empty()) {
+                if (errno == EWOULDBLOCK)
                     std::cerr << "Connection closed by peer." << std::endl;
-                } else {
+                else
                     std::cerr << "recv error: " << strerror(errno) << std::endl;
-                }
                 exit(EXIT_FAILURE);
             } else {
-                buffer[bytesRead] = '\0';
+                buffer.pop_back();
+                std::cout << "MESSAGES: " << buffer << std::endl;
                 _HandleServerMessage(buffer);
             }
-        }
+        } else
+            std::cerr << "selectSocket: Error: socket not set in readFds" << std::endl;
     }
 }
 

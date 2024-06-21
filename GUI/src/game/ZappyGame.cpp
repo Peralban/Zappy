@@ -248,28 +248,18 @@ void ZappyGame::setTimeUnit(int timeUnit)
 
 int ZappyGame::getTimeUnit()
 {
-    if (this->_TimeUnit == 0) {
-        std::cout << "getTimeUnit: Warning: TimeUnit is not setted returning default 10" << std::endl;
+    if (this->_TimeUnit == 0)
         return 10;
-    }
     return this->_TimeUnit;
 }
 
 int ZappyGame::getPlatformWidth()
 {
-    if (this->_PlatformX == 0) {
-        std::cout << "getPlatformWidth: Warning: PlatformWidth is not setted returning default 10" << std::endl;
-        return 10;
-    }
     return this->_PlatformX;
 }
 
 int ZappyGame::getPlatformHeight()
 {
-    if (this->_PlatformY == 0) {
-        std::cout << "getPlatformHeight: Warning: PlatformHeight is not setted returning default 10" << std::endl;
-        return 10;
-    }
     return this->_PlatformY;
 }
 

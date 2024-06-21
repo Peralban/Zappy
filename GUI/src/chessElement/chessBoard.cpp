@@ -62,19 +62,11 @@ void chessBoard::setTileSize(float tileSize)
 
 void chessBoard::setWidth(int width)
 {
-    if (width <= 0) {
-        std::cerr << "setWidth: Error: Invalid width for chess board." << std::endl;
-        exit(EXIT_FAILURE);
-    }
     _Width = width;
 }
 
 void chessBoard::setHeight(int height)
 {
-    if (height <= 0) {
-        std::cerr << "setHeight: Error: Invalid height for chess board." << std::endl;
-        exit(EXIT_FAILURE);
-    }
     _Height = height;
 }
 

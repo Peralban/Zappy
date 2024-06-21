@@ -47,8 +47,6 @@ void Core::initialize(int ac, char **av)
     std::cout << " -------------- CREATING SOCKET -------------- " << std::endl;
     m_client->createSocket();
 
-    std::cout << " -------------- INITIALIZING IDENTIFICATION -------------- " << std::endl;
-    m_client->askInitData();
 
     std::cout << " -------------- INITIALIZING CHESS BOARD -------------- " << std::endl;
     m_client->makeNonBlocking();
