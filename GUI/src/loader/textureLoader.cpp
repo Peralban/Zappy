@@ -14,8 +14,7 @@ TextureLoader::TextureLoader()
 TextureLoader::TextureLoader(irr::video::IVideoDriver *driver)
 {
     if (!driver) {
-        std::cerr << "TextureLoader: Error: No video driver set for texture loader." << std::endl;
-        exit(EXIT_FAILURE);
+        throw NoVideoDriver();
     }
     _Driver = driver;
 }
@@ -28,8 +27,7 @@ TextureLoader::~TextureLoader()
 void TextureLoader::setDriver(irr::video::IVideoDriver *driver)
 {
     if (!driver) {
-        std::cerr << "TextureLoader: Error: No video driver set for texture loader." << std::endl;
-        exit(EXIT_FAILURE);
+        throw NoVideoDriver();
     }
     _Driver = driver;
 }
@@ -50,13 +48,11 @@ irr::video::ITexture *TextureLoader::loadTexture(const char *path)
     irr::video::ITexture *texture;
 
     if (!_Driver) {
-        std::cerr << "loadTexture: Error: No video driver set for texture loader." << std::endl;
-        exit(EXIT_FAILURE);
+        throw NoVideoDriver();
     }
     texture = _Driver->getTexture(path);
     if (!texture) {
-        std::cerr << "loadTexture: Error: Could not load texture: " << path << std::endl;
-        exit(EXIT_FAILURE);
+        throw NotFindTexture();
     }
     return texture;
 }
@@ -69,8 +65,7 @@ irr::video::ITexture* TextureLoader::createTexture(int Red, int Green, int Blue,
     irr::video::ITexture *tmpTexture;
     std::string name = "Texture";
     if (!_Driver) {
-        std::cerr << "CreateTexture: Error: No video driver set for texture loader." << std::endl;
-        exit(EXIT_FAILURE);
+        throw NoVideoDriver();
     }
     tmpImage = _Driver->createImage(irr::video::ECF_A8R8G8B8, irr::core::dimension2d<irr::u32>(width, height));
     for (irr::u32 y = 0; y < height; ++y)
@@ -101,8 +96,7 @@ irr::video::ITexture* TextureLoader::createGetTexture(int Red, int Green, int Bl
 irr::video::ITexture* TextureLoader::getTexture(std::string name)
 {
     if (_Textures.find(name) == _Textures.end()) {
-        std::cerr << "getTexture: Error: Could not find texture: " << name << std::endl;
-        exit(EXIT_FAILURE);
+        throw NotFindTexture();
     }
     return _Textures[name];
 }

@@ -8,6 +8,7 @@
 #pragma once
 
 #include "irrlicht/irrlicht.h"
+#include "../interface/AError.hpp"
 #include <iostream>
 #include <map>
 
@@ -89,6 +90,25 @@ class TextureLoader {
          * @return The texture with the specified name as an Irrlicht video texture.
          */
         irr::video::ITexture* getTexture(std::string name);
+        
+        class NoVideoDriver : public AError {
+        public:
+            /**
+             * @brief Display an error message.
+             * @param message The error message to display. Defaults to "No video driver set for texture loader".
+             */
+            NoVideoDriver() : AError("No video driver set for texture loader.") {}
+        };
+
+        class NotFindTexture : public AError {
+        public:
+            /**
+             * @brief Display an error message.
+             * @param message The error message to display. Defaults to "Could not find texture.".
+             */
+            NotFindTexture() : AError("Could not find texture.") {}
+        };
+
     private:
         irr::video::IVideoDriver *_Driver; /**< The Irrlicht video driver used for loading textures. */
         std::map<std::string, irr::video::ITexture*> _Textures; /**< A map of texture names to texture objects. */
