@@ -49,7 +49,6 @@ void Core::initialize(int ac, char **av)
 
 
     std::cout << " -------------- INITIALIZING CHESS BOARD -------------- " << std::endl;
-    m_client->makeNonBlocking();
 
     m_zappy->loadChessPieces();
 

@@ -114,19 +114,19 @@ void ServerDataParser::HandleServerMessage(std::string message)
         }
         this->getParentGame()->updatePlayerPos(message);
     } else if (serverMessage.command == "plv") {
-        if (serverMessage.args.size() != 6) {
+        if (serverMessage.args.size() != 2) {
             std::cerr << "HandleServerMessage: Error: pnw command should have 6 arguments" << std::endl;
             exit(EXIT_FAILURE);
         }
         this->getParentGame()->updatePlayerLevel(message);
     } else if (serverMessage.command == "pin") {
-        if (serverMessage.args.size() != 4) {
+        if (serverMessage.args.size() != 10) {
             std::cerr << "HandleServerMessage: Error: ppo command should have 4 arguments" << std::endl;
             exit(EXIT_FAILURE);
         }
         this->getParentGame()->updatePlayerInventory(message);
     } else if (serverMessage.command == "pnw") {
-        if (serverMessage.args.size() != 4) {
+        if (serverMessage.args.size() != 6) {
             std::cerr << "HandleServerMessage: Error: ppo command should have 4 arguments" << std::endl;
             exit(EXIT_FAILURE);
         }

@@ -85,10 +85,7 @@ void ZappyGame::addPlayer(std::string name)
     if (this->getPlayer(name) != nullptr)
         return;
     Player *player = new Player(this, name);
-    if (player == nullptr) {
-        std::cerr << "addPlayer: Error: Couldn't create player" << std::endl;
-        exit(EXIT_FAILURE);
-    }
+
     player->playerInit();
     this->_playerList.push_back(std::make_pair(name, player));
 }
@@ -110,12 +107,9 @@ void ZappyGame::newPlayer(std::string cmd)
     //pnw #n X Y O L N\n
     std::vector<std::string> args = split(cmd, ' ');
 
-    if (args.size() != 8) {
-        std::cerr << "newPlayer: Error: pnw command should have 8 arguments" << std::endl;
-        exit(EXIT_FAILURE);
-    }
     this->addPlayer(args[1]);
     Player *player = this->getPlayer(args[1]);
+    player->playerInit();
     player->getPlayerPosition()->setPos(std::stoi(args[2]), std::stoi(args[3]));
     player->setOrientation(std::stoi(args[4]));
     player->setLevel(std::stoi(args[5]));
@@ -130,10 +124,6 @@ void ZappyGame::broadcastMessage(std::string cmd)
     //pbc #n message\n
     std::vector<std::string> args = split(cmd, ' ');
 
-    if (args.size() != 3) {
-        std::cerr << "broadcastMessage: Error: pbc command should have 3 arguments" << std::endl;
-        exit(EXIT_FAILURE);
-    }
     Player *player = this->getPlayer(args[1]);
     player->setBroadcastMessage(args[2]);
 }
@@ -143,10 +133,6 @@ void ZappyGame::playerDie(std::string cmd)
     //pdi #n\n
     std::vector<std::string> args = split(cmd, ' ');
 
-    if (args.size() != 2) {
-        std::cerr << "playerDie: Error: pdi command should have 2 arguments" << std::endl;
-        exit(EXIT_FAILURE);
-    }
     Player *player = this->getPlayer(args[1]);
     Tile *tile = this->_chessBoard->getMap()[player->getPlayerPosition()->getX()][player->getPlayerPosition()->getY()];
     tile->setPlayer(tile->getPlayer() - 1);
@@ -160,10 +146,6 @@ void ZappyGame::newEgg(std::string cmd)
     //enw #e #n X Y\n
     std::vector<std::string> args = split(cmd, ' ');
 
-    if (args.size() != 5) {
-        std::cerr << "newEgg: Error: enw command should have 5 arguments" << std::endl;
-        exit(EXIT_FAILURE);
-    }
     Tile *tile = this->_chessBoard->getMap()[std::stoi(args[3])][std::stoi(args[4])];
     tile->setEgg(tile->getEgg() + 1);
 }
@@ -173,10 +155,6 @@ void ZappyGame::updatePlayerPos(std::string cmd)
     //ppo #n X Y O\n
     std::vector<std::string> args = split(cmd, ' ');
 
-    if (args.size() != 5) {
-        std::cerr << "updatePlayerPos: Error: ppo command should have 5 arguments" << std::endl;
-        exit(EXIT_FAILURE);
-    }
     Player *player = this->getPlayer(args[1]);
     player->getPlayerPosition()->setPos(std::stoi(args[2]), std::stoi(args[3]));
     player->setOrientation(std::stoi(args[4]));
@@ -187,10 +165,6 @@ void ZappyGame::updatePlayerLevel(std::string cmd)
     //plv #n L\n
     std::vector<std::string> args = split(cmd, ' ');
 
-    if (args.size() != 3) {
-        std::cerr << "updatePlayerLevel: Error: plv command should have 3 arguments" << std::endl;
-        exit(EXIT_FAILURE);
-    }
     Player *player = this->getPlayer(args[1]);
     player->setLevel(std::stoi(args[2]));
 }
@@ -200,10 +174,6 @@ void ZappyGame::updatePlayerInventory(std::string cmd)
     //pin #n X Y T1 T2 T3 T4 T5 T6 T7\n
     std::vector<std::string> args = split(cmd, ' ');
 
-    if (args.size() != 12) {
-        std::cerr << "updatePlayerInventory: Error: pin command should have 12 arguments" << std::endl;
-        exit(EXIT_FAILURE);
-    }
     Player *player = this->getPlayer(args[1]);
     player->setInventory(std::stoi(args[4]), std::stoi(args[5]), std::stoi(args[6]), std::stoi(args[7]), std::stoi(args[8]), std::stoi(args[9]), std::stoi(args[10]));
 }

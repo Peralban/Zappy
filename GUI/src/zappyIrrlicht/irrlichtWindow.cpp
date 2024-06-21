@@ -132,12 +132,14 @@ int irrlichtWindow::runWindow(ZappyGame *game, guiNetworkClient *client)
     (void) game;
     (void) client;
     client->handleWrite("GRAPHIC\n");
-    for (int i = 0; i < 1000; i++) {
-        client->selectSocket();
-    }
+    client->getServerResponse();
+    client->handleRead();
+    client->makeNonBlocking();
     client->handleWrite("msz\n");
     client->selectSocket();
     client->handleWrite("mct\n");
+    client->selectSocket();
+    client->handleWrite("sgt\n");
     client->selectSocket();
     std::cout << "Running window..." << std::endl;
     while(this->_Device->run()) {
@@ -145,9 +147,13 @@ int irrlichtWindow::runWindow(ZappyGame *game, guiNetworkClient *client)
             this->_LinkedGuiClient->selectSocket();
         }
         if (this->_Device->isWindowActive() && (game->getPlatformWidth() != 0 && game->getPlatformHeight() != 0)) {
-        	this->_Driver->beginScene(true, true, irr::video::SColor(255, 100, 101, 140));
+        	std::cout << "1" << std::endl;
+            this->_Driver->beginScene(true, true, irr::video::SColor(255, 100, 101, 140));
+            std::cout << "2" << std::endl;
             this->_SceneManager->drawAll();
+            std::cout << "3" << std::endl;
             this->_Driver->endScene();
+            std::cout << "4" << std::endl;
         } else {
             this->_Device->yield();
         }
