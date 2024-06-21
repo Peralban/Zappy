@@ -139,12 +139,15 @@ class Bot:
         return
 
     def other(self): # temporary function while we don't have the other mode
+        self.move_to(random.randrange(-1, 1) - self.mid_x, random.randrange(-1, 1) - self.mid_y)
+        self.take_everything_on_tile()
         self.push_command("Inventory")
         self.push_command("Look")
         return
 
     def queen(self):
         self.create_broadcast("I am the queen")
+        self.take_everything_on_tile()
         self.push_command("Look")
         self.push_command("Right")
         if self.world[self.mid_y][self.mid_x]['player'] > 1:
