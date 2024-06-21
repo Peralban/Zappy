@@ -14,7 +14,6 @@
 
 ServerDataParser::ServerDataParser()
 {
-    this->_Command_msz= false;
     this->_ParentClient = nullptr;
     this->_ParentGame = nullptr;
     this->_ParentDevice = nullptr;
@@ -32,13 +31,11 @@ ServerDataParser::~ServerDataParser()
 void ServerDataParser::setParentGame(ZappyGame *parentGame)
 {
     if (parentGame == nullptr) {
-        std::cerr << "setParentGame: Error: trying to set ParentGame but given parentGame is null" << std::endl;
-        exit(EXIT_FAILURE);
+        throw NullableParentGame();
     }
     _ParentGame = parentGame;
     if (_ParentGame->getParentDevice() == nullptr) {
-        std::cerr << "setParentGame: Error: ParentDevice of parentGame is not setted" << std::endl;
-        exit(EXIT_FAILURE);
+        throw UnsetParentDevice();
     }
     _ParentDevice = parentGame->getParentDevice();
 }
@@ -46,8 +43,7 @@ void ServerDataParser::setParentGame(ZappyGame *parentGame)
 void ServerDataParser::SetParentClient(guiNetworkClient *parentClient)
 {
     if (parentClient == nullptr) {
-        std::cerr << "SetParentClient: Error: trying to set ParentClient but given parentClient is null" << std::endl;
-        exit(EXIT_FAILURE);
+        throw NullableParentClient();
     }
     this->_ParentClient = parentClient;
 }
@@ -84,14 +80,6 @@ void ServerDataParser::HandleServerMessage(std::string message)
             std::cerr << "HandleServerMessage: Error: msz command should have 2 arguments" << std::endl;
             exit(EXIT_FAILURE);
         }
-        this->getParentGame()->setPlatformWidth(std::stoi(serverMessage.args[0]));
-        this->getParentGame()->setPlatformHeight(std::stoi(serverMessage.args[1]));
-        std::cout << "Platform size: " << this->getParentGame()->getPlatformWidth() << "x" << this->getParentGame()->getPlatformHeight() << std::endl;
-        irr::scene::ICameraSceneNode *irrActiveCam = this->getParentGame()->getParentDevice()->getActiveCamera();
-        irrActiveCam->setPosition(irr::core::vector3df(-15, (this->getParentGame()->getPlatformWidth() + this->getParentGame()->getPlatformHeight()) * 3 + 25, -15));
-        this->getParentGame()->getChessBoard()->createBoard();
-        this->_Command_msz = true;
-        this->getParentGame()->getChessBoard()->InitMap(std::stoi(serverMessage.args[0]), std::stoi(serverMessage.args[1]));
     } else if (serverMessage.command == "sgt") {
         this->getParentGame()->setTimeUnit(std::stoi(serverMessage.args[0]));
         std::cout << "Time unit: " << this->getParentGame()->getTimeUnit() << std::endl;
@@ -178,8 +166,7 @@ serverMessage ServerDataParser::parseServerMessage(std::string message)
 ZappyGame *ServerDataParser::getParentGame()
 {
     if (_ParentGame == nullptr) {
-        std::cerr << "getParentGame: Error: trying to get ParentGame but ParentGame is not setted" << std::endl;
-        exit(EXIT_FAILURE);
+        throw UnsetParentGame();
     }
     return _ParentGame;
 }

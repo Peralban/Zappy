@@ -1,6 +1,5 @@
 # This file uses centimeters as units for non-parametric coordinates.
 
-mtllib King_hi.mtl
 g default
 v -1.108259 40.762592 0.000000
 v 1.102499 40.762592 0.000000

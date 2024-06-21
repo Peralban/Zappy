@@ -28,19 +28,27 @@ ZappyGame::~ZappyGame()
 void ZappyGame::linkWithDevice(irrlichtWindow *parentDevice)
 {
     if (parentDevice == nullptr) {
-        std::cerr << "trying to link with device but given parentDevice is null" << std::endl;
-        exit(EXIT_FAILURE);
+        throw NullableParentDevice();
     }
     this->_ParentDevice = parentDevice;
+    this->initServerEvents();
     this->_chessBoard = new chessBoard(this);
     this->_chessBoard->setParentWindow(parentDevice);
+}
+
+void ZappyGame::createTeam(std::string teams, int Red, int Green, int Blue, int Alpha)
+{
+    Team *team = new Team();
+    std::string teamName = teams + "_color";
+    team->setColor(this->_ParentDevice->getTextureLoader()->createGetTexture(Red, Green, Blue, Alpha, teamName), teamName);
+    team->setTeamName(teams);
+    this->_teamsList[teams] = team;
 }
 
 void ZappyGame::setServerDataParser(ServerDataParser *serverDataParser)
 {
     if (serverDataParser == nullptr) {
-        std::cerr << "trying to set ServerDataParser but given serverDataParser is null" << std::endl;
-        exit(EXIT_FAILURE);
+        throw NullableServerDataParser();
     }
     this->_serverDataParser = serverDataParser;
 }
@@ -49,12 +57,10 @@ void ZappyGame::loadChessPieces()
 {
     this->_chessPieces = new chessPiece(this->_ParentDevice);
     if (this->_chessPieces == nullptr) {
-        std::cerr << "loadChessPieces: Error: Couldn't create chessPieces" << std::endl;
-        exit(EXIT_FAILURE);
+        throw UnableCreateChessPiece();
     }
     if (this->_ParentDevice == nullptr) {
-        std::cerr << "loadChessPieces: Error: ParentDevice is not setted" << std::endl;
-        exit(EXIT_FAILURE);
+        throw UnsetParentDevice();
     }
     this->_chessPieces->loadPiece(this->_ParentDevice->getQuality());
 }
@@ -74,8 +80,7 @@ chessPiece *ZappyGame::getChessPieces()
 irrlichtWindow *ZappyGame::getParentDevice()
 {
     if (this->_ParentDevice == nullptr) {
-        std::cerr << "getParentDevice: Error: ParentDevice is not setted" << std::endl;
-        exit(EXIT_FAILURE);
+        throw UnsetParentDevice();
     }
     return this->_ParentDevice;
 }
@@ -85,9 +90,11 @@ void ZappyGame::addPlayer(std::string name)
     if (this->getPlayer(name) != nullptr)
         return;
     Player *player = new Player(this, name);
-
+    if (player == nullptr) {
+        throw UnableCreatePlayer();
+    }
     player->playerInit();
-    this->_playerList.push_back(std::make_pair(name, player));
+    this->_playerList[name] = player;
 }
 
 static std::vector<std::string> split(const std::string &s, char delimiter)
@@ -242,7 +249,7 @@ float ZappyGame::getTileSize()
     return this->_TileSize;
 }
 
-std::vector<std::pair<std::string, Player*>> *ZappyGame::getPlayerList()
+std::map<std::string, Player*> *ZappyGame::getPlayerList()
 {
     if (this->_playerList.empty())
         std::cout << "getPlayerList: WARNING : PlayerList is empty" << std::endl;
@@ -255,19 +262,17 @@ Player *ZappyGame::getPlayer(std::string name)
         std::cout << "getPlayer: WARNING : PlayerList is empty but trying to get a player by name" << std::endl;
         return nullptr;
     }
-    for (auto &player : this->_playerList) {
-        if (player.first == name) {
-            return player.second;
-        }
+    if (this->_playerList.find(name) == this->_playerList.end()) {
+        std::cout << "getPlayer: WARNING : Player not found returning nullptr" << std::endl;
+        return nullptr;
     }
-    return nullptr;
+    return this->_playerList[name];
 }
 
 ServerDataParser *ZappyGame::getServerDataParser()
 {
     if (this->_serverDataParser == nullptr) {
-        std::cerr << "getServerDataParser: Error: ServerDataParser is not setted" << std::endl;
-        exit(EXIT_FAILURE);
+        throw UnsetServerDataParser();
     }
     return this->_serverDataParser;
 }
@@ -275,4 +280,26 @@ ServerDataParser *ZappyGame::getServerDataParser()
 chessBoard *ZappyGame::getChessBoard()
 {
     return this->_chessBoard;
+}
+
+Team *ZappyGame::getTeamFromName(std::string teamName)
+{
+    if (this->_teamsList.find(teamName) == this->_teamsList.end()) {
+        std::cout << "getTeam: Warning: Team not found returning nullptr" << std::endl;
+        return nullptr;
+    }
+    return this->_teamsList[teamName];
+}
+
+std::map<std::string, Team*> *ZappyGame::getTeamsList()
+{
+    return &this->_teamsList;
+}
+
+Team *ZappyGame::createGetTeam(std::string teamName, int Red, int Green, int Blue, int Alpha)
+{
+    if (this->_teamsList.find(teamName) == this->_teamsList.end()) {
+        this->createTeam(teamName, Red, Green, Blue, Alpha);
+    }
+    return this->_teamsList[teamName];
 }

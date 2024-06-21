@@ -8,6 +8,7 @@
 #pragma once
 
 #include <irrlicht/irrlicht.h>
+#include "../interface/AError.hpp"
 
 /**
  * @class myEventReceiver
@@ -40,6 +41,24 @@ public:
      * @return True if the key press event was handled, false otherwise.
      */
     bool keyPress(const irr::SEvent& event);
+
+    class NullableDevice : public AError {
+    public:
+        /**
+         * @brief Display an error message.
+         * @param message The error message to display. Defaults to "Trying to create myEventReceiver but given device is null".
+         */
+        NullableDevice() : AError("Trying to create myEventReceiver but given device is null.") {}
+    };
+
+    class UnsetDevice : public AError {
+    public:
+        /**
+         * @brief Display an error message.
+         * @param message The error message to display. Defaults to "Trying to handle an event but device is not setted".
+         */
+        UnsetDevice() : AError("Trying to handle an event but device is not setted.") {}
+    };
 
 private:
     irr::IrrlichtDevice* _Device; /**< Pointer to the Irrlicht device. */

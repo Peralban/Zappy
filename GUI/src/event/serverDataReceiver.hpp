@@ -9,6 +9,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include "../interface/AError.hpp"
 
 class ZappyGame;
 class irrlichtWindow;
@@ -78,10 +79,44 @@ class ServerDataParser {
          */
         ZappyGame *getParentGame();
 
+        class NullableParentClient : public AError {
+        public:
+            /**
+             * @brief Display an error message.
+             * @param message The error message to display. Defaults to "Trying to set ParentClient but given parentClient is null".
+             */
+            NullableParentClient() : AError("Trying to set ParentClient but given parentClient is null.") {}
+        };
+
+        class NullableParentGame : public AError {
+        public:
+            /**
+             * @brief Display an error message.
+             * @param message The error message to display. Defaults to "Trying to set ParentGame but given parentClient is null".
+             */
+            NullableParentGame() : AError("Trying to set ParentClient but given parentGame is null.") {}
+        };
+
+        class UnsetParentGame : public AError {
+        public:
+            /**
+             * @brief Display an error message.
+             * @param message The error message to display. Defaults to "Trying to get ParentGame but ParentGame is not setted.".
+             */
+            UnsetParentGame() : AError("Trying to get ParentGame but ParentGame is not setted.") {}
+        };
+
+        class UnsetParentDevice : public AError {
+        public:
+            /**
+             * @brief Display an error message.
+             * @param message The error message to display. Defaults to "ParentDevice of parentGame is not setted".
+             */
+            UnsetParentDevice() : AError("ParentDevice of parentGame is not setted") {}
+        };
+
     private:
         ZappyGame *_ParentGame; /**< A pointer to the parent ZappyGame object. */
         irrlichtWindow *_ParentDevice; /**< A pointer to the parent irrlichtWindow object. */
         guiNetworkClient *_ParentClient; /**< A pointer to the parent guiNetworkClient object. */
-
-        bool _Command_msz; /**< A boolean to check if the command msz has already been called. */
 };

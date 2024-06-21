@@ -26,26 +26,27 @@ void Core::initialize(int ac, char **av)
 {
     std::cout << "Starting Zappy" << std::endl;
 
-    m_window.parseArgs(ac, av);
-    m_window.windowCreateDevice();
+    try {
+        m_window.parseArgs(ac, av);
+        m_window.windowCreateDevice();
 
-    if (m_window.getDevice() == nullptr)
-    {
-        std::cerr << "Failed to create Irrlicht device!" << std::endl;
-        std::exit(1);
-    }
+        if (m_window.getDevice() == nullptr)
+        {
+            std::cerr << "Failed to create Irrlicht device!" << std::endl;
+            std::exit(1);
+        }
 
-    m_window.initDrivers();
-    m_window.initLoader();
-    m_window.initCamera();
-    m_window.initEventReceiver();
+        m_window.initDrivers();
+        m_window.initLoader();
+        m_window.initCamera();
+        m_window.initEventReceiver();
 
-    std::cout << " -------------- LINKING CLIENT AND ZAPPY -------------- " << std::endl;
-    m_window.linkZappyGame(m_zappy);
-    m_window.linkGuiClient(m_client);
+        std::cout << " -------------- LINKING CLIENT AND ZAPPY -------------- " << std::endl;
+        m_window.linkZappyGame(m_zappy);
+        m_window.linkGuiClient(m_client);
 
-    std::cout << " -------------- CREATING SOCKET -------------- " << std::endl;
-    m_client->createSocket();
+        std::cout << " -------------- CREATING SOCKET -------------- " << std::endl;
+        m_client->createSocket();
 
 
     std::cout << " -------------- INITIALIZING CHESS BOARD -------------- " << std::endl;

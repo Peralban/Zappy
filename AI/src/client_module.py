@@ -18,9 +18,11 @@ sock_file = None
 data = []
 
 def get_next_instruction():
+    data = []
+
     sock_file = sock.makefile('r')
     inputs = [sock_file]
-    readable, _, _ = select.select(inputs, [], [])
+    readable, _, _ = select.select(inputs, [], [], 0)
     for s in readable:
         if s is sock_file:
             data = []
@@ -33,7 +35,7 @@ def send_instruction(instruction):
     sock.sendall((instruction + '\n').encode())
 
 def connect_to_server(host, port, name):
-    global current_line
+    current_line = 0
     server_address = (host, port)
     LatLng = ()
 
@@ -48,7 +50,7 @@ def connect_to_server(host, port, name):
 
     try:
         while True:
-            readable, _, _ = select.select(inputs, [], [])
+            readable, _, _ = select.select(inputs, [], [], 0)
             for s in readable:
                 if s is sock_file:
                     for message in s:
@@ -64,13 +66,13 @@ def connect_to_server(host, port, name):
                                     sys.exit(84)
                                 else:
                                     nb_players = int(message.strip())
-                                    if nb_players != 0:
-                                        parsing.sub_process()
+                                    #if nb_players != 0:
+                                    #    parsing.sub_process()
                             if current_line == 3:
                                 LatLng = (int(parts[0]), int(parts[1]))
                                 Bot = ai_zappy.Bot(name, LatLng[0], LatLng[1])
                                 Bot.run()
-                                return
+                                break
                 else:
                     message = sys.stdin.readline()
                     sock.sendall(message.encode())
@@ -78,8 +80,16 @@ def connect_to_server(host, port, name):
                     sys.stdout.write(message)
                     sys.stdout.flush()
     except KeyboardInterrupt:
+        print("\nClient interrupted.")
         send_instruction('quit')
         sock.close()
-        print("\nClient interrupted.")
-    finally:
+        sys.exit(0)
+    except Exception as e:
+        print(f"An error occured: {e}")
+        send_instruction('quit')
         sock.close()
+        sys.exit(84)
+    finally:
+        send_instruction('quit')
+        sock.close()
+        sys.exit(0)

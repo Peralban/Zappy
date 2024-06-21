@@ -9,6 +9,7 @@
 
 #include "irrlicht/irrlicht.h"
 #include "loader/textureLoader.hpp"
+#include "../interface/AError.hpp"
 #include <vector>
 
 class ZappyGame;
@@ -134,10 +135,82 @@ class chessBoard {
 
         std::vector<std::vector<Tile *>> getMap() { return _map; }
 
+        class NoParentWindow : public AError {
+        public:
+            /**
+             * @brief Display an error message.
+             * @param message The error message to display. Defaults to "No parent window set.".
+             */
+            NoParentWindow() : AError("No parent window set.") {}
+        };
+
+        class CouldNotLoadTexture : public AError {
+            public:
+            /**
+             * @brief Display an error message.
+             * @param message The error message to display. Defaults to "Could not load textures.".
+             */
+            CouldNotLoadTexture() : AError("Could not load textures.") {}
+        };
+
+        class InvalidTileSize : public AError {
+            public:
+            /**
+             * @brief Display an error message.
+             * @param message The error message to display. Defaults to "Invalid tile size".
+             */
+            InvalidTileSize() : AError("Invalid tile size.") {}
+        };
+
+        class InvalidWidth : public AError {
+            public:
+            /**
+             * @brief Display an error message.
+             * @param message The error message to display. Defaults to "Invalid width for chess board".
+             */
+            InvalidWidth() : AError("Invalid width for chess board.") {}
+        };
+
+        class InvalidHeight : public AError {
+            public:
+            /**
+             * @brief Display an error message.
+             * @param message The error message to display. Defaults to "Invalid height for chess board".
+             */
+            InvalidHeight() : AError("Invalid height for chess board.") {}
+        };
+
+        class NoSceneManager : public AError {
+            public:
+            /**
+             * @brief Display an error message.
+             * @param message The error message to display. Defaults to "No scene manager set for chess board".
+             */
+            NoSceneManager() : AError("No scene manager set for chess board.") {}
+        };
+
+        class NoTexturesSet : public AError {
+            public:
+            /**
+             * @brief Display an error message.
+             * @param message The error message to display. Defaults to "No textures set for chess board.".
+             */
+            NoTexturesSet() : AError("No textures set for chess board.") {}
+        };
+
+        /**
+         * @brief Returns the status of the creation of the board
+         * 
+         * @return a boolean value that indicates whether the board has been created or not.
+         */
+        bool isCreated();
+
     private:
         int _Width; ///< The width of the chess board in number of tiles.
         int _Height; ///< The height of the chess board in number of tiles.
         float _TileSize; ///< The size of each tile in the chess board.
+
+        bool _IsCreated; ///< A boolean value that indicates whether the chess board has been created or not.
 
         irrlichtWindow *_ParentWindow; ///< A pointer to the irrlichtWindow object that is used as the parent window.
         irr::scene::ISceneManager *_SceneManager; ///< A pointer to the irr::scene::ISceneManager object for scene management.

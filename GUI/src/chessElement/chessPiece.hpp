@@ -12,6 +12,7 @@
 #include <string>
 
 class irrlichtWindow;
+class Player;
 
 /**
  * @brief An enumeration of the possible types of chess pieces.
@@ -109,7 +110,7 @@ class chessPiece {
          * @param color The color of the chess piece.
          * @return The scene node of the placed chess piece.
          */
-        irr::scene::IAnimatedMeshSceneNode *placePiece(irr::scene::IAnimatedMesh *pieceToPlace, irr::core::vector3df position, irr::core::vector3df rotation, teamColor color);
+        irr::scene::IAnimatedMeshSceneNode *placePiece(irr::scene::IAnimatedMesh *pieceToPlace, irr::core::vector3df position, irr::core::vector3df rotation, Player *Player);
 
         /**
          * @brief Gets a chess piece.
@@ -132,15 +133,14 @@ private:
 
     irr::scene::IAnimatedMeshSceneNode *_Piece; ///< A pointer to the irr::scene::IAnimatedMeshSceneNode object for the chess piece.
 
-    irr::scene::IAnimatedMesh* _Bishop; ///< A pointer to the bishop chess piece.
-    irr::scene::IAnimatedMesh* _King; ///< A pointer to the king chess piece.
-    irr::scene::IAnimatedMesh* _Knight; ///< A pointer to the knight chess piece.
-    irr::scene::IAnimatedMesh* _Pawn; ///< A pointer to the pawn chess piece.
-    irr::scene::IAnimatedMesh* _Queen; ///< A pointer to the queen chess piece.
-    irr::scene::IAnimatedMesh* _Rook; ///< A pointer to the rook chess piece;
+    irr::scene::IAnimatedMesh *_Bishop; ///< A pointer to the bishop chess piece.
+    irr::scene::IAnimatedMesh *_King; ///< A pointer to the king chess piece.
+    irr::scene::IAnimatedMesh *_Knight; ///< A pointer to the knight chess piece.
+    irr::scene::IAnimatedMesh *_Pawn; ///< A pointer to the pawn chess piece.
+    irr::scene::IAnimatedMesh *_Queen; ///< A pointer to the queen chess piece.
+    irr::scene::IAnimatedMesh *_Rook; ///< A pointer to the rook chess piece;
 
-    irr::video::ITexture* _WhiteTexture; ///< A pointer to the white texture used for rendering the tiles.
-    irr::video::ITexture* _BlackTexture; ///< A pointer to the black texture used for rendering the tiles.
+    irr::video::ITexture *_DefaultTexture; ///< A pointer to the default texture if the player doesn't have a team or the player's team doesn't have a color set.
 
     quality _CurrentQuality; ///< The current quality of the chess pieces.
 };

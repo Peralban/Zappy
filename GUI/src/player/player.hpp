@@ -12,6 +12,7 @@
 #include "playerPosition.hpp"
 #include "chessElement/chessPiece.hpp"
 #include <string>
+#include "../interface/AError.hpp"
 
 class ZappyGame;
 class chessPiece;
@@ -64,6 +65,13 @@ class Player {
          * @param team A pointer to the Team object representing the player's team.
          */
         void setTeam(Team *team = nullptr);
+
+        /**
+         * @brief Sets the team of the player using the name of the team.
+         * 
+         * @param team string of the team name.
+         */
+        void setTeamFromName(std::string team = "undefined");
 
         /**
          * @brief Sets the name of the player.
@@ -201,6 +209,51 @@ class Player {
          * @return The broadcast message of the player.
          */
         std::string getBroadcastMessage() { return this->_broadcastMessage; }
+
+        class NullableParentGame : public AError {
+        public:
+            /**
+             * @brief Display an error message.
+             * @param message The error message to display. Defaults to "Trying to set ParentGame but given parentGame is null".
+             */
+            NullableParentGame() : AError("Trying to set ParentGame but given parentGame is null") {}
+        };
+
+        class ChessPieceUnset : public AError {
+        public:
+            /**
+             * @brief Display an error message.
+             * @param message The error message to display. Defaults to "ChessPiece is not setted".
+             */
+            ChessPieceUnset() : AError("ChessPiece is not setted") {}
+        };
+
+        class ChessPieceNotGetted : public AError {
+        public:
+            /**
+             * @brief Display an error message.
+             * @param message The error message to display. Defaults to "ChessPieces wasn't correctly getted".
+             */
+            ChessPieceNotGetted() : AError("ChessPieces wasn't correctly getted") {}
+        };
+
+        class ChessPieceNodeUnset : public AError {
+        public:
+            /**
+             * @brief Display an error message.
+             * @param message The error message to display. Defaults to "ChessPieceNode is not setted".
+             */
+            ChessPieceNodeUnset() : AError("ChessPieceNode is not setted") {}
+        };
+
+        class UnsetParentGame : public AError {
+        public:
+            /**
+             * @brief Display an error message.
+             * @param message The error message to display. Defaults to "Trying to get ParentGame but ParentGame is not setted.".
+             */
+            UnsetParentGame() : AError("Trying to get ParentGame but ParentGame is not setted.") {}
+        };
 
     private:
         std::string _Name; /**< The name of the player. */
