@@ -28,8 +28,7 @@ ZappyGame::~ZappyGame()
 void ZappyGame::linkWithDevice(irrlichtWindow *parentDevice)
 {
     if (parentDevice == nullptr) {
-        std::cerr << "trying to link with device but given parentDevice is null" << std::endl;
-        exit(EXIT_FAILURE);
+        throw NullableParentDevice();
     }
     this->_ParentDevice = parentDevice;
     this->initServerEvents();
@@ -49,8 +48,7 @@ void ZappyGame::createTeam(std::string teams, int Red, int Green, int Blue, int 
 void ZappyGame::setServerDataParser(ServerDataParser *serverDataParser)
 {
     if (serverDataParser == nullptr) {
-        std::cerr << "trying to set ServerDataParser but given serverDataParser is null" << std::endl;
-        exit(EXIT_FAILURE);
+        throw NullableServerDataParser();
     }
     this->_serverDataParser = serverDataParser;
 }
@@ -59,12 +57,10 @@ void ZappyGame::loadChessPieces()
 {
     this->_chessPieces = new chessPiece(this->_ParentDevice);
     if (this->_chessPieces == nullptr) {
-        std::cerr << "loadChessPieces: Error: Couldn't create chessPieces" << std::endl;
-        exit(EXIT_FAILURE);
+        throw UnableCreateChessPiece();
     }
     if (this->_ParentDevice == nullptr) {
-        std::cerr << "loadChessPieces: Error: ParentDevice is not setted" << std::endl;
-        exit(EXIT_FAILURE);
+        throw UnsetParentDevice();
     }
     this->_chessPieces->loadPiece(this->_ParentDevice->getQuality());
 }
@@ -84,8 +80,7 @@ chessPiece *ZappyGame::getChessPieces()
 irrlichtWindow *ZappyGame::getParentDevice()
 {
     if (this->_ParentDevice == nullptr) {
-        std::cerr << "getParentDevice: Error: ParentDevice is not setted" << std::endl;
-        exit(EXIT_FAILURE);
+        throw UnsetParentDevice();
     }
     return this->_ParentDevice;
 }
@@ -96,8 +91,7 @@ void ZappyGame::addPlayer(std::string name)
         return;
     Player *player = new Player(this, name);
     if (player == nullptr) {
-        std::cerr << "addPlayer: Error: Couldn't create player" << std::endl;
-        exit(EXIT_FAILURE);
+        throw UnableCreatePlayer();
     }
     player->playerInit();
     this->_playerList[name] = player;
@@ -200,8 +194,7 @@ Player *ZappyGame::getPlayer(std::string name)
 ServerDataParser *ZappyGame::getServerDataParser()
 {
     if (this->_serverDataParser == nullptr) {
-        std::cerr << "getServerDataParser: Error: ServerDataParser is not setted" << std::endl;
-        exit(EXIT_FAILURE);
+        throw UnsetServerDataParser();
     }
     return this->_serverDataParser;
 }
