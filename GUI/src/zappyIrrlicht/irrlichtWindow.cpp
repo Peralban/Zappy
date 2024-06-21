@@ -113,8 +113,8 @@ char *irrlichtWindow::getServerAdress()
 
 int irrlichtWindow::getServerPort()
 {
-        throw InvalidPort();
     if (this->_ServerPort < 1024 || this->_ServerPort > 65535) {
+        throw InvalidPort();
     }
     return this->_ServerPort;
 }
