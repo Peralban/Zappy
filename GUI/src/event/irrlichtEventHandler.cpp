@@ -58,10 +58,18 @@ void myEventReceiver::addTile(Tile* tile)
     _Tiles.push_back(tile);
 }
 
+void myEventReceiver::addPlayer(Player* player)
+{
+    if (player == nullptr) {
+        throw NullPlayer();
+    }
+    _Players.push_back(player);
+}
+
 bool myEventReceiver::OnEvent(const irr::SEvent& event) {
-    // if (_ActiveCamera && _ActiveCamera->OnEvent(event)) {
-    //     return true;
-    // }
+    if (_ActiveCamera && _ActiveCamera->OnEvent(event)) {
+        return true;
+    }
     if (_Device == nullptr) {
         throw UnsetDevice();
     }
@@ -129,9 +137,14 @@ bool myEventReceiver::OnLeftMouseClick(const irr::SEvent::SMouseInput& mouseInpu
 bool myEventReceiver::CkeckIfTileIsClicked(const irr::SEvent::SMouseInput& mouseInput)
 {
     irr::core::line3d<irr::f32> ray = _SceneManager->getSceneCollisionManager()->getRayFromScreenCoordinates(irr::core::position2di(mouseInput.X, mouseInput.Y),_ActiveCamera);
-    
+    for (auto player : _Players) {
+        if (CheckIfNodeIsClicked(ray, player->getChessPieceNode())) {
+            player->printInventory();
+            return true;
+        }
+    }
     for (auto tile : _Tiles) {
-        if (CheckIfNodeIsClicked(ray, tile->getNode())) {
+        if (CheckIfSimpleNodeIsClicked(ray, tile->getNode())) {
             tile->printInventory();
             return true;
         }
@@ -139,7 +152,7 @@ bool myEventReceiver::CkeckIfTileIsClicked(const irr::SEvent::SMouseInput& mouse
     return false;
 }
 
-bool myEventReceiver::CheckIfNodeIsClicked(irr::core::line3d<irr::f32> ray, irr::scene::ISceneNode *node)
+bool myEventReceiver::CheckIfSimpleNodeIsClicked(irr::core::line3d<irr::f32> ray, irr::scene::ISceneNode *node)
 {
     if (node == nullptr)
         return false;
@@ -147,11 +160,27 @@ bool myEventReceiver::CheckIfNodeIsClicked(irr::core::line3d<irr::f32> ray, irr:
     if (!meshNode->getTriangleSelector()) {
         meshNode->setTriangleSelector(_SceneManager->createTriangleSelector(meshNode->getMesh(), meshNode));
     }
-
     irr::core::vector3df intersection;
     irr::core::triangle3df hitTriangle;
     irr::scene::ISceneNode* hitNode = nullptr;
     if (_SceneManager->getSceneCollisionManager()->getCollisionPoint(ray, meshNode->getTriangleSelector(), intersection, hitTriangle, hitNode)) {
+        return true;
+    }
+    return false;
+}
+
+bool myEventReceiver::CheckIfNodeIsClicked(irr::core::line3d<irr::f32> ray, irr::scene::IAnimatedMeshSceneNode *node)
+{
+    if (node == nullptr)
+        return false;
+    irr::scene::IAnimatedMeshSceneNode* animNode = static_cast<irr::scene::IAnimatedMeshSceneNode*>(node);
+    if (!animNode->getTriangleSelector()) {
+        animNode->setTriangleSelector(_SceneManager->createTriangleSelectorFromBoundingBox(animNode));
+    }
+    irr::core::vector3df intersection;
+    irr::core::triangle3df hitTriangle;
+    irr::scene::ISceneNode* hitNode = nullptr;
+    if (_SceneManager->getSceneCollisionManager()->getCollisionPoint(ray, animNode->getTriangleSelector(), intersection, hitTriangle, hitNode)) {
         return true;
     }
     return false;

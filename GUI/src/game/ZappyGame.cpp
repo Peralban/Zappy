@@ -117,14 +117,15 @@ void ZappyGame::newPlayer(std::string cmd)
     this->addPlayer(args[1]);
     Player *player = this->getPlayer(args[1]);
     player->playerInit();
-    player->getPlayerPosition()->setPos(std::stoi(args[2]), std::stoi(args[3]));
+    player->getPlayerPosition()->setPos(std::stoi(args[2]), std::stoi(args[3]), 1);
     player->setOrientation(std::stoi(args[4]));
     player->setLevel(std::stoi(args[5]));
-    Team *newteam = this->createGetTeam(args[6], 255, 255, 255, 255);
+    Team *newteam = this->createGetTeam(args[6], 255, 155, 0, 255);
     player->setTeam(newteam);
     Tile *tile = this->_chessBoard->getMap()[std::stoi(args[2])][std::stoi(args[3])];
     tile->setPlayer(tile->getPlayer() + 1);
     tile->setEgg(tile->getEgg() - 1);
+    this->_ParentDevice->getEventReceiver()->addPlayer(_playerList[args[1]]);
 }
 
 void ZappyGame::broadcastMessage(std::string cmd)

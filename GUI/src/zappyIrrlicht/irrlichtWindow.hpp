@@ -432,6 +432,15 @@ public:
         UnableToCreateCamera() : AError("Could not create camera.") {}
     };
 
+    class UninitializedEventReceiver : public AError {
+    public:
+        /**
+         * @brief Display an error message.
+         * @param message The error message to display. Defaults to "Event receiver not initialized.".
+         */
+        UninitializedEventReceiver() : AError("Event receiver not initialized.") {}
+    };
+
 private:
     int _Width; /** < The width of the window */
     int _Height; /** < The height of the window */

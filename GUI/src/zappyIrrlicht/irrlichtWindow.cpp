@@ -86,7 +86,7 @@ void irrlichtWindow::initCamera()
     int height = 25;
 
 
-	this->_ActiveCamera = this->_SceneManager->addCameraSceneNodeFPS(0, 40.f, 50.f, -1, 0, 0, true, 0.5f, false, true);
+	this->_ActiveCamera = this->_SceneManager->addCameraSceneNodeFPS(0, 40.f, 1.f, -1, 0, 0, true, 0.5f, false, true);
     if (this->_ActiveCamera == nullptr) {
         throw UnableToCreateCamera();
     }
@@ -297,7 +297,7 @@ TextureLoader *irrlichtWindow::getTextureLoader()
 myEventReceiver *irrlichtWindow::getEventReceiver()
 {
     if (!this->_EventReceiver) {
-        // TODO add a throw
+        throw UninitializedEventReceiver();
     }
     return this->_EventReceiver;
 }

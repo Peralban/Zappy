@@ -8,6 +8,7 @@
 #pragma once
 
 #include "irrlicht/irrlicht.h"
+#include "../interface/AError.hpp"
 
 class chessBoard;
 
@@ -120,6 +121,72 @@ public:
      */
     int getEgg();
 
+    class UnsetParentChessboard : public AError {
+        public:
+            /**
+             * @brief Display an error message.
+             * @param message The error message to display. Defaults to "given parent chessboard is null".
+             * 
+             * occured when the parent chessboard is null and you try to initialise the tile by calling initTile() or setting the parent chessboard .
+             */
+            UnsetParentChessboard() : AError("given parent chessboard is null") {}
+        };
+    
+    class UnsetTileTexture : public AError {
+        public:
+            /**
+             * @brief Display an error message.
+             * @param message The error message to display. Defaults to "given tile texture is null".
+             * 
+             * occured when the tile texture is null and you try to set the texture by calling setTexture().
+             */
+            UnsetTileTexture() : AError("given tile texture is null") {}
+        };
+
+    class UnsetIrrlichVar : public AError {
+        public:
+            /**
+             * @brief Display an error message.
+             * @param message The error message to display. Defaults to "One of the Value that link tiles to irrlich isn't correctly setted".
+             * 
+             * occured when the irrlicht device, driver or scene manager is null and you try to create the tile.
+             */
+            UnsetIrrlichVar() : AError("One of the Value that link tiles to irrlich isn't correctly setted") {}
+        };
+    
+    class UnsetPos : public AError {
+        public:
+            /**
+             * @brief Display an error message.
+             * @param message The error message to display. Defaults to "One coordinate of the tile isn't correctly setted".
+             * 
+             * occured when the x, y or z coordinate is not setted and you try to create the tile.
+             */
+            UnsetPos() : AError("One coordinate of the tile isn't correctly setted") {}
+        };
+    
+    class UnsetTileSize : public AError {
+        public:
+            /**
+             * @brief Display an error message.
+             * @param message The error message to display. Defaults to "Tile size isn't correctly setted".
+             * 
+             * occured when the tile size is not setted and you try to create the tile.
+             */
+            UnsetTileSize() : AError("Tile size isn't correctly setted") {}
+        };
+    
+    class UnsetNode : public AError {
+        public:
+            /**
+             * @brief Display an error message.
+             * @param message The error message to display. Defaults to "Node isn't correctly setted".
+             * 
+             * occured when the node is null and you try to create the tile.
+             */
+            UnsetNode() : AError("Node isn't correctly setted") {}
+        };
+
 private:
     int _food; ///< The amount of food in the tile's inventory.
     int _linemate; ///< The amount of linemate in the tile's inventory.
@@ -138,7 +205,7 @@ private:
 
     chessBoard *_ParentChessBoard; ///< A pointer to the chessBoard object that is used as the parent chessboard.
 
-    irr::video::ITexture* _TileTexture; ///< A pointer to the ITexture object for the tile texture.
+    irr::video::ITexture *_TileTexture; ///< A pointer to the ITexture object for the tile texture.
     irr::scene::ISceneNode *_Node; ///< A pointer to the ISceneNode object for scene management.
 
     irr::scene::ISceneManager *_SceneManager; ///< A pointer to the ISceneManager object for scene management.

@@ -38,11 +38,11 @@ Tile::Tile(chessBoard *ParentChessBoard, irr::video::ITexture* tileTexture, int 
     _Z = z;
     _TileSize = tileSize;
     if (ParentChessBoard == nullptr) {
-        std::cout << "Tile: Warning: ParentChessBoard is null" << std::endl;
+        throw UnsetParentChessboard();
     }
     _ParentChessBoard = ParentChessBoard;
     if (tileTexture == nullptr) {
-        std::cout << "Tile: Warning: tileTexture is null" << std::endl;
+        throw UnsetTileTexture();
     }
     _TileTexture = tileTexture;
 }
@@ -54,7 +54,7 @@ Tile::~Tile()
 void Tile::linkToParent(chessBoard *ParentChessBoard)
 {
     if (ParentChessBoard == nullptr) {
-        std::cerr << "Tile: Warning: ParentChessBoard is null" << std::endl;
+        throw UnsetParentChessboard();
     }
     _ParentChessBoard = ParentChessBoard;
 }
@@ -62,8 +62,7 @@ void Tile::linkToParent(chessBoard *ParentChessBoard)
 void Tile::initTile()
 {
     if (_ParentChessBoard == nullptr) {
-        // TODO add a throw
-        std::cerr << "Tile: Warning: ParentChessBoard is null" << std::endl;
+       throw UnsetParentChessboard();
     }
     _SceneManager = _ParentChessBoard->getParentWindow()->getSceneManager();
     _Driver = _ParentChessBoard->getParentWindow()->getDriver();
@@ -74,24 +73,20 @@ void Tile::createTile()
 {
     std::cout << "Tile: Creating tile on pos " << _X << " " << _Y << std::endl;
     if (_SceneManager == nullptr || _Driver == nullptr || _Device == nullptr) {
-        // TODO add a throw
-        std::cerr << "Tile: Error: link to irrlich lib is null" << std::endl;
+        throw UnsetIrrlichVar();
     }
     if (_X == -1 || _Y == -1 || _Z == -1) {
-        // TODO add a throw
-        std::cerr << "Tile: Error: X, Y or Z is not set" << std::endl;
+        throw UnsetPos();
     }
     if (_TileSize == -1) {
-        // TODO add a throw
-        std::cerr << "Tile: Error: TileSize is not set" << std::endl;
+        throw UnsetTileSize();
     }
     _Node = const_cast<irr::scene::ISceneManager*>(_SceneManager)->addCubeSceneNode(_TileSize);
     if (_Node == nullptr) {
-        // TODO add a throw
-        std::cerr << "Tile: Warning: Node is null" << std::endl;
+        throw UnsetNode();
     }
     _Node->setMaterialTexture(0, _TileTexture);
-    _Node->setPosition(irr::core::vector3df(_X * _TileSize, 0, _Y * _TileSize));
+    _Node->setPosition(irr::core::vector3df(_X * _TileSize, _TileSize / 2, _Y * _TileSize));
     _Node->setMaterialFlag(irr::video::EMF_LIGHTING, false);
     _Node->setMaterialTexture(0, _TileTexture);
     _Node->setMaterialType(irr::video::EMT_SOLID);

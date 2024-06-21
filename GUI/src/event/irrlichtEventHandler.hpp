@@ -41,6 +41,12 @@ public:
     void addTile(Tile *tile);
 
     /**
+     * @brief Adds a player to the list of players.
+     * @param player The player to add.
+     */
+    void addPlayer(Player *player);
+
+    /**
      * @brief Callback function that is called when an event occurs.
      * @param event The event that occurred.
      * @return True if the event was handled, false otherwise.
@@ -82,7 +88,20 @@ public:
      */
     bool CkeckIfTileIsClicked(const irr::SEvent::SMouseInput& mouseInput);
 
-    bool CheckIfNodeIsClicked(irr::core::line3d<irr::f32> ray, irr::scene::ISceneNode *node);
+    /**
+     * @brief Checks if a player is clicked.
+     * @param mouseInput The mouse input event.
+     * @return True if a player is clicked, false otherwise.
+     */
+    bool CheckIfSimpleNodeIsClicked(irr::core::line3d<irr::f32> ray, irr::scene::ISceneNode *node);
+
+    /**
+     * @brief Checks if a node is clicked.
+     * @param ray The ray to check.
+     * @param node The node to check.
+     * @return True if the node is clicked, false otherwise.
+     */
+    bool CheckIfNodeIsClicked(irr::core::line3d<irr::f32> ray, irr::scene::IAnimatedMeshSceneNode *node);
     class NullableDevice : public AError {
     public:
         /**
@@ -137,6 +156,15 @@ public:
         NullTile() : AError("Trying to add a tile but given tile is null.") {}
     };
 
+    class NullPlayer : public AError {
+    public:
+        /**
+         * @brief Display an error message.
+         * @param message The error message to display. Defaults to "Trying to add a player but given player is null".
+         */
+        NullPlayer() : AError("Trying to add a player but given player is null.") {}
+    };
+
 
 private:
 
@@ -144,6 +172,7 @@ private:
     bool _RightMouseButtonDown; /**< A boolean value that indicates whether the right mouse button is down. */
 
     std::vector<Tile *> _Tiles; /**< A list of Tile objects that represent the tiles of the chess board. */
+    std::vector<Player *> _Players; /**< A list of Tile objects that represent the tiles of the chess board. */
 
     irrlichtWindow* _ParentWindow; /**< Pointer to the Irrlicht device. */
     irr::IrrlichtDevice* _Device; /**< Pointer to the Irrlicht device. */
