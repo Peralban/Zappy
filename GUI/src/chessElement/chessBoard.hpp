@@ -9,6 +9,7 @@
 
 #include "irrlicht/irrlicht.h"
 #include "loader/textureLoader.hpp"
+#include "../interface/AError.hpp"
 #include <vector>
 
 class ZappyGame;
@@ -131,6 +132,69 @@ class chessBoard {
         void printMap();
 
         void printMapAtPos(int x, int y);
+
+        class NoParentWindow : public AError {
+        public:
+            /**
+             * @brief Display an error message.
+             * @param message The error message to display. Defaults to "No parent window set.".
+             */
+            NoParentWindow() : AError("No parent window set.") {}
+        };
+
+        class CouldNotLoadTexture : public AError {
+            public:
+            /**
+             * @brief Display an error message.
+             * @param message The error message to display. Defaults to "Could not load textures.".
+             */
+            CouldNotLoadTexture() : AError("Could not load textures.") {}
+        };
+
+        class InvalidTileSize : public AError {
+            public:
+            /**
+             * @brief Display an error message.
+             * @param message The error message to display. Defaults to "Invalid tile size".
+             */
+            InvalidTileSize() : AError("Invalid tile size.") {}
+        };
+
+        class InvalidWidth : public AError {
+            public:
+            /**
+             * @brief Display an error message.
+             * @param message The error message to display. Defaults to "Invalid width for chess board".
+             */
+            InvalidWidth() : AError("Invalid width for chess board.") {}
+        };
+
+        class InvalidHeight : public AError {
+            public:
+            /**
+             * @brief Display an error message.
+             * @param message The error message to display. Defaults to "Invalid height for chess board".
+             */
+            InvalidHeight() : AError("Invalid height for chess board.") {}
+        };
+
+        class NoSceneManager : public AError {
+            public:
+            /**
+             * @brief Display an error message.
+             * @param message The error message to display. Defaults to "No scene manager set for chess board".
+             */
+            NoSceneManager() : AError("No scene manager set for chess board.") {}
+        };
+
+        class NoTexturesSet : public AError {
+            public:
+            /**
+             * @brief Display an error message.
+             * @param message The error message to display. Defaults to "No textures set for chess board.".
+             */
+            NoTexturesSet() : AError("No textures set for chess board.") {}
+        };
 
     private:
         int _Width; ///< The width of the chess board in number of tiles.
