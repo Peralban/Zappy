@@ -164,6 +164,20 @@ void signalHandler(int signal) {
     gSignalStatus = signal;
 }
 
+static void UpdateAllPlayers(ZappyGame *game, guiNetworkClient *client)
+{
+    if (game->getPlayerList()->empty())
+        return;
+    for (auto player : *game->getPlayerList()) {
+        client->handleWrite("ppo " + player.second->getName() + "\n");
+        client->selectSocket();
+        client->handleWrite("plv " + player.second->getName() + "\n");
+        client->selectSocket();
+        client->handleWrite("pin " + player.second->getName() + "\n");
+        client->selectSocket();
+    }
+}
+
 int irrlichtWindow::runWindow(ZappyGame *game, guiNetworkClient *client)
 {
     (void) game;
