@@ -8,6 +8,7 @@
 #include "chessBoard.hpp"
 #include "../game/ZappyGame.hpp"
 #include "../zappyIrrlicht/irrlichtWindow.hpp"
+#include "../items/items.hpp"
 #include <iostream>
 
 chessBoard::chessBoard(ZappyGame *ParentZappy, int width, int height, float tileSize)
@@ -79,11 +80,17 @@ void chessBoard::createBoard()
         }
     }
     _IsCreated = true;
+    this->_ItemsHandler->initItemsObj();
 }
 
 bool chessBoard::isCreated()
 {
     return _IsCreated;
+}
+
+void chessBoard::updateMapItem()
+{
+    this->_ItemsHandler->updateMap(this->_map);
 }
 
 void chessBoard::InitMap(int width, int height)
@@ -111,6 +118,7 @@ void chessBoard::InitMap(int width, int height)
         }
         _map.push_back(tmp);
     }
+    this->_ItemsHandler = new items(this);
 }
 
 static std::vector<std::string> split(const std::string &s, char delimiter)
@@ -158,4 +166,14 @@ void chessBoard::printMapAtPos(int x, int y)
 irrlichtWindow *chessBoard::getParentWindow()
 {
     return _ParentWindow;
+}
+
+std::vector<std::vector<Tile *>> chessBoard::getMap()
+{
+    return _map;
+}
+
+items *chessBoard::getItemsHandler()
+{
+    return _ItemsHandler;
 }

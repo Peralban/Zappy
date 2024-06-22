@@ -9,6 +9,7 @@
 
 #include "irrlicht/irrlicht.h"
 #include "../interface/AError.hpp"
+#include <vector>
 
 class chessBoard;
 
@@ -120,6 +121,18 @@ public:
      * @return The egg on the tile.
      */
     int getEgg();
+
+    int getPositionX();
+    int getPositionY();
+    int getPositionZ();
+
+    std::vector<int> getInventory();
+
+    /**
+     * @brief Gets the parent chessboard of the tile.
+     * @return The parent chessboard of the tile.
+     */
+    chessBoard *getParentChessBoard();
 
     class UnsetParentChessboard : public AError {
         public:

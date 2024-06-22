@@ -8,6 +8,7 @@
 #include "tiles.hpp"
 #include "zappyIrrlicht/irrlichtWindow.hpp"
 #include "chessElement/chessBoard.hpp"
+#include "items/items.hpp"
 
 Tile::Tile()
 {
@@ -161,3 +162,31 @@ int Tile::getEgg()
     return _egg;
 }
 
+chessBoard *Tile::getParentChessBoard()
+{
+    if (_ParentChessBoard == nullptr) {
+        throw UnsetParentChessboard();
+    }
+    return _ParentChessBoard;
+}
+
+int Tile::getPositionX()
+{
+    return _X;
+}
+
+int Tile::getPositionY()
+{
+    return _Y;
+}
+
+int Tile::getPositionZ()
+{
+    return _Z;
+}
+
+std::vector<int> Tile::getInventory()
+{
+    std::vector<int> inventory = {_food, _linemate, _deraumere, _sibur, _mendiane, _phiras, _thystame};
+    return inventory;
+}
