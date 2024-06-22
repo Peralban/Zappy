@@ -86,7 +86,7 @@ std::string readUntilNewline(int sockfd) {
     return result;
 }
 
-void guiNetworkClient::selectSocket()
+void guiNetworkClient:: selectSocket()
 {
     fd_set readFds;
     std::string message;
