@@ -393,6 +393,15 @@ public:
         UninitializedGuiNetworkClient() : AError("guiNetworkClient not initialized.") {}
     };
 
+    class SelectError : public AError {
+    public:
+        /**
+         * @brief Display an error message.
+         * @param message The error message to display. Defaults to "Select error".
+         */
+        SelectError() : AError("Select error") {}
+    };
+
     class UninitializedObjLoader : public AError {
     public:
         /**
