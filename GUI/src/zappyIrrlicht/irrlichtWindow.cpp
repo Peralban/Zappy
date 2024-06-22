@@ -169,6 +169,20 @@ void signalHandler(int signal) {
     gSignalStatus = signal;
 }
 
+static void UpdateAllPlayers(ZappyGame *game, guiNetworkClient *client)
+{
+    if (game->getPlayerList()->empty())
+        return;
+    for (auto player : *game->getPlayerList()) {
+        client->handleWrite("ppo " + player.second->getName() + "\n");
+        client->selectSocket();
+        client->handleWrite("plv " + player.second->getName() + "\n");
+        client->selectSocket();
+        client->handleWrite("pin " + player.second->getName() + "\n");
+        client->selectSocket();
+    }
+}
+
 int irrlichtWindow::runWindow(ZappyGame *game, guiNetworkClient *client)
 {
     (void) game;
@@ -193,6 +207,7 @@ int irrlichtWindow::runWindow(ZappyGame *game, guiNetworkClient *client)
         for (int i = 0; i < game->getTimeUnit(); i++) {
             this->_LinkedGuiClient->selectSocket();
         }
+        UpdateAllPlayers(game, client);
         if (this->_Device->isWindowActive() && (game->getPlatformWidth() != 0 && game->getPlatformHeight() != 0)) {
             this->_Driver->beginScene(true, true, irr::video::SColor(255, 100, 101, 140));
             this->_SceneManager->drawAll();

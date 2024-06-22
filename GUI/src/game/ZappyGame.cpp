@@ -8,6 +8,7 @@
 #include "ZappyGame.hpp"
 #include "../zappyIrrlicht/irrlichtWindow.hpp"
 #include "../player/player.hpp"
+#include <random>
 
 ZappyGame::ZappyGame()
 {
@@ -113,6 +114,9 @@ void ZappyGame::newPlayer(std::string cmd)
 {
     //pnw #n X Y O L N\n
     std::vector<std::string> args = split(cmd, ' ');
+    std::random_device rd; // obtain a random number from hardware
+    std::mt19937 gen(rd()); // seed the generator
+    std::uniform_int_distribution<> distr(0, 255); // define the range
 
     this->addPlayer(args[1]);
     Player *player = this->getPlayer(args[1]);
@@ -120,7 +124,7 @@ void ZappyGame::newPlayer(std::string cmd)
     player->getPlayerPosition()->setPos(std::stoi(args[2]), std::stoi(args[3]), 1);
     player->setOrientation(std::stoi(args[4]));
     player->setLevel(std::stoi(args[5]));
-    Team *newteam = this->createGetTeam(args[6], 255, 155, 0, 255);
+    Team *newteam = this->createGetTeam(args[6], distr(gen), distr(gen), distr(gen), 255);
     player->setTeam(newteam);
     Tile *tile = this->_chessBoard->getMap()[std::stoi(args[2])][std::stoi(args[3])];
     tile->setPlayer(tile->getPlayer() + 1);
@@ -169,8 +173,9 @@ void ZappyGame::updatePlayerPos(std::string cmd)
     std::vector<std::string> args = split(cmd, ' ');
 
     Player *player = this->getPlayer(args[1]);
-    player->getPlayerPosition()->setPos(std::stoi(args[2]), std::stoi(args[3]));
-    player->setOrientation(std::stoi(args[4]));
+    player->getPlayerPosition()->setPos(std::stoi(args[2]), std::stoi(args[3]), 1);
+    player->setOrientation(args[4] == "N" ? 0 : args[4] == "E" ? 1 : args[4] == "S" ? 2 : 3);
+    player->updatePlayerPos();
 }
 
 void ZappyGame::updatePlayerLevel(std::string cmd)
@@ -180,6 +185,7 @@ void ZappyGame::updatePlayerLevel(std::string cmd)
 
     Player *player = this->getPlayer(args[1]);
     player->setLevel(std::stoi(args[2]));
+    player->updateLevel();
 }
 
 void ZappyGame::updatePlayerInventory(std::string cmd)
@@ -305,6 +311,18 @@ std::map<std::string, Team*> *ZappyGame::getTeamsList()
 Team *ZappyGame::createGetTeam(std::string teamName, int Red, int Green, int Blue, int Alpha)
 {
     if (this->_teamsList.find(teamName) == this->_teamsList.end()) {
+        std::random_device rd; // obtain a random number from hardware
+        std::mt19937 gen(rd()); // seed the generator
+        std::uniform_int_distribution<> distr(0, 255); // define the range
+
+        while (this->_teamsList.find(std::to_string(Red)) != this->_teamsList.end() &&
+        this->_teamsList.find(std::to_string(Green)) != this->_teamsList.end() &&
+        this->_teamsList.find(std::to_string(Blue)) != this->_teamsList.end()) {
+            Red = distr(gen); // generate random numbers
+            Green = distr(gen);
+            Blue = distr(gen);
+            Alpha = 255;
+        }
         this->createTeam(teamName, Red, Green, Blue, Alpha);
     }
     return this->_teamsList[teamName];

@@ -109,7 +109,6 @@ void guiNetworkClient::selectSocket()
                 throw SelectError();
             } else {
                 message.pop_back();
-                std::cout << "MESSAGES: " << message << std::endl;
                 _HandleServerMessage(message);
             }
         } else
