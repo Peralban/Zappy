@@ -40,6 +40,8 @@ Player::~Player()
     std::cout << "\nPlayer destroyed\n" << std::endl;
 }
 
+
+
 void Player::setParentGame(ZappyGame *parentGame)
 {
     if (parentGame == nullptr) {
@@ -68,6 +70,13 @@ void Player::playerInit()
         this->_PlayerPosition.getVecRotConverted(),
         this
     );
+    _linemate = 0;
+    _deraumere = 0;
+    _sibur = 0;
+    _mendiane = 0;
+    _phiras = 0;
+    _thystame = 0;
+    _food = 10;
 }
 
 void Player::setTeam(Team *team)
@@ -132,12 +141,35 @@ void Player::setLevel(int level)
 {
     if (level < 0)
         level = 0;
-    // if (level > 8)  TOCHANGE
-    //     level = 8;
-    if (level > 5)
-        level = 5;
+    if (level > 8)
+        level = 8;
     this->_Level = level;
-    this->_PieceType = static_cast<pieceType>(level);
+    switch (level) {
+        case 1:
+            this->_PieceType = PAWN;
+            break;
+        case 2:
+            this->_PieceType = PAWN;
+            break;
+        case 3:
+            this->_PieceType = PAWN;
+            break;
+        case 4:
+            this->_PieceType = KNIGHT;
+            break;
+        case 5:
+            this->_PieceType = BISHOP;
+            break;
+        case 6:
+            this->_PieceType = ROOK;
+            break;
+        case 7:
+            this->_PieceType = QUEEN;
+            break;
+        case 8:
+            this->_PieceType = KING;
+            break;
+    }
     this->updateLevel();
 }
 
@@ -200,6 +232,14 @@ PlayerPos *Player::getPlayerPosition()
     return &this->_PlayerPosition;
 }
 
+irr::scene::IAnimatedMeshSceneNode *Player::getChessPieceNode()
+{
+    if (this->_chessPieceNode == nullptr) {
+        throw ChessPieceNodeUnset();
+    }
+    return this->_chessPieceNode;
+}
+
 ZappyGame *Player::getParentGame()
 {
     if (this->_ParentGame == nullptr) {
@@ -208,3 +248,55 @@ ZappyGame *Player::getParentGame()
     return this->_ParentGame;
 }
 
+int Player::getID()
+{
+    return this->_Id;
+}
+
+void Player::setID(int id)
+{
+    this->_Id = id;
+}
+
+int Player::getOrientation()
+{
+    return this->_Orientation;
+}
+
+void Player::setOrientation(int orientation)
+{
+    this->_Orientation = orientation;
+}
+
+void Player::setInventory(int food, int linemate, int deraumere, int sibur, int mendiane, int phiras, int thystame)
+{
+    this->_food = food;
+    this->_linemate = linemate;
+    this->_deraumere = deraumere;
+    this->_sibur = sibur;
+    this->_mendiane = mendiane;
+    this->_phiras = phiras;
+    this->_thystame = thystame;
+}
+
+void Player::printInventory()
+{
+    std::cout << "Inventory of player " << this->_Name << std::endl;
+    std::cout << "food: " << this->_food << std::endl;
+    std::cout << "linemate: " << this->_linemate << std::endl;
+    std::cout << "deraumere: " << this->_deraumere << std::endl;
+    std::cout << "sibur: " << this->_sibur << std::endl;
+    std::cout << "mendiane: " << this->_mendiane << std::endl;
+    std::cout << "phiras: " << this->_phiras << std::endl;
+    std::cout << "thystame: " << this->_thystame << std::endl;
+}
+
+void Player::setBroadcastMessage(std::string message)
+{
+    this->_broadcastMessage = message;
+}
+
+std::string Player::getBroadcastMessage()
+{
+    return this->_broadcastMessage;
+}

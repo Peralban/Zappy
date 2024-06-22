@@ -35,22 +35,17 @@ static int *get_distance(drone_t *drone, drone_t *target, info_game_t info)
 
 static int get_square(int angle, orientation_t ori)
 {
-    bool conditions[10] = {
-        angle < 0 && angle > -45, angle == -45, angle > -135 && angle < -45,
-        angle == -135, angle >= -180 && angle < -135, angle >= 0 && angle < 45,
-        angle == 45, angle > 45 && angle < 135, angle == 135,
-        angle >= 135 && angle <= 180
+    bool conditions[8] = {
+        angle >= -28 && angle <= 28, angle > 28 && angle < 61,
+        angle >= 61 && angle <= 118, angle > 118 && angle < 151,
+        angle >= 151 || angle <= -151, angle > -151 && angle < -118,
+        angle >= -118 && angle <= -61, angle > -61 && angle < -28
     };
-    int values[4][10] = {
-        {7, 8, 1, 2, 3, 7, 6, 5, 4, 3},
-        {1, 2, 3, 4, 5, 1, 8, 7, 6, 5},
-        {3, 4, 5, 6, 7, 3, 2, 1, 8, 7},
-        {5, 6, 7, 8, 1, 5, 4, 3, 2, 1}
-    };
+    int values[8] = {7, 6, 5, 4, 3, 2, 1, 8};
 
-    for (int i = 0; i < 10; i++)
+    for (int i = 0; i < 8; i++)
         if (conditions[i])
-            return values[ori][i];
+            return values[(i + (8 - ori * 2)) % 8];
     return 0;
 }
 

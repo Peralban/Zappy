@@ -70,18 +70,6 @@ public:
     void makeNonBlocking();
 
     /**
-     * @brief send a message to the server saying that we are a GUI.
-     * 
-     * basically consist of handleWrite("GRAPHIC\n");
-     */
-    void initIdentification();
-
-    /**
-     * @brief Asks the server for the initial data for example the map size.
-     */
-    void askInitData();
-
-    /**
      * @brief Selects the socket for reading.
      * 
      * if the socket is ready to read, it will call handleRead.
