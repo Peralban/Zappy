@@ -36,11 +36,11 @@ _PlayerPosition(PlayerPos(this))
 
 Player::~Player()
 {
-    this->_chessPieceNode->remove();
-    std::cout << "\nPlayer destroyed\n" << std::endl;
+    if (_chessPieceNode) {
+        _chessPieceNode->remove();
+        std::cout << "\nPlayer destroyed\n" << std::endl;
+    }
 }
-
-
 
 void Player::setParentGame(ZappyGame *parentGame)
 {
