@@ -182,6 +182,7 @@ int irrlichtWindow::runWindow(ZappyGame *game, guiNetworkClient *client)
 {
     (void) game;
     (void) client;
+    bool isRunning = true;
 
     try {
         client->handleWrite("GRAPHIC\n");
@@ -195,9 +196,10 @@ int irrlichtWindow::runWindow(ZappyGame *game, guiNetworkClient *client)
         client->handleWrite("sgt\n");
         client->selectSocket();
         std::cout << "Running window..." << std::endl;
-        while(this->_Device->run()) {
+        while(this->_Device->run() && isRunning) {
             std::signal(SIGINT, signalHandler);
             if (gSignalStatus == SIGINT) {
+                isRunning = false;
                 client->handleWrite("quit\n");
                 if (_EventReceiver) {
                     delete _EventReceiver;
@@ -211,7 +213,8 @@ int irrlichtWindow::runWindow(ZappyGame *game, guiNetworkClient *client)
                 if (_Device) {
                     _Device->drop();
                 }
-                std::exit(0);
+                if (isRunning == false)
+                    return 0;
             }
             for (int i = 0; i < game->getTimeUnit(); i++) {
                 this->_LinkedGuiClient->selectSocket();
