@@ -171,16 +171,22 @@ static void UpdateAllPlayers(ZappyGame *game, guiNetworkClient *client)
         return;
     for (auto player : *game->getPlayerList()) {
         std::string player_name = player.second->getName();
-        if (game->getPlayer(player_name) == nullptr)
+        if (game->getPlayer(player_name) == nullptr) {
+            UpdateAllPlayers(game, client);
             break;
+        }
         client->handleWrite("ppo " + player.second->getName() + "\n");
         client->selectSocket();
-        if (game->getPlayer(player_name) == nullptr)
+        if (game->getPlayer(player_name) == nullptr) {
+            UpdateAllPlayers(game, client);
             break;
+        }
         client->handleWrite("plv " + player.second->getName() + "\n");
         client->selectSocket();
-        if (game->getPlayer(player_name) == nullptr)
+        if (game->getPlayer(player_name) == nullptr) {
+            UpdateAllPlayers(game, client);
             break;
+        }
         client->handleWrite("pin " + player.second->getName() + "\n");
         client->selectSocket();
     }
