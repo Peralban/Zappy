@@ -199,6 +199,18 @@ int irrlichtWindow::runWindow(ZappyGame *game, guiNetworkClient *client)
             std::signal(SIGINT, signalHandler);
             if (gSignalStatus == SIGINT) {
                 client->handleWrite("quit\n");
+                if (_EventReceiver) {
+                    delete _EventReceiver;
+                }
+                if (_ObjLoader) {
+                    delete _ObjLoader;
+                }
+                if (_TextureLoader) {
+                    delete _TextureLoader;
+                }
+                if (_Device) {
+                    _Device->drop();
+                }
                 std::exit(0);
             }
             for (int i = 0; i < game->getTimeUnit(); i++) {
