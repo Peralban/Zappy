@@ -67,6 +67,7 @@ void irrlichtWindow::initDrivers()
     }
     this->_Driver = this->_Device->getVideoDriver();
     this->_SceneManager = this->_Device->getSceneManager();
+    this->_GuiEnv = this->_Device->getGUIEnvironment();
 }
 
 void irrlichtWindow::initLoader()
@@ -79,9 +80,21 @@ void irrlichtWindow::initCamera()
 {
     //making the height of the camera relative to the platform size
     int height = 25;
+    float rotatespeed = 40.0f;
+    float movespeed = 0.5f;
+    bool novertical = false;
+    irr::SKeyMap *keyMap = new irr::SKeyMap[6];
+    keyMap[0].Action = irr::EKA_MOVE_FORWARD;
+    keyMap[0].KeyCode = irr::KEY_KEY_Z;
+    keyMap[1].Action = irr::EKA_MOVE_BACKWARD;
+    keyMap[1].KeyCode = irr::KEY_KEY_S;
+    keyMap[2].Action = irr::EKA_STRAFE_LEFT;
+    keyMap[2].KeyCode = irr::KEY_KEY_Q;
+    keyMap[3].Action = irr::EKA_STRAFE_RIGHT;
+    keyMap[3].KeyCode = irr::KEY_KEY_D;
 
 
-	this->_ActiveCamera = this->_SceneManager->addCameraSceneNodeFPS(0, 40.f, 1.f, -1, 0, 0, true, 0.5f, false, true);
+	this->_ActiveCamera = this->_SceneManager->addCameraSceneNodeFPS(0, rotatespeed, movespeed, -1, keyMap, 6, novertical, 0.5f, false, true);
     if (this->_ActiveCamera == nullptr) {
         throw UnableToCreateCamera();
     }
@@ -132,6 +145,22 @@ void irrlichtWindow::drawCursor()
     int centerY = screenHeight / 2;
     _Driver->draw2DRectangle(_CursorColor, irr::core::rect<irr::s32>(centerX - _CursorLength, centerY - _CursorThickness, centerX + _CursorLength, centerY + _CursorThickness)); // Horizontal line
     _Driver->draw2DRectangle(_CursorColor, irr::core::rect<irr::s32>(centerX - _CursorThickness, centerY - _CursorLength, centerX + _CursorThickness, centerY + _CursorLength)); // Vertical line
+}
+
+void irrlichtWindow::createText()
+{
+    _SceneManager->addTextSceneNode(
+        _GuiEnv->getBuiltInFont(), // Font
+        L"hola soy dora",      // Text to display
+        irr::video::SColor(255, 0, 0, 0), // Text color
+        0,                        // Parent node
+        irr::core::vector3df(
+            0,
+            10,
+            0
+        )                         // Position
+    );
+
 }
 
 void irrlichtWindow::LinkEventReceiver()
@@ -194,6 +223,8 @@ int irrlichtWindow::runWindow(ZappyGame *game, guiNetworkClient *client)
         client->selectSocket();
         client->handleWrite("sgt\n");
         client->selectSocket();
+
+        createText();
         std::cout << "Running window..." << std::endl;
         while(this->_Device->run()) {
             std::signal(SIGINT, signalHandler);
@@ -209,6 +240,7 @@ int irrlichtWindow::runWindow(ZappyGame *game, guiNetworkClient *client)
             if (this->_Device->isWindowActive() && (game->getPlatformWidth() != 0 && game->getPlatformHeight() != 0)) {
                 this->_Driver->beginScene(true, true, irr::video::SColor(255, 100, 101, 140));
                 this->_SceneManager->drawAll();
+                this->_GuiEnv->drawAll(); // Draw the GUI
                 this->drawCursor();
                 this->_Driver->endScene();
             } else {
@@ -314,7 +346,7 @@ ObjLoader *irrlichtWindow::getObjLoader()
 TextureLoader *irrlichtWindow::getTextureLoader()
 {
     if (!this->_TextureLoader) {
-        throw ObjLoader();
+        throw UninitializedTextureLoader();
     }
     return this->_TextureLoader;
 }
@@ -356,4 +388,12 @@ irrlichtWindow::~irrlichtWindow()
     if (_Device) {
         _Device->drop();
     }
+}
+
+irr::gui::IGUIEnvironment *irrlichtWindow::getGuiEnv()
+{
+    if (!this->_GuiEnv) {
+        throw GuiEnvUninitialized();
+    }
+    return this->_GuiEnv;
 }

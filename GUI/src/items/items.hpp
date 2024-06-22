@@ -134,6 +134,18 @@ public:
         UnsetDriver() : AError("Driver is not set") {}
     };
 
+    /**
+     * @class UnsetFont
+     * @brief Exception class for unset font.
+     */
+    class UnsetFont : public AError {
+        public:
+            /**
+             * @brief Constructor.
+             */
+            UnsetFont() : AError("Font is not set") {}
+    };
+
 private:
     irr::scene::IAnimatedMesh * _Food;             ///< The food obj file
     irr::scene::IAnimatedMesh * _Linemate;         ///< The coal obj file
@@ -143,9 +155,17 @@ private:
     irr::scene::IAnimatedMesh * _Phiras;           ///< The diamond obj file
     irr::scene::IAnimatedMesh * _Thystame;         ///< The netherite obj file
 
-    std::map<std::string, std::vector<irr::scene::IAnimatedMeshSceneNode *>> _TilesContent; ///< A map that contains the content of the tiles.
+    int countX;
+    int countY;
+    int countZ;
+
+    std::vector<irr::scene::ITextSceneNode *> _TextNode;         ///< The text node for the items.
+
+    std::vector<irr::scene::IAnimatedMeshSceneNode *> _ItemNode; ///< The node for the items.
 
     chessBoard *_ParentchessBoard;                 ///< A pointer to the chessBoard object that contains the items.
+
+    irr::gui::IGUIFont *_Font;                      ///< A pointer to the IGUIFont object for font rendering.
 
     irr::scene::ISceneManager *_SceneManager;      ///< A pointer to the ISceneManager object for scene management.
     irr::video::IVideoDriver *_Driver;              ///< A pointer to the IVideoDriver object for video rendering.

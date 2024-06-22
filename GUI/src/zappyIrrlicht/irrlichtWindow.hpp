@@ -133,6 +133,8 @@ public:
      */
     void drawCursor();
 
+    void createText();
+
     /**
      * @brief Links the ZappyGame object to the irrlichtWindow.
      * 
@@ -264,6 +266,8 @@ public:
      * @return The debug state.
      */
     bool getDebugState();
+
+    irr::gui::IGUIEnvironment *getGuiEnv();
 
     class WrongArgs : public AError {
     public:
@@ -456,6 +460,15 @@ public:
         UninitializedEventReceiver() : AError("Event receiver not initialized.") {}
     };
 
+    class GuiEnvUninitialized : public AError {
+    public:
+        /**
+         * @brief Display an error message.
+         * @param message The error message to display. Defaults to "GUI environment not initialized.".
+         */
+        GuiEnvUninitialized() : AError("GUI environment not initialized.") {}
+    };
+
 private:
     int _Width; /** < The width of the window */
     int _Height; /** < The height of the window */
@@ -470,11 +483,14 @@ private:
     bool _Debug; /** < The debug state */
 
     quality _Quality; /** < The selected quality settings */
+
     irr::IrrlichtDevice *_Device; /** < The Irrlicht device */
     irr::video::IVideoDriver *_Driver; /** < The video driver */
     irr::scene::ISceneManager *_SceneManager; /** < The scene manager */
     irr::video::E_DRIVER_TYPE _DriverType; /** < The video driver type */
     irr::scene::ICameraSceneNode *_ActiveCamera; /** < The camera */
+    irr::gui::IGUIEnvironment *_GuiEnv; /** < The GUI environment */
+
     myEventReceiver *_EventReceiver; /** < The event receiver Object */
     ZappyGame *_LinkedZappyGame; /** < The linked ZappyGame Object */
     guiNetworkClient *_LinkedGuiClient; /** < The linked guiNetworkClient Object */
