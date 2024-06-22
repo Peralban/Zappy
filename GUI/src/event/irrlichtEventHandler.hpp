@@ -35,6 +35,11 @@ public:
     void InitEventReceiver();
 
     /**
+     * @brief check if tile is clicked.
+     */
+    bool CheckIfTileIsClicked(const irr::SEvent::SMouseInput& mouseInput);
+
+    /**
      * @brief Adds a tile to the list of tiles.
      * @param tile The tile to add.
      */

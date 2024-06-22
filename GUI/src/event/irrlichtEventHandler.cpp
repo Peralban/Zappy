@@ -16,12 +16,14 @@ myEventReceiver::myEventReceiver(irrlichtWindow* parentWindow)
     _ParentWindow = parentWindow;
     _LeftMouseButtonDown = false;
     _RightMouseButtonDown = false;
+    _ActiveCamera = nullptr;
 }
 
 myEventReceiver::~myEventReceiver()
 {
     if (_ActiveCamera != nullptr) {
         _ActiveCamera->drop();
+        _ActiveCamera = nullptr;
     }
     for (auto tile : _Tiles) {
         delete tile;
@@ -44,10 +46,10 @@ void myEventReceiver::InitEventReceiver()
         throw UnsetDriver();
     }
     _ActiveCamera = _ParentWindow->getActiveCamera();
-    _ActiveCamera->grab();
     if (_ActiveCamera == nullptr) {
         throw UnsetCamera();
     }
+    _ActiveCamera->grab();
 }
 
 void myEventReceiver::addTile(Tile* tile)
@@ -66,7 +68,8 @@ void myEventReceiver::addPlayer(Player* player)
     _Players.push_back(player);
 }
 
-bool myEventReceiver::OnEvent(const irr::SEvent& event) {
+bool myEventReceiver::OnEvent(const irr::SEvent& event)
+{
     if (_ActiveCamera && _ActiveCamera->OnEvent(event)) {
         return true;
     }
@@ -94,8 +97,8 @@ bool myEventReceiver::keyPress(const irr::SEvent& event)
     }
 
     if (keyCode == irr::KEY_KEY_P) {
-        const irr::core::vector3df& position = _Device->getSceneManager()->getActiveCamera()->getPosition();
-        const irr::core::vector3df& target = _Device->getSceneManager()->getActiveCamera()->getTarget();
+        const irr::core::vector3df& position = _ActiveCamera->getPosition();
+        const irr::core::vector3df& target = _ActiveCamera->getTarget();
         std::cout << "Position: (" << position.X << ", " << position.Y << ", " << position.Z << ")" << std::endl;
         std::cout << "Target: (" << target.X << ", " << target.Y << ", " << target.Z << ")" << std::endl;
         return false;
@@ -108,13 +111,13 @@ bool myEventReceiver::mouseClick(const irr::SEvent& event)
     if (event.MouseInput.Event == irr::EMIE_RMOUSE_LEFT_UP) {
         this->_RightMouseButtonDown = false;
         return OnRightMouseClick(event.MouseInput);
-    }   else if (event.MouseInput.Event ==  irr::EMIE_RMOUSE_PRESSED_DOWN) {
+    } else if (event.MouseInput.Event == irr::EMIE_RMOUSE_PRESSED_DOWN) {
         this->_RightMouseButtonDown = true;
     }
     if (event.MouseInput.Event == irr::EMIE_LMOUSE_LEFT_UP) {
         this->_LeftMouseButtonDown = false;
         return OnLeftMouseClick(event.MouseInput);
-    } else if (event.MouseInput.Event ==  irr::EMIE_LMOUSE_PRESSED_DOWN) {
+    } else if (event.MouseInput.Event == irr::EMIE_LMOUSE_PRESSED_DOWN) {
         this->_LeftMouseButtonDown = true;
     }
     return false;
@@ -128,15 +131,15 @@ bool myEventReceiver::OnRightMouseClick(const irr::SEvent::SMouseInput& mouseInp
 
 bool myEventReceiver::OnLeftMouseClick(const irr::SEvent::SMouseInput& mouseInput)
 {
-    if (CkeckIfTileIsClicked(mouseInput)) {
+    if (CheckIfTileIsClicked(mouseInput)) {
         return true;
     }
     return false;
 }
 
-bool myEventReceiver::CkeckIfTileIsClicked(const irr::SEvent::SMouseInput& mouseInput)
+bool myEventReceiver::CheckIfTileIsClicked(const irr::SEvent::SMouseInput& mouseInput)
 {
-    irr::core::line3d<irr::f32> ray = _SceneManager->getSceneCollisionManager()->getRayFromScreenCoordinates(irr::core::position2di(mouseInput.X, mouseInput.Y),_ActiveCamera);
+    irr::core::line3d<irr::f32> ray = _SceneManager->getSceneCollisionManager()->getRayFromScreenCoordinates(irr::core::position2di(mouseInput.X, mouseInput.Y), _ActiveCamera);
     for (auto player : _Players) {
         if (CheckIfNodeIsClicked(ray, player->getChessPieceNode())) {
             player->printInventory();
