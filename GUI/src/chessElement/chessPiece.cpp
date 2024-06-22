@@ -23,16 +23,25 @@ chessPiece::chessPiece(irrlichtWindow *window)
     _DefaultTexture = window->getTextureLoader()->createGetTexture(155, 155, 155, 255, "Default");
 }
 
+
 chessPiece::~chessPiece()
 {
-    this->_Bishop->drop();
-    this->_King->drop();
-    this->_Knight->drop();
-    this->_Pawn->drop();
-    this->_Queen->drop();
-    this->_Rook->drop();
-    this->_Piece->drop();
-    this->_DefaultTexture->drop();
+    if (_Pawn)
+        _Pawn->drop();
+    if (_King)
+        _King->drop();
+    if (_Queen)
+        _Queen->drop();
+    if (_Rook)
+        _Rook->drop();
+    if (_Bishop)
+        _Bishop->drop();
+    if (_Knight)
+        _Knight->drop();
+    if (_Piece)
+        _Piece->drop();
+    if (_DefaultTexture)
+        _DefaultTexture->drop();
 }
 
 void chessPiece::loadPiece(quality choosedQuality)
