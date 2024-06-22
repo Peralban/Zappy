@@ -23,7 +23,7 @@ incantation_prerequisites = {
 
 
 class Bot:
-    def __init__(self, team_name, x, y):
+    def __init__(self, team_name, x, y, n):
         self.team_name = team_name
         self.dimension = {'x' : x, 'y' : y}
         self.inventory = {'food' : 0, 'linemate' : 0, 'deraumere' : 0, 'sibur' : 0, 'mendiane' : 0, 'phiras' : 0, 'thystame' : 0}
@@ -33,17 +33,19 @@ class Bot:
         self.doing_action = False
         self.nb_message = 0
         self.nb_message_queen = 0
-        self.wolrd_dimension = 5
+        self.wolrd_dimension = 7
         self.world = [[{'food' : 0, 'linemate' : 0, 'deraumere' : 0, 'sibur' : 0, 'mendiane' : 0, 'phiras' : 0, 'thystame' : 0, 'player' : 0} for _ in range(0, self.wolrd_dimension)] for _ in range(0, self.wolrd_dimension)]
         self.mid_x = len(self.world[0]) // 2
         self.mid_y = len(self.world) // 2
         self.world[self.mid_y][self.mid_x]['player'] = 1
         self.queen_position = None
-        self.queen_direction = None
+        self.queen_direction = -1
         self.queen_exists = False
         self.is_queen = False
-        self.nb_player = 1
+        self.missing_player = 6 - n - 1 if n < 6 else 0
+        self.ready_to_incant = False
         self.mode = "survive"
+        self.target = None
 
     def run(self):
         while self.alive:
@@ -51,7 +53,7 @@ class Bot:
             self.send_commands()
             self.change_mode()
             self.do_action()
-            #self.print_stuff(seconds=3, mode=True, inventory=True, lvl=True, command=True)
+            self.print_stuff(seconds=3, inventory=True, command=True, lvl=True, mode=True)
         return
 
     def move_to(self, x, y):
@@ -70,51 +72,106 @@ class Bot:
                 self.push_command("Forward")
             return
 
+        def move_to_y(ya):
+            if ya == 0:
+                return
+            for _ in range(abs(ya)):
+                self.push_command("Forward")
+            return
+
         if y > 0:
             move_to_x(x)
             if x > 0:
                 self.push_command("Right")
             elif x < 0:
                 self.push_command("Left")
-            for _ in range(abs(y)):
-                self.push_command("Forward")
+            else:
+                self.push_command("Right")
+                self.push_command("Right")
+            move_to_y(y)
         elif y < 0:
-            for _ in range(abs(y)):
-                self.push_command("Forward")
+            move_to_y(y)
             move_to_x(x)
         else:
             move_to_x(x)
         return
 
     def take_everything_on_tile(self):
-        for e in ressources_types:
-            for _ in range(self.world[self.mid_y][self.mid_x][e]):
-                self.push_command(f"Take {e}")
+        for _ in range(self.world[self.mid_y][self.mid_x]['food']):
+            self.push_command("Take food")
+        for e in ressources_types[1::]:
+            if self.inventory[e] < 1:
+                for _ in range(self.world[self.mid_y][self.mid_x][e]):
+                    self.push_command(f"Take {e}")
+        return
+
+    def drop_everything_on_tile(self):
+        for e in ressources_types[1::]:
+            for _ in range(self.inventory[e]):
+                self.push_command(f"Set {e}")
+        if self.inventory['food'] > 30:
+            for _ in range(self.inventory['food'] - 30):
+                self.push_command("Set food")
         return
 
     # mode functions
 
     def change_mode(self):
-        if self.doing_action:
+        if self.doing_action or len(self.waiting_command) > 0:
             return
+
         if not self.is_queen:
-            if self.inventory['food'] < 15 or self.level < 2:
+            if self.inventory['food'] < 10 or self.level < 2:
                 self.mode = "survive"
                 return
             if self.mode == "survive" and self.inventory['food'] < 50:
                 return
-            self.mode = "other"
             if not self.queen_exists:
                 self.mode = "queen election"
                 return
             if self.queen_exists and (self.queen_position is None):
                 self.mode = "find queen"
                 return
+
+            def should_return():
+                if self.inventory['food'] > 50:
+                    return True
+                nb_stones = 0
+                for e in ressources_types[1::]:
+                    nb_stones += self.inventory[e]
+                if self.inventory['food'] > 40 and nb_stones >= 4:
+                    return True
+                return False
+
+            if self.ready_to_incant and self.queen_position['x'] == 0 and self.queen_position['y'] == 0:
+                self.mode = "stay"
+                return
+            if self.ready_to_incant or should_return():
+                self.mode = "return"
+                return
+            self.mode = "gathering"
         else:
-            if self.nb_player < 6:
+            if self.inventory['food'] < 10:
+                self.mode = "survive"
+                return
+            if self.mode == "survive" and self.inventory['food'] < 30:
+                return
+            if self.queen_position != {'x': 0, 'y': 0}:
+                self.mode = "queen"
+                return
+            if self.missing_player > 0:
                 self.mode = "lay egg"
                 return
             self.mode = "queen"
+
+            def can_incant():
+                for e in ressources_types[1::]:
+                    if self.inventory[e] < incantation_prerequisites[self.level][e]:
+                        return False
+                return True
+
+            if can_incant():
+                self.mode = "queen incantation"
             return
         return
 
@@ -134,31 +191,77 @@ class Bot:
 
         nearest_food = find_nearest_food()
 
+        self.push_command("Look")
         if nearest_food is None:
             self.push_command(random.choice(["Forward", "Right", "Left"]))
         else:
             self.move_to(nearest_food[0] - self.mid_x, nearest_food[1] - self.mid_y)
-            self.push_command("Take food")
+            for _ in range(self.world[nearest_food[0]][nearest_food[1]]['food']):
+                self.push_command("Take food")
+        return
+
+    def gathering(self):
+        if self.target is None:
+            d = max(self.dimension['x'], self.dimension['y']) // 2 + 1
+            self.target = {'x': random.randint(-d, d), 'y':random.randint(-d, d)}
+        if self.mid_x == self.target['x'] and self.mid_y == self.target['y']:
+            self.target = None
+            return
+        if 0 != self.queen_position['x'] or 0 != self.queen_position['y']:
+            self.take_everything_on_tile()
+        self.move_to(random.randint(-1, 0) if self.target['x'] < 0 else random.randint(0, 1), random.randint(-1, 0) if self.target['y'] < 0 else random.randint(0, 1))
         self.push_command("Look")
         return
 
-    def other(self): # temporary function while we don't have the other mode
-        self.move_to(random.randrange(-1, 1) - self.mid_x, random.randrange(-1, 1) - self.mid_y)
-        self.take_everything_on_tile()
-        self.push_command("Inventory")
+    def return_to_queen(self):
+        if self.queen_position is None:
+            return
+        self.move_to(self.queen_position['x'], self.queen_position['y'])
+        self.drop_everything_on_tile()
+        return
+
+    def stay(self):
+        if self.inventory['food'] < 50:
+            if self.world[self.mid_y][self.mid_x]['food'] > (50 - self.inventory['food']):
+                for _ in range(50 - self.inventory['food']):
+                    self.push_command("Take food")
+            else:
+                for _ in range(self.world[self.mid_y][self.mid_x]['food']):
+                    self.push_command("Take food")
         self.push_command("Look")
+        self.push_command("Right")
         return
 
     def queen(self):
+
+        if self.queen_position['x'] != 0 or self.queen_position['y'] != 0:
+            self.move_to(self.queen_position['x'], self.queen_position['y'])
+            return
+
+        def take_everything_on_tile_queen():
+            nb_command = 0
+            for e in ressources_types:
+                for _ in range(self.world[self.mid_y][self.mid_x][e]):
+                    self.push_command(f"Take {e}")
+                    nb_command += 1
+                    if nb_command % 3 == 0:
+                        self.create_broadcast("I am the queen")
+            return
+
         self.create_broadcast("I am the queen")
-        self.take_everything_on_tile()
+        take_everything_on_tile_queen()
         self.push_command("Look")
         self.push_command("Right")
+        self.create_broadcast("I am the queen")
+        self.push_command("Connect_nbr")
         if self.world[self.mid_y][self.mid_x]['player'] > 1:
             print(f"I am the queen and there is {self.world[self.mid_y][self.mid_x]['player']} players on my tile")
         return
 
     def queen_election(self):
+        if self.inventory['food'] < 80:
+            self.survive()
+            return
         self.queen_exists = True
         self.is_queen = True
         self.queen_position = {'x' : 0, 'y' : 0}
@@ -166,10 +269,11 @@ class Bot:
         return
 
     def find_queen(self):
-        if (self.queen_direction is None) or (self.queen_position is not None):
+        if self.queen_position is not None:
+            return
+        if self.queen_direction is -1:
             return
         if self.queen_direction == 0:
-            self.queen_position = {'x': 0, 'y': 0}
             return
         elif self.queen_direction == 1:
             self.move_to(0, -1) #None
@@ -187,38 +291,67 @@ class Bot:
             self.move_to(1, 0) #self.push_command("Right")
         elif self.queen_direction == 8:
             self.move_to(1, -1) #None
-        self.queen_direction = None
         return
 
     def lay_egg(self):
         self.push_command("Fork")
-        self.push_command("Connect_nbr")
+        self.missing_player -= 1
+        return
+
+    def queen_incantation(self):
+        if not self.ready_to_incant:
+            self.create_broadcast("Queen incantation")
+            for e in ressources_types[1::]:
+                for _ in range(incantation_prerequisites[self.level][e]):
+                    self.push_command(f"Set {e}")
+            self.ready_to_incant = True
+
+        if self.world[self.mid_y][self.mid_x]['player'] >= 6:
+            self.push_command("Incantation")
+            self.push_command("Look")
+            return
+
+        def take_all_food():
+            for j in range(self.world[self.mid_y][self.mid_x]['food']):
+                self.push_command("Take food")
+                if j % 3 == 0:
+                    self.create_broadcast("Queen incantation")
+            return
+
+        take_all_food()
+        self.push_command("Look")
+        if self.inventory['food'] > 100:
+            for i in range(10):
+                if i % 3 == 0:
+                    self.create_broadcast("Queen_incantation")
+                self.push_command("Set food")
+
         return
 
     # end of mode functions
 
+    actions = {
+        "survive": survive,
+        "gathering": gathering,
+        "return": return_to_queen,
+        "stay": stay,
+        "queen election": queen_election,
+        "find queen": find_queen,
+        "queen": queen,
+        "lay egg": lay_egg,
+        "queen incantation": queen_incantation
+    }
+
     def do_action(self):
-        if self.doing_action:
+        if self.doing_action or len(self.waiting_command) > 0:
             return
         if self.level == 1 and self.world[self.mid_y][self.mid_x]['linemate'] >= 1 and self.inventory['food'] >= 10:
             self.push_command("Incantation")
 
-        if not self.is_queen:
-            if self.mode == "survive":
-                self.survive()
-            if self.mode == "other":
-                self.other()
-            if self.mode == "queen election":
-                self.queen_election()
-            if self.mode == "find queen":
-                self.find_queen()
-        else:
-            self.push_command("Take food")
-            if self.mode == "queen":
-                self.queen()
-            if self.mode == "lay egg":
-                self.lay_egg()
+        if len(self.waiting_command) > 0:
             return
+        self.push_command("Inventory")
+        self.actions[self.mode](self)
         return
 
     def push_command(self, command):
@@ -285,14 +418,15 @@ class Bot:
 
     def action_on_broadcast(self, message):
         team, nb_message, content, direction = self.broadcast_analyse(message)
-        #if team != self.team_name:
-        #    return
-        if content == "I am the queen":
-            if nb_message < self.nb_message_queen:
-                return
-            self.nb_message_queen = nb_message
+        if team != self.team_name or nb_message < self.nb_message or content[:5] == "debug":
+            return
+        if content == "I am the queen" or content == "Queen incantation":
             self.queen_exists = True
             self.queen_direction = direction
+            if direction == 0:
+                self.queen_position = {'x': 0, 'y': 0}
+        if content == "Queen incantation":
+            self.ready_to_incant = True
         return
 
 
@@ -366,6 +500,7 @@ class Bot:
     def look(self, result):
         results = result[1:-1].split(', ')
 
+        print(results)
         def init_dict(t_result):
             t_dict = {'food' : 0, 'linemate' : 0, 'deraumere' : 0, 'sibur' : 0, 'mendiane' : 0, 'phiras' : 0, 'thystame' : 0, 'player' : 0}
             t_results = t_result.split()
@@ -382,22 +517,25 @@ class Bot:
             k += 2
 
     def update_inventory(self, res):
-        res = res[1:-1].split(', ')
+        res = res[1:-1]
+        if res == " " or res == "":
+            return
+        res = res.split(', ')
+        print(res)
         for objects in res:
             objects = objects.split()
             self.inventory[objects[0]] = int(objects[1])
         return
 
     def connect_nbr(self, nb):
-        if self.is_queen:
-            self.nb_player += nb
-            if nb > 0:
-                for i in range(nb):
-                    client_module.parsing.sub_process()
+        #if self.is_queen:
+        #    if nb > 0:
+        #        for i in range(nb):
+        #            client_module.parsing.sub_process()
         return
 
     def fork(self):
-        client_module.parsing.sub_process()
+        #client_module.parsing.sub_process()
         return
 
     def eject(self):
@@ -417,6 +555,7 @@ class Bot:
         for stone in incantation_prerequisites[self.level]:
             self.world[self.mid_y][self.mid_x][stone] -= incantation_prerequisites[self.level][stone]
         self.level += 1
+        self.ready_to_incant = False
         return
 
     def broadcast(self):
@@ -434,7 +573,9 @@ class Bot:
 
         self.push_command("Broadcast " + encrypted_broadcast)
 
-        self.nb_message += 1
+        if self.is_queen:
+            self.nb_message_queen += 1
+
         return
 
     def broadcast_analyse(self, message):
@@ -450,9 +591,12 @@ class Bot:
             decrypted_broadcast += str(chr(int(encrypted_char)))
 
         team = decrypted_broadcast.split(' ')[0]
-        nb_message = int(decrypted_broadcast.split(':')[0].split(' ')[1])
-        content = decrypted_broadcast.split(':')[1]
+        nb_message = int(decrypted_broadcast.split(':', 1)[0].split(' ')[1])
+        content = decrypted_broadcast.split(':', 1)[1]
 
         print(team, nb_message, content, direction)
+
+        if not self.is_queen:
+            self.nb_message = nb_message
 
         return team, nb_message, content, direction

@@ -14,12 +14,13 @@
 #include "lib/my.h"
 #include <stdio.h>
 
-static void start_communication_with_client(client_t *client,
+static int start_communication_with_client(client_t *client,
     server_t *server, char *buffer)
 {
     if (strcmp(buffer, "GRAPHIC") == 0 || strcmp(buffer, "ADMIN") == 0) {
         client->state = buffer[0] == 'G' ? GRAPHIC : ADMIN;
-        return start_gui_client(server, client);
+        start_gui_client(server, client);
+        return 0;
     }
     for (int i = 0; server->info_game.team_names[i] != NULL; i++) {
         if (strcmp(buffer, server->info_game.team_names[i]) == 0 &&
@@ -32,10 +33,14 @@ static void start_communication_with_client(client_t *client,
             client->state = PLAYING;
             create_player(server, client, server->info_game.team_names[i]);
             gui_pnw(server, client->drone);
-            return;
+            return 0;
         }
     }
-    send(client->socket, "ko\n", 3, 0);
+    if (send(client->socket, "ko\n", 3, 0) < 0) {
+        eject_client_from_server(client, server);
+        return 1;
+    }
+    return 0;
 }
 
 static void push_command(client_t *client, char *buffer)
@@ -85,13 +90,12 @@ static void exec_gui_commands(client_t *client, server_t *server, char *buffer)
     my_free_array(commands_arr);
 }
 
-static void client_state_switch(client_t *client, server_t *server,
+static int client_state_switch(client_t *client, server_t *server,
     char *buffer)
 {
     switch (client->state) {
         case WAITING:
-            start_communication_with_client(client, server, buffer);
-            break;
+            return start_communication_with_client(client, server, buffer);
         case PLAYING:
             push_command(client, buffer);
             break;
@@ -102,6 +106,7 @@ static void client_state_switch(client_t *client, server_t *server,
             exec_admin_commands(client, server, buffer);
             break;
     }
+    return 0;
 }
 
 static int recv_command(client_t *client, server_t *server)
@@ -116,15 +121,15 @@ static int recv_command(client_t *client, server_t *server)
         buffer[buffer_length - 2] = '\0';
     else
         buffer[buffer_length - 1] = '\0';
-    printf("Received: %s\n", buffer);
+    if (strlen(buffer) == 0)
+        strcpy(buffer, "quit");
     if (strcmp(buffer, "quit") == 0) {
         reset_client(client, server);
         eject_client_from_server(client, server);
         client_already_connected(server);
         return 1;
     } else
-        client_state_switch(client, server, buffer);
-    return 0;
+        return client_state_switch(client, server, buffer);
 }
 
 void client_already_connected(server_t *server)
@@ -162,7 +167,13 @@ static void set_all_in_fd(server_t *server, int *max_fd)
 static void inthand(int signum)
 {
     (void)signum;
+    static int i = 0;
     replace_stop(1);
+    if (i == 1) {
+        printf("Server stopped\n");
+        exit(0);
+    }
+    i++;
 }
 
 int server_loop(server_t *server)
