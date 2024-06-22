@@ -15,8 +15,14 @@
 #include "loader/objLoader.hpp"
 #include "loader/textureLoader.hpp"
 #include "../interface/AError.hpp"
+#include <csignal>
 
 class guiNetworkClient;
+
+namespace
+{
+    volatile std::sig_atomic_t gSignalStatus;
+}
 
 /**
  * @class irrlichtWindow
