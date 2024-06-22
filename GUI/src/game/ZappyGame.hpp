@@ -284,6 +284,26 @@ class ZappyGame {
          */
         Team *createGetTeam(std::string teamName, int Red, int Green, int Blue, int Alpha);
 
+        /**
+         * @brief Deletes a player from the game by their name.
+         *
+         * This function removes a player from the game's player list using their name as the key.
+         * If the player does not exist in the list, no action is performed.
+         *
+         * @param name The name of the player to delete.
+         */
+        void deletePlayer(std::string name);
+
+        /**
+         * @brief Deletes a player from the game by their Player object.
+         *
+         * This function removes a player from the game's player list using their Player object.
+         * If the player does not exist in the list, no action is performed.
+         *
+         * @param player A pointer to the Player object of the player to delete.
+         */
+        void deletePlayer(Player *player);
+
         class NullableParentDevice : public AError {
         public:
             /**

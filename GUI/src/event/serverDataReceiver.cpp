@@ -10,6 +10,7 @@
 #include "zappyIrrlicht/irrlichtWindow.hpp"
 #include "networkGui/guiClient.hpp"
 #include "chessElement/chessBoard.hpp"
+#include <random>
 
 
 ServerDataParser::ServerDataParser()
@@ -79,8 +80,6 @@ void ServerDataParser::HandleServerMessage(std::string message)
             irrActiveCam->setPosition(irr::core::vector3df(-15, (this->getParentGame()->getPlatformWidth() + this->getParentGame()->getPlatformHeight()) * 3 + 25, -15));
             this->getParentGame()->getChessBoard()->InitMap(std::stoi(serverMessage.args[0]), std::stoi(serverMessage.args[1]));
             this->getParentGame()->getChessBoard()->createBoard();
-
-            std::cout << "Map initialized" << std::endl;
         }
     } else if (serverMessage.command == "sgt") {
         this->getParentGame()->setTimeUnit(std::stoi(serverMessage.args[0]));
@@ -141,6 +140,15 @@ void ServerDataParser::HandleServerMessage(std::string message)
             exit(EXIT_FAILURE);
         }
         this->getParentGame()->playerDie(message);
+    } else if (serverMessage.command == "tna") {
+        if (serverMessage.args.size() != 1) {
+            std::cerr << "HandleServerMessage: Error: tna command should have 1 arguments" << std::endl;
+            exit(EXIT_FAILURE);
+        }
+        std::random_device rd;
+        std::mt19937 gen(rd());
+        std::uniform_int_distribution<> distr(0, 255);
+        this->getParentGame()->createGetTeam(serverMessage.args[0], distr(gen), distr(gen), distr(gen), 255);
     }
 }
 
