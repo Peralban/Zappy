@@ -9,6 +9,7 @@
 
 #include "irrlicht/irrlicht.h"
 #include <iostream>
+#include "../interface/AError.hpp"
 
 /**
  * @class ObjLoader
@@ -44,6 +45,24 @@ class ObjLoader {
          * @return The loaded animated mesh.
          */
         irr::scene::IAnimatedMesh* loadObj(const char *path);
+
+        class NoSceneManager : public AError {
+        public:
+            /**
+             * @brief Display an error message.
+             * @param message The error message to display. Defaults to "No scene manager set for obj loader.".
+             */
+            NoSceneManager() : AError("No scene manager set for obj loader.") {}
+        };
+
+        class UnableLoadObj : public AError {
+        public:
+            /**
+             * @brief Display an error message.
+             * @param message The error message to display. Defaults to "Could not load obj.".
+             */
+            UnableLoadObj() : AError("Could not load obj.") {}
+        };
 
     private:
         irr::scene::ISceneManager *_SceneManager; /**< The Irrlicht scene manager used to create the animated meshes. */

@@ -24,22 +24,28 @@ irrlichtWindow::irrlichtWindow(
     this->_LinkedZappyGame = nullptr;
     this->_Quality = selectedQuality;
     this->_Debug = debug;
+    this->_ServerAdress = nullptr;
+    this->_ServerPort = 0;
+    this->_ObjLoader = nullptr;
+    this->_TextureLoader = nullptr;
+    this->_ActiveCamera = nullptr;
+    this->_CursorLength = 0;
+    this->_CursorThickness = 0;
+    this->_CursorColor = irr::video::SColor(255, 0, 0, 0);
+    
 }
 
 void irrlichtWindow::parseArgs(int ac, char **av)
 {
-   if (ac != 3) {
-        std::cerr << "Usage: " << av[0] << " <server_ip> <server_port>" << std::endl;
-        exit(EXIT_FAILURE);
+    if (ac != 3) {
+        throw WrongArgs();
     }
     std::regex ip_regex(R"(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})");
     if (!std::regex_match(av[1], ip_regex)) {
-        std::cerr << "Invalid server IP address" << std::endl;
-        exit(EXIT_FAILURE);
+        throw InvalidIP();
     }
     if (std::stoi(av[2]) < 1024 || std::stoi(av[2]) > 65535) {
-        std::cerr << "Invalid server port" << std::endl;
-        exit(EXIT_FAILURE);
+        throw InvalidPort();
     }
     this->_ServerAdress = av[1];
     this->_ServerPort = std::stoi(av[2]);
@@ -49,22 +55,15 @@ void irrlichtWindow::windowCreateDevice()
 {
     irr::IrrlichtDevice *device = irr::createDevice(this->_DriverType, irr::core::dimension2d<irr::u32>(this->_Width, this->_Height), 16, false, false, false, 0);
 	if (device == 0) {
-        std::cerr << "windowCreateDevice : Error: Could not create device" << std::endl;
-        exit(EXIT_FAILURE);
+        throw NotDeviceCreated();
     }
 	this->_Device = device;
-}
-
-irrlichtWindow::~irrlichtWindow()
-{
-    this->_Device->drop();
 }
 
 void irrlichtWindow::initDrivers()
 {
     if (!this->_Device) {
-        std::cerr << "initDrivers : Error: Device not initialized, can't create driver" << std::endl;
-        exit(EXIT_FAILURE);
+        throw DeviceUninitialized();
     }
     this->_Driver = this->_Device->getVideoDriver();
     this->_SceneManager = this->_Device->getSceneManager();
@@ -81,10 +80,12 @@ void irrlichtWindow::initCamera()
     //making the height of the camera relative to the platform size
     int height = 25;
 
-	this->_Device->getCursorControl()->setVisible(false);
 
-	this->_SceneManager->addCameraSceneNodeFPS();
-    this->_ActiveCamera = this->_SceneManager->getActiveCamera();
+	this->_ActiveCamera = this->_SceneManager->addCameraSceneNodeFPS(0, 40.f, 1.f, -1, 0, 0, true, 0.5f, false, true);
+    if (this->_ActiveCamera == nullptr) {
+        throw UnableToCreateCamera();
+    }
+    this->_Device->getCursorControl()->setVisible(false);
 
 	// droite-gauche   haut-bas   avant-arriere
 	this->_ActiveCamera->setPosition(irr::core::vector3df(-15, height, -15));
@@ -92,28 +93,61 @@ void irrlichtWindow::initCamera()
 	this->_ActiveCamera->setFarValue(10000.0f);
 	this->_ActiveCamera->setNearValue(0.1f);
 	this->_ActiveCamera->setAspectRatio(1.33f);
-	this->_ActiveCamera->setInputReceiverEnabled(true);
 	this->_ActiveCamera->setDebugDataVisible(irr::scene::EDS_FULL);
-	this->_ActiveCamera->setViewMatrixAffector(irr::core::matrix4());
     if (this->_Debug)
         std::cout << "Camera initialized" << std::endl;
 }
 
-void irrlichtWindow::initEventReceiver()
+void irrlichtWindow::initCursor(int cursorLength, int thickness, irr::video::SColor cursorColor)
 {
-    this->_EventReceiver = new myEventReceiver(this->_Device);
+    this->_CursorLength = cursorLength;
+    this->_CursorColor = cursorColor;
+    this->_CursorThickness = thickness;
+}
+
+void irrlichtWindow::initCursor(int cursorLength, int thickness, int red, int green, int blue)
+{
+    this->_CursorLength = cursorLength;
+    this->_CursorThickness = thickness;
+    this->_CursorColor = irr::video::SColor(255, red, green, blue);
+}
+
+void irrlichtWindow::setCursorLength(int cursorLength)
+{
+    this->_CursorLength = cursorLength;
+}
+
+void irrlichtWindow::setCursorThickness(int thickness)
+{
+    this->_CursorThickness = thickness;
+}
+
+void irrlichtWindow::drawCursor()
+{
+    
+    irr::core::dimension2d<irr::u32> screenSize = _Driver->getScreenSize();
+    int screenWidth = screenSize.Width;
+    int screenHeight = screenSize.Height;
+    int centerX = screenWidth / 2;
+    int centerY = screenHeight / 2;
+    _Driver->draw2DRectangle(_CursorColor, irr::core::rect<irr::s32>(centerX - _CursorLength, centerY - _CursorThickness, centerX + _CursorLength, centerY + _CursorThickness)); // Horizontal line
+    _Driver->draw2DRectangle(_CursorColor, irr::core::rect<irr::s32>(centerX - _CursorThickness, centerY - _CursorLength, centerX + _CursorThickness, centerY + _CursorLength)); // Vertical line
+}
+
+void irrlichtWindow::LinkEventReceiver()
+{
+    this->_EventReceiver = new myEventReceiver(this);
     if (this->_EventReceiver == nullptr) {
-        std::cerr << "initEventReceiver: Error: Could not create event receiver" << std::endl;
-        exit(EXIT_FAILURE);
+        throw UnableToCreateEvent();
     }
     this->_Device->setEventReceiver(this->_EventReceiver);
+    this->_EventReceiver->InitEventReceiver();
 }
 
 char *irrlichtWindow::getServerAdress()
 {
     if (!this->_ServerAdress) {
-        std::cerr << "getServerAdress Error: Server adress not initialized" << std::endl;
-        exit(EXIT_FAILURE);
+        throw UninitializedServerAdress();
     }
     return this->_ServerAdress;
 }
@@ -121,51 +155,89 @@ char *irrlichtWindow::getServerAdress()
 int irrlichtWindow::getServerPort()
 {
     if (this->_ServerPort < 1024 || this->_ServerPort > 65535) {
-        std::cerr << "getServerPort: Error: Invalid server port" << std::endl;
-        exit(EXIT_FAILURE);
+        throw InvalidPort();
     }
     return this->_ServerPort;
+}
+
+void signalHandler(int signal) {
+    gSignalStatus = signal;
+}
+
+static void UpdateAllPlayers(ZappyGame *game, guiNetworkClient *client)
+{
+
+    if (game->getPlayerList()->empty())
+        return;
+    for (auto player : *game->getPlayerList()) {
+        std::string player_name = player.second->getName();
+        if (game->getPlayer(player_name) == nullptr) {
+            UpdateAllPlayers(game, client);
+            break;
+        }
+        client->handleWrite("ppo " + player.second->getName() + "\n");
+        client->selectSocket();
+        if (game->getPlayer(player_name) == nullptr) {
+            UpdateAllPlayers(game, client);
+            break;
+        }
+        client->handleWrite("plv " + player.second->getName() + "\n");
+        client->selectSocket();
+        if (game->getPlayer(player_name) == nullptr) {
+            UpdateAllPlayers(game, client);
+            break;
+        }
+        client->handleWrite("pin " + player.second->getName() + "\n");
+        client->selectSocket();
+    }
 }
 
 int irrlichtWindow::runWindow(ZappyGame *game, guiNetworkClient *client)
 {
     (void) game;
     (void) client;
-    int count = 0;
-    while(this->_Device->run()) {
-        for (int i = 0; i < 100; i++)
-            this->_LinkedGuiClient->selectSocket();
-        if (this->_Device->isWindowActive()) {
-            // make the player rotate
-            float orientation = this->getLinkedZappyGame()->getPlayer("player1")->getPlayerPosition()->getConvOrientationX();
-            if (orientation >= 359)
-                this->getLinkedZappyGame()->getPlayer("player1")->getPlayerPosition()->setConvertedOrientationX(0);
-            else
-                this->getLinkedZappyGame()->getPlayer("player1")->getPlayerPosition()->setConvertedOrientationX(orientation + 1);
 
-            // update the player position BUT NOT THE CONV POSITION
-            this->getLinkedZappyGame()->getPlayer("player1")->updatePlayerPos();
-            if (count < 100) {
-                count++;
-            } else {
-
-                this->getLinkedZappyGame()->getPlayer("player1")->getPlayerPosition()->setPos(rand() % this->getLinkedZappyGame()->getPlatformWidth(), rand() % this->getLinkedZappyGame()->getPlatformHeight(), 3);
-                count = 0;
+    try {
+        client->handleWrite("GRAPHIC\n");
+        client->getServerResponse();
+        client->handleRead();
+        client->makeNonBlocking();
+        client->handleWrite("msz\n");
+        client->selectSocket();
+        client->handleWrite("mct\n");
+        client->selectSocket();
+        client->handleWrite("sgt\n");
+        client->selectSocket();
+        std::cout << "Running window..." << std::endl;
+        while(this->_Device->run()) {
+            std::signal(SIGINT, signalHandler);
+            if (gSignalStatus == SIGINT) {
+                client->handleWrite("quit\n");
+                std::exit(0);
             }
-        	this->_Driver->beginScene(true, true, irr::video::SColor(255, 100, 101, 140));
-            this->_SceneManager->drawAll();
-            this->_Driver->endScene();
-        } else
-            this->_Device->yield();
-    }
+            for (int i = 0; i < game->getTimeUnit(); i++) {
+                this->_LinkedGuiClient->selectSocket();
+            }
+            UpdateAllPlayers(game, client);
+            if (this->_Device->isWindowActive() && (game->getPlatformWidth() != 0 && game->getPlatformHeight() != 0)) {
+                this->_Driver->beginScene(true, true, irr::video::SColor(255, 100, 101, 140));
+                this->_SceneManager->drawAll();
+                this->drawCursor();
+                this->_Driver->endScene();
+            } else {
+                this->_Device->yield();
+            }
+        }
+    } catch (const std::exception &e) {
+        exit(0);
+    };
     return 0;
 }
 
 irr::scene::ICameraSceneNode *irrlichtWindow::getActiveCamera()
 {
     if (!this->_ActiveCamera) {
-        std::cerr << "getActiveCamera: Error: Camera not initialized" << std::endl;
-        exit(EXIT_FAILURE);
+        throw UninitializedCamera();
     }
     return this->_ActiveCamera;
 }
@@ -173,8 +245,7 @@ irr::scene::ICameraSceneNode *irrlichtWindow::getActiveCamera()
 irr::IrrlichtDevice *irrlichtWindow::getDevice()
 {
     if (!this->_Device) {
-        std::cerr << "getDevice: Error: Device not initialized" << std::endl;
-        exit(EXIT_FAILURE);
+        throw DeviceUnitialized();
     }
     return this->_Device;
 }
@@ -182,8 +253,7 @@ irr::IrrlichtDevice *irrlichtWindow::getDevice()
 irr::video::IVideoDriver *irrlichtWindow::getDriver()
 {
     if (!this->_Driver) {
-        std::cerr << "getDriver: Error: Driver not initialized" << std::endl;
-        exit(EXIT_FAILURE);
+        throw DriverUnitialized();
     }
     return this->_Driver;
 }
@@ -191,8 +261,7 @@ irr::video::IVideoDriver *irrlichtWindow::getDriver()
 irr::scene::ISceneManager *irrlichtWindow::getSceneManager()
 {
     if (!this->_SceneManager) {
-        std::cerr << "getSceneManager: Error: SceneManager not initialized" << std::endl;
-        exit(EXIT_FAILURE);
+        throw SceneManagerUnitialized();
     }
     return this->_SceneManager;
 }
@@ -209,8 +278,7 @@ quality irrlichtWindow::getQuality()
 void irrlichtWindow::linkZappyGame(ZappyGame *gameToLink)
 {
     if (!gameToLink) {
-        std::cerr << "linkZappyGame: Error: ZappyGame not linked" << std::endl;
-        exit(EXIT_FAILURE);
+        throw UnlinkedZappyGame();
     }
     this->_LinkedZappyGame = gameToLink;
     gameToLink->linkWithDevice(this);
@@ -219,18 +287,15 @@ void irrlichtWindow::linkZappyGame(ZappyGame *gameToLink)
 void irrlichtWindow::linkGuiClient(guiNetworkClient *clientToLink)
 {
     if (!this->_LinkedZappyGame) {
-        std::cerr << "Error: ZappyGame not linked" << std::endl;
-        exit(EXIT_FAILURE);
+        throw UnlinkedZappyGame();
     }
     if (!clientToLink) {
-        std::cerr << "Error: guiNetworkClient not linked" << std::endl;
-        exit(EXIT_FAILURE);
+        throw UnlinkedGuiNetworkClient();
     }
     this->_LinkedGuiClient = clientToLink;
     clientToLink->setLinkedGame(this);
     if (this->_LinkedZappyGame->getServerDataParser() == nullptr) {
-        std::cerr << "linkGuiClient: Error: ServerDataParser not initialized" << std::endl;
-        exit(EXIT_FAILURE);
+        throw UnlinkedServerDataParser();
     }
     this->_LinkedZappyGame->getServerDataParser()->SetParentClient(clientToLink);
 }
@@ -238,8 +303,7 @@ void irrlichtWindow::linkGuiClient(guiNetworkClient *clientToLink)
 ZappyGame *irrlichtWindow::getLinkedZappyGame()
 {
     if (!this->_LinkedZappyGame) {
-        std::cerr << "getLinkedZappyGame: Error: ZappyGame not initialized" << std::endl;
-        exit(EXIT_FAILURE);
+        throw UninitializedZappyGame();
     }
     return this->_LinkedZappyGame;
 }
@@ -247,8 +311,7 @@ ZappyGame *irrlichtWindow::getLinkedZappyGame()
 guiNetworkClient *irrlichtWindow::getGuiClient()
 {
     if (!this->_LinkedGuiClient) {
-        std::cerr << "getGuiClient: Error: guiNetworkClient not initialized" << std::endl;
-        exit(EXIT_FAILURE);
+        throw UninitializedGuiNetworkClient();
     }
     return this->_LinkedGuiClient;
 }
@@ -256,8 +319,7 @@ guiNetworkClient *irrlichtWindow::getGuiClient()
 ObjLoader *irrlichtWindow::getObjLoader()
 {
     if (this->_ObjLoader == nullptr) {
-        std::cerr << "getObjLoader: Error: ObjLoader not initialized" << std::endl;
-        exit(EXIT_FAILURE);
+        throw UninitializedObjLoader();
     }
     return this->_ObjLoader;
 }
@@ -265,10 +327,17 @@ ObjLoader *irrlichtWindow::getObjLoader()
 TextureLoader *irrlichtWindow::getTextureLoader()
 {
     if (!this->_TextureLoader) {
-        std::cerr << "getTextureLoader: Error: TextureLoader not initialized" << std::endl;
-        exit(EXIT_FAILURE);
+        throw ObjLoader();
     }
     return this->_TextureLoader;
+}
+
+myEventReceiver *irrlichtWindow::getEventReceiver()
+{
+    if (!this->_EventReceiver) {
+        throw UninitializedEventReceiver();
+    }
+    return this->_EventReceiver;
 }
 
 int irrlichtWindow::getWidth()
@@ -284,4 +353,20 @@ int irrlichtWindow::getHeight()
 bool irrlichtWindow::getDebugState()
 {
     return this->_Debug;
+}
+
+irrlichtWindow::~irrlichtWindow()
+{
+    if (_EventReceiver) {
+        delete _EventReceiver;
+    }
+    if (_ObjLoader) {
+        delete _ObjLoader;
+    }
+    if (_TextureLoader) {
+        delete _TextureLoader;
+    }
+    if (_Device) {
+        _Device->drop();
+    }
 }

@@ -36,9 +36,8 @@ chessBoard::~chessBoard()
 
 void chessBoard::setParentWindow(irrlichtWindow *parentWindow)
 {
-   if (parentWindow == nullptr) {
-        std::cerr << "chessBoard: Error: No parent window set." << std::endl;
-        exit(EXIT_FAILURE);
+    if (parentWindow == nullptr) {
+        throw NoParentWindow();
     }
     this->_ParentWindow = parentWindow;
     this->_SceneManager = parentWindow->getSceneManager();
@@ -46,35 +45,25 @@ void chessBoard::setParentWindow(irrlichtWindow *parentWindow)
     _WhiteTexture = parentWindow->getTextureLoader()->loadTexture("./GUI/assets/White.png");
     _BlackTexture = parentWindow->getTextureLoader()->loadTexture("./GUI/assets/Black.png");
     if (!_WhiteTexture || !_BlackTexture) {
-        std::cerr << "chessBoard: Error: Could not load textures" << std::endl;
-        exit(84);
+        throw CouldNotLoadTexture();
     }
 }
 
 void chessBoard::setTileSize(float tileSize)
 {
     if (tileSize <= 0) {
-        std::cerr << "setTileSize: Error: Invalid tile size for chess board." << std::endl;
-        exit(EXIT_FAILURE);
+        throw InvalidTileSize();
     }
     _TileSize = tileSize;
 }
 
 void chessBoard::setWidth(int width)
 {
-    if (width <= 0) {
-        std::cerr << "setWidth: Error: Invalid width for chess board." << std::endl;
-        exit(EXIT_FAILURE);
-    }
     _Width = width;
 }
 
 void chessBoard::setHeight(int height)
 {
-    if (height <= 0) {
-        std::cerr << "setHeight: Error: Invalid height for chess board." << std::endl;
-        exit(EXIT_FAILURE);
-    }
     _Height = height;
 }
 
@@ -83,26 +72,10 @@ void chessBoard::createBoard()
     int x;
     int y;
 
-    if (_SceneManager == nullptr) {
-        std::cerr << "createBoard: Error: No scene manager set for chess board." << std::endl;
-        exit(EXIT_FAILURE);
-    }
-    if (_WhiteTexture == nullptr || _BlackTexture == nullptr) {
-        std::cerr << "createBoard: Error: No textures set for chess board." << std::endl;
-        exit(EXIT_FAILURE);
-    }
-
     for (x = 0; x < _Width; ++x) {
         for (y = 0; y < _Height; ++y) {
-			irr::video::ITexture* _TileTexture = ((x + y) % 2 == 0) ? _WhiteTexture : _BlackTexture;
-			irr::scene::ISceneNode* tile = const_cast<irr::scene::ISceneManager*>(_SceneManager)->addCubeSceneNode(_TileSize);
-            if (tile) {
-                tile->setPosition(irr::core::vector3df(x * _TileSize, 0, y * _TileSize));
-                tile->setMaterialFlag(irr::video::EMF_LIGHTING, false);
-                tile->setMaterialTexture(0, _TileTexture);
-                tile->setMaterialType(irr::video::EMT_SOLID);
-                tile->setMaterialFlag(irr::video::EMF_BACK_FACE_CULLING, false);
-            }
+            _map[x][y]->initTile();
+            _map[x][y]->createTile();
         }
     }
     _IsCreated = true;
@@ -115,10 +88,26 @@ bool chessBoard::isCreated()
 
 void chessBoard::InitMap(int width, int height)
 {
-    for (int i = 0; i < width; i++) {
+    int i;
+    int j;
+    irr::video::ITexture* tmpTexture;
+    Tile *tmpTile;
+
+
+    if (_SceneManager == nullptr) {
+        throw NoSceneManager();
+    }
+    if (_WhiteTexture == nullptr || _BlackTexture == nullptr) {
+        throw NoTexturesSet();
+    }
+    for (i = 0; i < width; i++) {
         std::vector<Tile *> tmp;
-        for (int j = 0; j < height; j++) {
-            tmp.push_back(new Tile());
+        for (j = 0; j < height; j++) {
+            tmpTexture = ((i + j) % 2 == 0) ? _WhiteTexture : _BlackTexture;
+            tmpTile = new Tile(this, tmpTexture, i, j, 0, _TileSize);
+            tmp.push_back(tmpTile);
+            _ParentWindow->getEventReceiver()->addTile(tmp.back());
+            
         }
         _map.push_back(tmp);
     }
@@ -164,4 +153,9 @@ void chessBoard::printMap()
 void chessBoard::printMapAtPos(int x, int y)
 {
     _map[x][y]->printInventory();
+}
+
+irrlichtWindow *chessBoard::getParentWindow()
+{
+    return _ParentWindow;
 }

@@ -37,14 +37,17 @@ _PlayerPosition(PlayerPos(this))
 Player::~Player()
 {
     this->_chessPieceNode->remove();
+    this->_ParentGame = nullptr;
+    this->_PlayerTeam = nullptr;
     std::cout << "\nPlayer destroyed\n" << std::endl;
 }
+
+
 
 void Player::setParentGame(ZappyGame *parentGame)
 {
     if (parentGame == nullptr) {
-        std::cerr << "setParentGame: Error: trying to set ParentGame but given parentGame is null" << std::endl;
-        exit(EXIT_FAILURE);
+        throw NullableParentGame();
     }
     this->_ParentGame = parentGame;
     this->_PlayerPosition.initPos();
@@ -69,6 +72,13 @@ void Player::playerInit()
         this->_PlayerPosition.getVecRotConverted(),
         this
     );
+    _linemate = 0;
+    _deraumere = 0;
+    _sibur = 0;
+    _mendiane = 0;
+    _phiras = 0;
+    _thystame = 0;
+    _food = 10;
 }
 
 void Player::setTeam(Team *team)
@@ -119,14 +129,13 @@ void Player::setPlayerPosition(PlayerPos *pos)
 void Player::updatePlayerPos()
 {
     if (this->_chessPieceNode == nullptr) {
-        std::cerr << "updatePlayerPos: Error: ChessPieceNode is not setted" << std::endl;
-        exit(EXIT_FAILURE);
+        throw ChessPieceUnset();
     }
     if (this->_PlayerPosition.getVecPosConverted() == irr::core::vector3df(0, 0, 0))
-        std::cout << "updatePlayerPos: Warning: PlayerPosition is not setted" << std::endl;
+        //std::cout << "updatePlayerPos: Warning: PlayerPosition is not setted" << std::endl;
     this->_chessPieceNode->setPosition(this->_PlayerPosition.getVecPosConverted());
     if (this->_PlayerPosition.getVecRotConverted() == irr::core::vector3df(0, 0, 0))
-        std::cout << "updatePlayerPos: Warning: PlayerRotation is not setted" << std::endl;
+        //std::cout << "updatePlayerPos: Warning: PlayerRotation is not setted" << std::endl;
     this->_chessPieceNode->setRotation(this->_PlayerPosition.getVecRotConverted());
 }
 
@@ -134,26 +143,47 @@ void Player::setLevel(int level)
 {
     if (level < 0)
         level = 0;
-    // if (level > 8)  TOCHANGE
-    //     level = 8;
-    if (level > 5)
-        level = 5;
+    if (level > 8)
+        level = 8;
     this->_Level = level;
-    this->_PieceType = static_cast<pieceType>(level);
+    switch (level) {
+        case 1:
+            this->_PieceType = PAWN;
+            break;
+        case 2:
+            this->_PieceType = PAWN;
+            break;
+        case 3:
+            this->_PieceType = PAWN;
+            break;
+        case 4:
+            this->_PieceType = KNIGHT;
+            break;
+        case 5:
+            this->_PieceType = BISHOP;
+            break;
+        case 6:
+            this->_PieceType = ROOK;
+            break;
+        case 7:
+            this->_PieceType = QUEEN;
+            break;
+        case 8:
+            this->_PieceType = KING;
+            break;
+    }
     this->updateLevel();
 }
 
 void Player::updateLevel()
 {
     if (this->_chessPieceNode == nullptr) {
-        std::cerr << "updateLevel: Error: ChessPieceNode is not setted" << std::endl;
-        exit(EXIT_FAILURE);
+        throw ChessPieceNodeUnset();
     }
     this->_chessPieceNode->remove();
     chessPiece *_chessPieces = this->_ParentGame->getChessPieces();
     if (_chessPieces == nullptr) {
-        std::cerr << "updateLevel: Error: ChessPieces wasn't correctly getted" << std::endl;
-        exit(EXIT_FAILURE);
+        throw ChessPieceNotGetted();
     }
     this-> _chessPieceNode = _chessPieces->placePiece(
         _chessPieces->getPiece(_PieceType),
@@ -204,12 +234,71 @@ PlayerPos *Player::getPlayerPosition()
     return &this->_PlayerPosition;
 }
 
+irr::scene::IAnimatedMeshSceneNode *Player::getChessPieceNode()
+{
+    if (this->_chessPieceNode == nullptr) {
+        throw ChessPieceNodeUnset();
+    }
+    return this->_chessPieceNode;
+}
+
 ZappyGame *Player::getParentGame()
 {
     if (this->_ParentGame == nullptr) {
-        std::cerr << "getParentGame: Error: ParentGame is not setted" << std::endl;
-        exit(EXIT_FAILURE);
+        throw UnsetParentGame();
     }
     return this->_ParentGame;
 }
 
+int Player::getID()
+{
+    return this->_Id;
+}
+
+void Player::setID(int id)
+{
+    this->_Id = id;
+}
+
+int Player::getOrientation()
+{
+    return this->_Orientation;
+}
+
+void Player::setOrientation(int orientation)
+{
+    this->_Orientation = orientation;
+}
+
+void Player::setInventory(int food, int linemate, int deraumere, int sibur, int mendiane, int phiras, int thystame)
+{
+    this->_food = food;
+    this->_linemate = linemate;
+    this->_deraumere = deraumere;
+    this->_sibur = sibur;
+    this->_mendiane = mendiane;
+    this->_phiras = phiras;
+    this->_thystame = thystame;
+}
+
+void Player::printInventory()
+{
+    std::cout << "Inventory of player " << this->_Name << std::endl;
+    std::cout << "\tfood: " << this->_food << std::endl;
+    std::cout << "\tlinemate: " << this->_linemate << std::endl;
+    std::cout << "\tderaumere: " << this->_deraumere << std::endl;
+    std::cout << "\tsibur: " << this->_sibur << std::endl;
+    std::cout << "\tmendiane: " << this->_mendiane << std::endl;
+    std::cout << "\tphiras: " << this->_phiras << std::endl;
+    std::cout << "\tthystame: " << this->_thystame << std::endl << std::endl;
+}
+
+void Player::setBroadcastMessage(std::string message)
+{
+    this->_broadcastMessage = message;
+}
+
+std::string Player::getBroadcastMessage()
+{
+    return this->_broadcastMessage;
+}

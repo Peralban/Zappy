@@ -9,6 +9,7 @@
 
 #include <string>
 #include <iostream>
+#include "../interface/AError.hpp"
 #include "chessElement/chessPiece.hpp"
 
 /**
@@ -50,6 +51,15 @@ class Team {
          * @return The name of the team.
          */
         std::string getTeamName();
+
+        class NoTextureSet : public AError {
+        public:
+            /**
+             * @brief Display an error message.
+             * @param message The error message to display. Defaults to "No texture set for team.".
+             */
+            NoTextureSet() : AError("No texture set for team.") {}
+        };
 
     private:
         std::string _ColorName; /**< The name of the color of the team. */

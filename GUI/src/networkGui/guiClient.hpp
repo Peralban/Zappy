@@ -16,6 +16,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <regex>
+#include "../interface/AError.hpp"
 #include <functional>
 #include "zappyIrrlicht/irrlichtWindow.hpp"
 
@@ -69,18 +70,6 @@ public:
     void makeNonBlocking();
 
     /**
-     * @brief send a message to the server saying that we are a GUI.
-     * 
-     * basically consist of handleWrite("GRAPHIC\n");
-     */
-    void initIdentification();
-
-    /**
-     * @brief Asks the server for the initial data for example the map size.
-     */
-    void askInitData();
-
-    /**
      * @brief Selects the socket for reading.
      * 
      * if the socket is ready to read, it will call handleRead.
@@ -110,6 +99,96 @@ public:
      * @return The server address.
      */
     struct sockaddr_in getServerAddr();
+
+    class SocketFailed : public AError {
+    public:
+        /**
+         * @brief Display an error message.
+         * @param message The error message to display. Defaults to "socket creation failed.".
+         */
+        SocketFailed() : AError("socket creation failed.") {}
+    };
+
+    class ServerAdressUninitialized : public AError {
+    public:
+        /**
+         * @brief Display an error message.
+         * @param message The error message to display. Defaults to "Server address not initialized".
+         */
+        ServerAdressUninitialized() : AError("Server address not initialized.") {}
+    };
+
+    class InvalidAdress : public AError {
+    public:
+        /**
+         * @brief Display an error message.
+         * @param message The error message to display. Defaults to "Invalid address/ Address not supported.".
+         */
+        InvalidAdress() : AError("Invalid address/ Address not supported.") {}
+    };
+
+    class ConnectionFailed : public AError {
+    public:
+        /**
+         * @brief Display an error message.
+         * @param message The error message to display. Defaults to "Connection failed".
+         */
+        ConnectionFailed() : AError("Connection failed") {}
+    };
+
+    class FcntlException : public AError {
+    public:
+        /**
+         * @brief Display an error message.
+         * @param message The error message to display. Defaults to "fnctl failed".
+         */
+        FcntlException() : AError("fnctl failed") {}
+    };
+
+    class SelectError : public AError {
+    public:
+        /**
+         * @brief Display an error message.
+         * @param message The error message to display. Defaults to "Select error".
+         */
+        SelectError() : AError("Select error") {}
+    };
+
+    class UninitializedSocketFileDescriptor : public AError {
+    public:
+        /**
+         * @brief Display an error message.
+         * @param message The error message to display. Defaults to "Select error".
+         */
+        UninitializedSocketFileDescriptor() : AError("Select error") {}
+    };
+
+    class IrrlichtWindowNotLinked : public AError {
+    public:
+        /**
+         * @brief Display an error message.
+         * @param message The error message to display. Defaults to "IrrlichtWindow not linked".
+         */
+        IrrlichtWindowNotLinked() : AError("IrrlichtWindow not linked") {}
+    };
+
+    class GameUnlinkToWindow : public AError {
+    public:
+        /**
+         * @brief Display an error message.
+         * @param message The error message to display. Defaults to "Linked window is not linked to a game".
+         */
+        GameUnlinkToWindow() : AError("Linked window is not linked to a game") {}
+    };
+
+    class GameUnlinkToDataParser: public AError {
+    public:
+        /**
+         * @brief Display an error message.
+         * @param message The error message to display. Defaults to "Linked window linked game is not linked to a server data parser".
+         */
+        GameUnlinkToDataParser() : AError("Linked window linked game is not linked to a server data parser") {}
+    };
 
 private:
     std::string _ServerAdress; // The server address

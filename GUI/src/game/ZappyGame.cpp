@@ -8,6 +8,7 @@
 #include "ZappyGame.hpp"
 #include "../zappyIrrlicht/irrlichtWindow.hpp"
 #include "../player/player.hpp"
+#include <random>
 
 ZappyGame::ZappyGame()
 {
@@ -28,8 +29,7 @@ ZappyGame::~ZappyGame()
 void ZappyGame::linkWithDevice(irrlichtWindow *parentDevice)
 {
     if (parentDevice == nullptr) {
-        std::cerr << "trying to link with device but given parentDevice is null" << std::endl;
-        exit(EXIT_FAILURE);
+        throw NullableParentDevice();
     }
     this->_ParentDevice = parentDevice;
     this->initServerEvents();
@@ -49,8 +49,7 @@ void ZappyGame::createTeam(std::string teams, int Red, int Green, int Blue, int 
 void ZappyGame::setServerDataParser(ServerDataParser *serverDataParser)
 {
     if (serverDataParser == nullptr) {
-        std::cerr << "trying to set ServerDataParser but given serverDataParser is null" << std::endl;
-        exit(EXIT_FAILURE);
+        throw NullableServerDataParser();
     }
     this->_serverDataParser = serverDataParser;
 }
@@ -59,12 +58,10 @@ void ZappyGame::loadChessPieces()
 {
     this->_chessPieces = new chessPiece(this->_ParentDevice);
     if (this->_chessPieces == nullptr) {
-        std::cerr << "loadChessPieces: Error: Couldn't create chessPieces" << std::endl;
-        exit(EXIT_FAILURE);
+        throw UnableCreateChessPiece();
     }
     if (this->_ParentDevice == nullptr) {
-        std::cerr << "loadChessPieces: Error: ParentDevice is not setted" << std::endl;
-        exit(EXIT_FAILURE);
+        throw UnsetParentDevice();
     }
     this->_chessPieces->loadPiece(this->_ParentDevice->getQuality());
 }
@@ -84,8 +81,7 @@ chessPiece *ZappyGame::getChessPieces()
 irrlichtWindow *ZappyGame::getParentDevice()
 {
     if (this->_ParentDevice == nullptr) {
-        std::cerr << "getParentDevice: Error: ParentDevice is not setted" << std::endl;
-        exit(EXIT_FAILURE);
+        throw UnsetParentDevice();
     }
     return this->_ParentDevice;
 }
@@ -96,11 +92,123 @@ void ZappyGame::addPlayer(std::string name)
         return;
     Player *player = new Player(this, name);
     if (player == nullptr) {
-        std::cerr << "addPlayer: Error: Couldn't create player" << std::endl;
-        exit(EXIT_FAILURE);
+        throw UnableCreatePlayer();
     }
     player->playerInit();
     this->_playerList[name] = player;
+}
+
+static std::vector<std::string> split(const std::string &s, char delimiter)
+{
+    std::vector<std::string> tokens;
+    std::string token;
+    std::istringstream tokenStream(s);
+    while (std::getline(tokenStream, token, delimiter)) {
+        tokens.push_back(token);
+    }
+    return tokens;
+}
+
+
+void ZappyGame::newPlayer(std::string cmd)
+{
+    //pnw #n X Y O L N\n
+    std::vector<std::string> args = split(cmd, ' ');
+    std::random_device rd; // obtain a random number from hardware
+    std::mt19937 gen(rd()); // seed the generator
+    std::uniform_int_distribution<> distr(0, 255); // define the range
+
+    this->addPlayer(args[1]);
+    Player *player = this->getPlayer(args[1]);
+    player->playerInit();
+    player->getPlayerPosition()->setPos(std::stoi(args[2]), std::stoi(args[3]), 1);
+    player->setOrientation(std::stoi(args[4]));
+    player->setLevel(std::stoi(args[5]));
+    Team *newteam = this->createGetTeam(args[6], distr(gen), distr(gen), distr(gen), 255);
+    player->setTeam(newteam);
+    Tile *tile = this->_chessBoard->getMap()[std::stoi(args[2])][std::stoi(args[3])];
+    tile->setPlayer(tile->getPlayer() + 1);
+    tile->setEgg(tile->getEgg() - 1);
+    this->_ParentDevice->getEventReceiver()->addPlayer(_playerList[args[1]]);
+}
+
+void ZappyGame::broadcastMessage(std::string cmd)
+{
+    //pbc #n message\n
+    std::vector<std::string> args = split(cmd, ' ');
+
+    Player *player = this->getPlayer(args[1]);
+    player->setBroadcastMessage(args[2]);
+}
+
+void ZappyGame::deletePlayer(std::string name)
+{
+    if (this->_playerList.find(name) == this->_playerList.end()) {
+        std::cout << "removePlayer: Warning: Player not found" << std::endl;
+        return;
+    }
+
+    this->getParentDevice()->getEventReceiver()->remmovePlayerByName(name);
+    delete this->_playerList[name];
+    this->_playerList.erase(name);
+}
+
+void ZappyGame::deletePlayer(Player *player)
+{
+    if (player == nullptr) {
+        std::cout << "removePlayer: Warning: Player is nullptr" << std::endl;
+        return;
+    }
+    this->deletePlayer(player->getName());
+}
+
+void ZappyGame::playerDie(std::string cmd)
+{
+    //pdi #n\n
+    std::vector<std::string> args = split(cmd, ' ');
+
+    Tile *tile = this->_chessBoard->getMap()[this->getPlayer(args[1])->getPlayerPosition()->getX()][this->getPlayer(args[1])->getPlayerPosition()->getY()];
+    tile->setPlayer(tile->getPlayer() - 1);
+    this->deletePlayer(args[1]);
+}
+
+void ZappyGame::newEgg(std::string cmd)
+{
+    //enw #e #n X Y\n
+    std::vector<std::string> args = split(cmd, ' ');
+
+    Tile *tile = this->_chessBoard->getMap()[std::stoi(args[3])][std::stoi(args[4])];
+    tile->setEgg(tile->getEgg() + 1);
+}
+
+void ZappyGame::updatePlayerPos(std::string cmd)
+{
+    //ppo #n X Y O\n
+    std::vector<std::string> args = split(cmd, ' ');
+
+    Player *player = this->getPlayer(args[1]);
+    player->getPlayerPosition()->setPos(std::stoi(args[2]), std::stoi(args[3]), 1);
+    player->setOrientation(args[4] == "N" ? 0 : args[4] == "E" ? 1 : args[4] == "S" ? 2 : 3);
+    player->updatePlayerPos();
+}
+
+void ZappyGame::updatePlayerLevel(std::string cmd)
+{
+    //plv #n L\n
+    std::vector<std::string> args = split(cmd, ' ');
+
+    Player *player = this->getPlayer(args[1]);
+    player->setLevel(std::stoi(args[2]));
+    player->updateLevel();
+}
+
+void ZappyGame::updatePlayerInventory(std::string cmd)
+{
+    //pin #n X Y T1 T2 T3 T4 T5 T6 T7\n
+    std::vector<std::string> args = split(cmd, ' ');
+
+    Player *player = this->getPlayer(args[1]);
+    player->setInventory(std::stoi(args[4]), std::stoi(args[5]), std::stoi(args[6]), std::stoi(args[7]), std::stoi(args[8]), std::stoi(args[9]), std::stoi(args[10]));
 }
 
 void ZappyGame::setPlatformSize(int x, int y)
@@ -143,28 +251,18 @@ void ZappyGame::setTimeUnit(int timeUnit)
 
 int ZappyGame::getTimeUnit()
 {
-    if (this->_TimeUnit == 0) {
-        std::cout << "getTimeUnit: Warning: TimeUnit is not setted returning default 100" << std::endl;
-        return 100;
-    }
+    if (this->_TimeUnit == 0)
+        return 10;
     return this->_TimeUnit;
 }
 
 int ZappyGame::getPlatformWidth()
 {
-    if (this->_PlatformX == 0) {
-        std::cout << "getPlatformWidth: Warning: PlatformWidth is not setted returning default 10" << std::endl;
-        return 10;
-    }
     return this->_PlatformX;
 }
 
 int ZappyGame::getPlatformHeight()
 {
-    if (this->_PlatformY == 0) {
-        std::cout << "getPlatformHeight: Warning: PlatformHeight is not setted returning default 10" << std::endl;
-        return 10;
-    }
     return this->_PlatformY;
 }
 
@@ -179,8 +277,6 @@ float ZappyGame::getTileSize()
 
 std::map<std::string, Player*> *ZappyGame::getPlayerList()
 {
-    if (this->_playerList.empty())
-        std::cout << "getPlayerList: WARNING : PlayerList is empty" << std::endl;
     return &this->_playerList;
 }
 
@@ -200,8 +296,7 @@ Player *ZappyGame::getPlayer(std::string name)
 ServerDataParser *ZappyGame::getServerDataParser()
 {
     if (this->_serverDataParser == nullptr) {
-        std::cerr << "getServerDataParser: Error: ServerDataParser is not setted" << std::endl;
-        exit(EXIT_FAILURE);
+        throw UnsetServerDataParser();
     }
     return this->_serverDataParser;
 }
@@ -228,6 +323,18 @@ std::map<std::string, Team*> *ZappyGame::getTeamsList()
 Team *ZappyGame::createGetTeam(std::string teamName, int Red, int Green, int Blue, int Alpha)
 {
     if (this->_teamsList.find(teamName) == this->_teamsList.end()) {
+        std::random_device rd; // obtain a random number from hardware
+        std::mt19937 gen(rd()); // seed the generator
+        std::uniform_int_distribution<> distr(0, 255); // define the range
+
+        while (this->_teamsList.find(std::to_string(Red)) != this->_teamsList.end() &&
+        this->_teamsList.find(std::to_string(Green)) != this->_teamsList.end() &&
+        this->_teamsList.find(std::to_string(Blue)) != this->_teamsList.end()) {
+            Red = distr(gen); // generate random numbers
+            Green = distr(gen);
+            Blue = distr(gen);
+            Alpha = 255;
+        }
         this->createTeam(teamName, Red, Green, Blue, Alpha);
     }
     return this->_teamsList[teamName];

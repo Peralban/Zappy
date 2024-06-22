@@ -9,6 +9,7 @@
 
 SRC		=       chessElement/chessBoard.cpp 		\
 				chessElement/chessPiece.cpp 		\
+				items/tiles.cpp 					\
 				loader/objLoader.cpp 				\
 				loader/textureLoader.cpp 			\
 				event/irrlichtEventHandler.cpp 		\

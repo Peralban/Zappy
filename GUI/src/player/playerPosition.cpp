@@ -46,6 +46,7 @@ PlayerPos::PlayerPos(Player *parentPlayer) :
 
 PlayerPos::~PlayerPos()
 {
+    this->_ParentPlayer = nullptr;
     std::cout << "\nPlayerPos destroyed\n" << std::endl;
 }
 
