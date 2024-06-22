@@ -165,6 +165,10 @@ int irrlichtWindow::getServerPort()
     return this->_ServerPort;
 }
 
+void signalHandler(int signal) {
+    gSignalStatus = signal;
+}
+
 int irrlichtWindow::runWindow(ZappyGame *game, guiNetworkClient *client)
 {
     (void) game;
@@ -181,6 +185,11 @@ int irrlichtWindow::runWindow(ZappyGame *game, guiNetworkClient *client)
     client->selectSocket();
     std::cout << "Running window..." << std::endl;
     while(this->_Device->run()) {
+        std::signal(SIGINT, signalHandler);
+        if (gSignalStatus == SIGINT) {
+            client->handleWrite("quit\n");
+            std::exit(0);
+        }
         for (int i = 0; i < game->getTimeUnit(); i++) {
             this->_LinkedGuiClient->selectSocket();
         }
