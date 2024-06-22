@@ -156,6 +156,13 @@ class Player {
         PlayerPos *getPlayerPosition();
 
         /**
+         * @brief Sets the chess piece of the player.
+         * 
+         * @param piece A pointer to the chessPiece object representing the player's chess piece.
+         */
+        irr::scene::IAnimatedMeshSceneNode *getChessPieceNode();
+
+        /**
          * @brief Sets the ID of the player.
          *
          * @param id The ID to be set for the player.
@@ -197,18 +204,23 @@ class Player {
         void setInventory(int food, int linemate, int deraumere, int sibur, int mendiane, int phiras, int thystame);
 
         /**
+         * @brief Prints the inventory of the player.
+         */
+        void printInventory();
+
+        /**
          * @brief Sets the broadcast message of the player.
          *
          * @param message The message to be set for the player.
          */
-        void setBroadcastMessage(std::string message) { this->_broadcastMessage = message; }
+        void setBroadcastMessage(std::string message);
 
         /**
          * @brief Gets the broadcast message of the player.
          *
          * @return The broadcast message of the player.
          */
-        std::string getBroadcastMessage() { return this->_broadcastMessage; }
+        std::string getBroadcastMessage();
 
         class NullableParentGame : public AError {
         public:

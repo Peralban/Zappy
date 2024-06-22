@@ -38,7 +38,8 @@ void Core::initialize(int ac, char **av)
         m_window.initDrivers();
         m_window.initLoader();
         m_window.initCamera();
-        m_window.initEventReceiver();
+        m_window.initCursor(20, 3, 125, 125, 125);
+        m_window.LinkEventReceiver(); // Must be called after initDrivers and initCamera
 
         std::cout << " -------------- LINKING CLIENT AND ZAPPY -------------- " << std::endl;
         m_window.linkZappyGame(m_zappy);

@@ -70,17 +70,24 @@ void ServerDataParser::HandleServerMessage(std::string message)
     serverMessage serverMessage = parseServerMessage(message);
 
     if (serverMessage.command == "msz") {
-        if (serverMessage.args.size() != 2) {
-            std::cerr << "HandleServerMessage: Error: msz command should have 2 arguments" << std::endl;
-            exit(EXIT_FAILURE);
+        if (this->getParentGame()->getChessBoard() != nullptr && this->getParentGame()->getChessBoard()->isCreated() == false) {
+            if (serverMessage.args.size() != 2) {
+                std::cout << "HandleServerMessage: Warning: msz command should have 2 arguments" << std::endl;
+                return;
+            }
+            this->getParentGame()->setPlatformWidth(std::stoi(serverMessage.args[0]));
+            this->getParentGame()->setPlatformHeight(std::stoi(serverMessage.args[1]));
+            std::cout << "Platform size: " << this->getParentGame()->getPlatformWidth() << "x" << this->getParentGame()->getPlatformHeight() << std::endl;
+            irr::scene::ICameraSceneNode *irrActiveCam = this->getParentGame()->getParentDevice()->getActiveCamera();
+            irrActiveCam->setPosition(irr::core::vector3df(-15, (this->getParentGame()->getPlatformWidth() + this->getParentGame()->getPlatformHeight()) * 3 + 25, -15));
+            std::cout << "creating board..." << std::endl;
+            this->getParentGame()->getChessBoard()->InitMap(std::stoi(serverMessage.args[0]), std::stoi(serverMessage.args[1]));
+
+            std::cout << "board created" << std::endl;
+            this->getParentGame()->getChessBoard()->createBoard();
+
+            std::cout << "Map initialized" << std::endl;
         }
-        this->getParentGame()->setPlatformWidth(std::stoi(serverMessage.args[0]));
-        this->getParentGame()->setPlatformHeight(std::stoi(serverMessage.args[1]));
-        irr::scene::ICameraSceneNode *irrActiveCam = this->getParentGame()->getParentDevice()->getActiveCamera();
-        irrActiveCam->setPosition(irr::core::vector3df(-15, (this->getParentGame()->getPlatformWidth() + this->getParentGame()->getPlatformHeight()) * 3 + 25, -15));
-        this->getParentGame()->getChessBoard()->createBoard();
-        this->getParentGame()->getChessBoard()->InitMap(std::stoi(serverMessage.args[0]), std::stoi(serverMessage.args[1]));
-        std::cout << "-----------------------------------------" << std::endl;
     } else if (serverMessage.command == "sgt") {
         this->getParentGame()->setTimeUnit(std::stoi(serverMessage.args[0]));
         std::cout << "Time unit: " << this->getParentGame()->getTimeUnit() << std::endl;

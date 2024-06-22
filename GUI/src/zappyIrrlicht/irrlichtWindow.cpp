@@ -24,6 +24,15 @@ irrlichtWindow::irrlichtWindow(
     this->_LinkedZappyGame = nullptr;
     this->_Quality = selectedQuality;
     this->_Debug = debug;
+    this->_ServerAdress = nullptr;
+    this->_ServerPort = 0;
+    this->_ObjLoader = nullptr;
+    this->_TextureLoader = nullptr;
+    this->_ActiveCamera = nullptr;
+    this->_CursorLength = 0;
+    this->_CursorThickness = 0;
+    this->_CursorColor = irr::video::SColor(255, 0, 0, 0);
+    
 }
 
 void irrlichtWindow::parseArgs(int ac, char **av)
@@ -76,10 +85,12 @@ void irrlichtWindow::initCamera()
     //making the height of the camera relative to the platform size
     int height = 25;
 
-	this->_Device->getCursorControl()->setVisible(false);
 
-	this->_SceneManager->addCameraSceneNodeFPS();
-    this->_ActiveCamera = this->_SceneManager->getActiveCamera();
+	this->_ActiveCamera = this->_SceneManager->addCameraSceneNodeFPS(0, 40.f, 1.f, -1, 0, 0, true, 0.5f, false, true);
+    if (this->_ActiveCamera == nullptr) {
+        throw UnableToCreateCamera();
+    }
+    this->_Device->getCursorControl()->setVisible(false);
 
 	// droite-gauche   haut-bas   avant-arriere
 	this->_ActiveCamera->setPosition(irr::core::vector3df(-15, height, -15));
@@ -87,20 +98,55 @@ void irrlichtWindow::initCamera()
 	this->_ActiveCamera->setFarValue(10000.0f);
 	this->_ActiveCamera->setNearValue(0.1f);
 	this->_ActiveCamera->setAspectRatio(1.33f);
-	this->_ActiveCamera->setInputReceiverEnabled(true);
 	this->_ActiveCamera->setDebugDataVisible(irr::scene::EDS_FULL);
-	this->_ActiveCamera->setViewMatrixAffector(irr::core::matrix4());
     if (this->_Debug)
         std::cout << "Camera initialized" << std::endl;
 }
 
-void irrlichtWindow::initEventReceiver()
+void irrlichtWindow::initCursor(int cursorLength, int thickness, irr::video::SColor cursorColor)
 {
-    this->_EventReceiver = new myEventReceiver(this->_Device);
+    this->_CursorLength = cursorLength;
+    this->_CursorColor = cursorColor;
+    this->_CursorThickness = thickness;
+}
+
+void irrlichtWindow::initCursor(int cursorLength, int thickness, int red, int green, int blue)
+{
+    this->_CursorLength = cursorLength;
+    this->_CursorThickness = thickness;
+    this->_CursorColor = irr::video::SColor(255, red, green, blue);
+}
+
+void irrlichtWindow::setCursorLength(int cursorLength)
+{
+    this->_CursorLength = cursorLength;
+}
+
+void irrlichtWindow::setCursorThickness(int thickness)
+{
+    this->_CursorThickness = thickness;
+}
+
+void irrlichtWindow::drawCursor()
+{
+    
+    irr::core::dimension2d<irr::u32> screenSize = _Driver->getScreenSize();
+    int screenWidth = screenSize.Width;
+    int screenHeight = screenSize.Height;
+    int centerX = screenWidth / 2;
+    int centerY = screenHeight / 2;
+    _Driver->draw2DRectangle(_CursorColor, irr::core::rect<irr::s32>(centerX - _CursorLength, centerY - _CursorThickness, centerX + _CursorLength, centerY + _CursorThickness)); // Horizontal line
+    _Driver->draw2DRectangle(_CursorColor, irr::core::rect<irr::s32>(centerX - _CursorThickness, centerY - _CursorLength, centerX + _CursorThickness, centerY + _CursorLength)); // Vertical line
+}
+
+void irrlichtWindow::LinkEventReceiver()
+{
+    this->_EventReceiver = new myEventReceiver(this);
     if (this->_EventReceiver == nullptr) {
         throw UnableToCreateEvent();
     }
     this->_Device->setEventReceiver(this->_EventReceiver);
+    this->_EventReceiver->InitEventReceiver();
 }
 
 char *irrlichtWindow::getServerAdress()
@@ -141,6 +187,7 @@ int irrlichtWindow::runWindow(ZappyGame *game, guiNetworkClient *client)
         if (this->_Device->isWindowActive() && (game->getPlatformWidth() != 0 && game->getPlatformHeight() != 0)) {
             this->_Driver->beginScene(true, true, irr::video::SColor(255, 100, 101, 140));
             this->_SceneManager->drawAll();
+            this->drawCursor();
             this->_Driver->endScene();
         } else {
             this->_Device->yield();
@@ -245,6 +292,14 @@ TextureLoader *irrlichtWindow::getTextureLoader()
         throw ObjLoader();
     }
     return this->_TextureLoader;
+}
+
+myEventReceiver *irrlichtWindow::getEventReceiver()
+{
+    if (!this->_EventReceiver) {
+        throw UninitializedEventReceiver();
+    }
+    return this->_EventReceiver;
 }
 
 int irrlichtWindow::getWidth()
