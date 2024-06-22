@@ -128,13 +128,14 @@ void Tile::setInventory(int food, int linemate, int deraumere, int sibur, int me
 
 void Tile::printInventory()
 {
-    std::cout << "food: " << _food << std::endl;
-    std::cout << "linemate: " << _linemate << std::endl;
-    std::cout << "deraumere: " << _deraumere << std::endl;
-    std::cout << "sibur: " << _sibur << std::endl;
-    std::cout << "mendiane: " << _mendiane << std::endl;
-    std::cout << "phiras: " << _phiras << std::endl;
-    std::cout << "thystame: " << _thystame << std::endl;
+    std::cout << "Inventory of tile " << _X << " " << _Y << std::endl;
+    std::cout << "\tfood: " << _food << std::endl;
+    std::cout << "\tlinemate: " << _linemate << std::endl;
+    std::cout << "\tderaumere: " << _deraumere << std::endl;
+    std::cout << "\tsibur: " << _sibur << std::endl;
+    std::cout << "\tmendiane: " << _mendiane << std::endl;
+    std::cout << "\tphiras: " << _phiras << std::endl;
+    std::cout << "\tthystame: " << _thystame << std::endl << std::endl;
 }
 
 void Tile::setPlayer(int player)

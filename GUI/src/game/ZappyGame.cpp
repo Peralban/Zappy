@@ -141,21 +141,35 @@ void ZappyGame::broadcastMessage(std::string cmd)
     player->setBroadcastMessage(args[2]);
 }
 
+void ZappyGame::deletePlayer(std::string name)
+{
+    if (this->_playerList.find(name) == this->_playerList.end()) {
+        std::cout << "removePlayer: Warning: Player not found" << std::endl;
+        return;
+    }
+
+    this->getParentDevice()->getEventReceiver()->remmovePlayerByName(name);
+    delete this->_playerList[name];
+    this->_playerList.erase(name);
+}
+
+void ZappyGame::deletePlayer(Player *player)
+{
+    if (player == nullptr) {
+        std::cout << "removePlayer: Warning: Player is nullptr" << std::endl;
+        return;
+    }
+    this->deletePlayer(player->getName());
+}
+
 void ZappyGame::playerDie(std::string cmd)
 {
     //pdi #n\n
     std::vector<std::string> args = split(cmd, ' ');
 
-    Player *player = this->getPlayer(args[1]);
-    Tile *tile = this->_chessBoard->getMap()[player->getPlayerPosition()->getX()][player->getPlayerPosition()->getY()];
+    Tile *tile = this->_chessBoard->getMap()[this->getPlayer(args[1])->getPlayerPosition()->getX()][this->getPlayer(args[1])->getPlayerPosition()->getY()];
     tile->setPlayer(tile->getPlayer() - 1);
-    for(auto it = this->_playerList.begin(); it != this->_playerList.end(); ) {
-        if(it->first == args[1]) {
-            it = this->_playerList.erase(it);
-        } else {
-            ++it;
-        }
-    }
+    this->deletePlayer(args[1]);
 }
 
 void ZappyGame::newEgg(std::string cmd)
@@ -263,8 +277,6 @@ float ZappyGame::getTileSize()
 
 std::map<std::string, Player*> *ZappyGame::getPlayerList()
 {
-    if (this->_playerList.empty())
-        std::cout << "getPlayerList: WARNING : PlayerList is empty" << std::endl;
     return &this->_playerList;
 }
 
