@@ -65,8 +65,6 @@ void ServerDataParser::HandleServerMessage(std::string message)
         }
         buffer.clear();
     }
-    std::cout << this->getParentGame()->getPlatformWidth() << std::endl;
-    std::cout << this->getParentGame()->getPlatformHeight() << std::endl;
     serverMessage serverMessage = parseServerMessage(message);
 
     if (serverMessage.command == "msz") {
@@ -77,13 +75,9 @@ void ServerDataParser::HandleServerMessage(std::string message)
             }
             this->getParentGame()->setPlatformWidth(std::stoi(serverMessage.args[0]));
             this->getParentGame()->setPlatformHeight(std::stoi(serverMessage.args[1]));
-            std::cout << "Platform size: " << this->getParentGame()->getPlatformWidth() << "x" << this->getParentGame()->getPlatformHeight() << std::endl;
             irr::scene::ICameraSceneNode *irrActiveCam = this->getParentGame()->getParentDevice()->getActiveCamera();
             irrActiveCam->setPosition(irr::core::vector3df(-15, (this->getParentGame()->getPlatformWidth() + this->getParentGame()->getPlatformHeight()) * 3 + 25, -15));
-            std::cout << "creating board..." << std::endl;
             this->getParentGame()->getChessBoard()->InitMap(std::stoi(serverMessage.args[0]), std::stoi(serverMessage.args[1]));
-
-            std::cout << "board created" << std::endl;
             this->getParentGame()->getChessBoard()->createBoard();
 
             std::cout << "Map initialized" << std::endl;
@@ -163,13 +157,7 @@ serverMessage ServerDataParser::parseServerMessage(std::string message)
         args.push_back(arg);
     }
     serverMessage.command = command;
-    std::cout << "Command: " << command << std::endl;
     serverMessage.args = args;
-    std::cout << "Args: ";
-    for (std::string A : args) {
-        std::cout << A << " ";
-    }
-    std::cout << std::endl;
     return serverMessage;
 }
 

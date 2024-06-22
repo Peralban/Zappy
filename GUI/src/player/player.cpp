@@ -130,10 +130,10 @@ void Player::updatePlayerPos()
         throw ChessPieceUnset();
     }
     if (this->_PlayerPosition.getVecPosConverted() == irr::core::vector3df(0, 0, 0))
-        std::cout << "updatePlayerPos: Warning: PlayerPosition is not setted" << std::endl;
+        //std::cout << "updatePlayerPos: Warning: PlayerPosition is not setted" << std::endl;
     this->_chessPieceNode->setPosition(this->_PlayerPosition.getVecPosConverted());
     if (this->_PlayerPosition.getVecRotConverted() == irr::core::vector3df(0, 0, 0))
-        std::cout << "updatePlayerPos: Warning: PlayerRotation is not setted" << std::endl;
+        //std::cout << "updatePlayerPos: Warning: PlayerRotation is not setted" << std::endl;
     this->_chessPieceNode->setRotation(this->_PlayerPosition.getVecRotConverted());
 }
 
