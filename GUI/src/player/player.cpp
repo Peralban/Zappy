@@ -37,6 +37,8 @@ _PlayerPosition(PlayerPos(this))
 Player::~Player()
 {
     this->_chessPieceNode->remove();
+    this->_ParentGame = nullptr;
+    this->_PlayerTeam = nullptr;
     std::cout << "\nPlayer destroyed\n" << std::endl;
 }
 

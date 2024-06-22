@@ -140,15 +140,6 @@ void ServerDataParser::HandleServerMessage(std::string message)
             exit(EXIT_FAILURE);
         }
         this->getParentGame()->playerDie(message);
-    } else if (serverMessage.command == "tna") {
-        if (serverMessage.args.size() != 1) {
-            std::cerr << "HandleServerMessage: Error: tna command should have 1 arguments" << std::endl;
-            exit(EXIT_FAILURE);
-        }
-        std::random_device rd;
-        std::mt19937 gen(rd());
-        std::uniform_int_distribution<> distr(0, 255);
-        this->getParentGame()->createGetTeam(serverMessage.args[0], distr(gen), distr(gen), distr(gen), 255);
     }
 }
 

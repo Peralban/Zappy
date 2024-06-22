@@ -172,15 +172,20 @@ void signalHandler(int signal) {
 static void UpdateAllPlayers(ZappyGame *game, guiNetworkClient *client)
 {
 
-    std::cout << "Player_list size: " << game->getPlayerList()->size() << std::endl;
-    std::cout << "Player_list empty: " << (game->getPlayerList()->empty() ? "true" : "false") << std::endl;
     if (game->getPlayerList()->empty())
         return;
     for (auto player : *game->getPlayerList()) {
+        std::string player_name = player.second->getName();
+        if (game->getPlayer(player_name) == nullptr)
+            break;
         client->handleWrite("ppo " + player.second->getName() + "\n");
         client->selectSocket();
+        if (game->getPlayer(player_name) == nullptr)
+            break;
         client->handleWrite("plv " + player.second->getName() + "\n");
         client->selectSocket();
+        if (game->getPlayer(player_name) == nullptr)
+            break;
         client->handleWrite("pin " + player.second->getName() + "\n");
         client->selectSocket();
     }
@@ -207,15 +212,10 @@ int irrlichtWindow::runWindow(ZappyGame *game, guiNetworkClient *client)
             client->handleWrite("quit\n");
             std::exit(0);
         }
-        std::cout << "Before selectSocket" << std::endl;
-            for (int i = 0; i < game->getTimeUnit(); i++) {
-                this->_LinkedGuiClient->selectSocket();
-            }
-            std::cout << "Le programme est ici" << std::endl;
-        std::cout << "Before updateAllPlayers" << std::endl;
-            UpdateAllPlayers(game, client);
-            std::cout << "Le programme est la" << std::endl;
-        std::cout << "After updateAllPlayers" << std::endl;
+        for (int i = 0; i < game->getTimeUnit(); i++) {
+            this->_LinkedGuiClient->selectSocket();
+        }
+        UpdateAllPlayers(game, client);
         if (this->_Device->isWindowActive() && (game->getPlatformWidth() != 0 && game->getPlatformHeight() != 0)) {
             this->_Driver->beginScene(true, true, irr::video::SColor(255, 100, 101, 140));
             this->_SceneManager->drawAll();
