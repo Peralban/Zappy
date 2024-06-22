@@ -48,15 +48,12 @@ void Core::initialize(int ac, char **av)
         std::cout << " -------------- CREATING SOCKET -------------- " << std::endl;
         m_client->createSocket();
 
-
         std::cout << " -------------- INITIALIZING CHESS BOARD -------------- " << std::endl;
-
         m_zappy->loadChessPieces();
     } catch (const std::exception &e) {
         std::cerr << "Error: " << e.what() << std::endl;
         std::exit(1);
     }
-
 }
 
 void Core::run()
