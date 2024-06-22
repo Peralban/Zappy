@@ -60,11 +60,6 @@ void irrlichtWindow::windowCreateDevice()
 	this->_Device = device;
 }
 
-irrlichtWindow::~irrlichtWindow()
-{
-    this->_Device->drop();
-}
-
 void irrlichtWindow::initDrivers()
 {
     if (!this->_Device) {
@@ -195,36 +190,41 @@ int irrlichtWindow::runWindow(ZappyGame *game, guiNetworkClient *client)
 {
     (void) game;
     (void) client;
-    client->handleWrite("GRAPHIC\n");
-    client->getServerResponse();
-    client->handleRead();
-    client->makeNonBlocking();
-    client->handleWrite("msz\n");
-    client->selectSocket();
-    client->handleWrite("mct\n");
-    client->selectSocket();
-    client->handleWrite("sgt\n");
-    client->selectSocket();
-    std::cout << "Running window..." << std::endl;
-    while(this->_Device->run()) {
-        std::signal(SIGINT, signalHandler);
-        if (gSignalStatus == SIGINT) {
-            client->handleWrite("quit\n");
-            std::exit(0);
+
+    try {
+        client->handleWrite("GRAPHIC\n");
+        client->getServerResponse();
+        client->handleRead();
+        client->makeNonBlocking();
+        client->handleWrite("msz\n");
+        client->selectSocket();
+        client->handleWrite("mct\n");
+        client->selectSocket();
+        client->handleWrite("sgt\n");
+        client->selectSocket();
+        std::cout << "Running window..." << std::endl;
+        while(this->_Device->run()) {
+            std::signal(SIGINT, signalHandler);
+            if (gSignalStatus == SIGINT) {
+                client->handleWrite("quit\n");
+                std::exit(0);
+            }
+            for (int i = 0; i < game->getTimeUnit(); i++) {
+                this->_LinkedGuiClient->selectSocket();
+            }
+            UpdateAllPlayers(game, client);
+            if (this->_Device->isWindowActive() && (game->getPlatformWidth() != 0 && game->getPlatformHeight() != 0)) {
+                this->_Driver->beginScene(true, true, irr::video::SColor(255, 100, 101, 140));
+                this->_SceneManager->drawAll();
+                this->drawCursor();
+                this->_Driver->endScene();
+            } else {
+                this->_Device->yield();
+            }
         }
-        for (int i = 0; i < game->getTimeUnit(); i++) {
-            this->_LinkedGuiClient->selectSocket();
-        }
-        UpdateAllPlayers(game, client);
-        if (this->_Device->isWindowActive() && (game->getPlatformWidth() != 0 && game->getPlatformHeight() != 0)) {
-            this->_Driver->beginScene(true, true, irr::video::SColor(255, 100, 101, 140));
-            this->_SceneManager->drawAll();
-            this->drawCursor();
-            this->_Driver->endScene();
-        } else {
-            this->_Device->yield();
-        }
-    }
+    } catch (const std::exception &e) {
+        exit(0);
+    };
     return 0;
 }
 
@@ -347,4 +347,20 @@ int irrlichtWindow::getHeight()
 bool irrlichtWindow::getDebugState()
 {
     return this->_Debug;
+}
+
+irrlichtWindow::~irrlichtWindow()
+{
+    if (_EventReceiver) {
+        delete _EventReceiver;
+    }
+    if (_ObjLoader) {
+        delete _ObjLoader;
+    }
+    if (_TextureLoader) {
+        delete _TextureLoader;
+    }
+    if (_Device) {
+        _Device->drop();
+    }
 }

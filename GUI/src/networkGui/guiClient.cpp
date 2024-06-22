@@ -89,18 +89,24 @@ std::string readUntilNewline(int sockfd) {
 void guiNetworkClient:: selectSocket()
 {
     fd_set readFds;
+    std::string message;
     struct timeval timeOut;
+    int selectResult;
+
     FD_ZERO(&readFds);
     FD_SET(_Sockfd, &readFds);
     timeOut.tv_sec = 0;
     timeOut.tv_usec = 0;
-
-    int selectResult = select(_Sockfd + 1, &readFds, NULL, NULL, &timeOut);
+    selectResult = select(_Sockfd + 1, &readFds, NULL, NULL, &timeOut);
     if (selectResult < 0) { 
         throw SelectError();
     } else if (selectResult > 0) {
         if (FD_ISSET(_Sockfd, &readFds)) {
-            std::string message = readUntilNewline(_Sockfd);
+            try {
+                message = readUntilNewline(_Sockfd);
+            } catch (const std::exception &e) {
+                throw guiNetworkClient::SelectError(); 
+            };
             if (message.empty()) {
                 if (errno == EWOULDBLOCK)
                     std::cerr << "Connection closed by peer." << std::endl;
