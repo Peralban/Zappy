@@ -196,37 +196,41 @@ void Tile::dropRessource(std::string ressource)
 {
     std::cout << "Dropping ressource " << ressource << std::endl;
     std::cout << "Drop at pos " << _X << " " << _Y << std::endl;
-    if (ressource == "food")
+     std::cout << ressource << "dropppppp" << std::endl;
+    if (ressource == "0") {
         _food--;
-    else if (ressource == "linemate")
+    }
+    else if (ressource == "1")
         _linemate--;
-    else if (ressource == "deraumere")
+    else if (ressource == "2")
         _deraumere--;
-    else if (ressource == "sibur")
+    else if (ressource == "3")
         _sibur--;
-    else if (ressource == "mendiane")
+    else if (ressource == "4")
         _mendiane--;
-    else if (ressource == "phiras")
+    else if (ressource == "5")
         _phiras--;
-    else if (ressource == "thystame")
+    else if (ressource == "6")
         _thystame--;
 }
 
 void Tile::takeRessource(std::string ressource)
 {
-    if (ressource == "food")
+    std::cout << ressource << "takeeeee" << std::endl;
+    if (ressource == "0") {
         _food++;
-    else if (ressource == "linemate")
+    }
+    else if (ressource == "1")
         _linemate++;
-    else if (ressource == "deraumere")
+    else if (ressource == "2")
         _deraumere++;
-    else if (ressource == "sibur")
+    else if (ressource == "3")
         _sibur++;
-    else if (ressource == "mendiane")
+    else if (ressource == "4")
         _mendiane++;
-    else if (ressource == "phiras")
+    else if (ressource == "5")
         _phiras++;
-    else if (ressource == "thystame")
+    else if (ressource == "6")
         _thystame++;
 }
 
