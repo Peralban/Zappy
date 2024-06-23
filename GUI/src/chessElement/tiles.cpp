@@ -229,3 +229,14 @@ void Tile::takeRessource(std::string ressource)
     else if (ressource == "thystame")
         _thystame++;
 }
+
+void Tile::resetInventory()
+{
+    _food = 0;
+    _linemate = 0;
+    _deraumere = 0;
+    _sibur = 0;
+    _mendiane = 0;
+    _phiras = 0;
+    _thystame = 0;
+}

@@ -146,6 +146,8 @@ public:
      */
     void dropRessource(std::string ressource);
 
+    void resetInventory();
+
     class UnsetParentChessboard : public AError {
         public:
             /**

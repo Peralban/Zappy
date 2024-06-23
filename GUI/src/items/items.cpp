@@ -223,6 +223,7 @@ void items::updateMap(std::vector<std::vector<Tile *>> map)
                 }
                 threads.clear();
             }
+            tile->resetInventory();
         }
     }
 }
