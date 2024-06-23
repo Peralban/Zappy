@@ -10,7 +10,9 @@
 #include <irrlicht/irrlicht.h>
 #include "zappyIrrlicht/irrlichtWindow.hpp"
 #include "../interface/AError.hpp"
+#include "networkGui/guiClient.hpp"
 
+class guiNetworkClient;
 /**
  * @class myEventReceiver
  * @brief The myEventReceiver class is responsible for handling events in the Irrlicht application.
@@ -32,7 +34,12 @@ public:
     /**
      * @brief Initializes the event receiver.
      */
-    void InitEventReceiver();
+    void InitEventReceiver(guiNetworkClient* client);
+
+    /**
+     * @brief check if tile is clicked.
+     */
+    bool CheckIfTileIsClicked(const irr::SEvent::SMouseInput& mouseInput);
 
     /**
      * @brief Adds a tile to the list of tiles.
@@ -201,6 +208,7 @@ private:
     std::vector<Tile *> _Tiles; /**< A list of Tile objects that represent the tiles of the chess board. */
     std::vector<Player *> _Players; /**< A list of Tile objects that represent the tiles of the chess board. */
 
+    guiNetworkClient *_LinkedGuiClient;
     irrlichtWindow* _ParentWindow; /**< Pointer to the Irrlicht device. */
     irr::IrrlichtDevice* _Device; /**< Pointer to the Irrlicht device. */
     irr::scene::ISceneManager *_SceneManager; ///< A pointer to the irr::scene::ISceneManager object for scene management.

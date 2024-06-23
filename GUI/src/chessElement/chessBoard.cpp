@@ -30,8 +30,15 @@ chessBoard::chessBoard()
 
 chessBoard::~chessBoard()
 {
-    this->_BlackTexture->drop();
-    this->_WhiteTexture->drop();
+    if (_BlackTexture)
+        _BlackTexture->drop();
+    if (_WhiteTexture)
+        _WhiteTexture->drop();
+    for (int i = 0; i < _Width; ++i) {
+        for (int j = 0; j < _Height; ++j) {
+            delete _map[i][j];
+        }
+    }
 }
 
 void chessBoard::setParentWindow(irrlichtWindow *parentWindow)
@@ -100,6 +107,14 @@ void chessBoard::InitMap(int width, int height)
     if (_WhiteTexture == nullptr || _BlackTexture == nullptr) {
         throw NoTexturesSet();
     }
+    for (auto& row : _map) {
+        for (auto& tile : row) {
+            delete tile;
+        }
+        row.clear();
+    }
+    _map.clear();
+
     for (i = 0; i < width; i++) {
         std::vector<Tile *> tmp;
         for (j = 0; j < height; j++) {
