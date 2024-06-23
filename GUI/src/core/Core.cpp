@@ -24,8 +24,6 @@ Core::~Core()
 
 void Core::initialize(int ac, char **av)
 {
-    std::cout << "Starting Zappy" << std::endl;
-
     try {
         m_window.parseArgs(ac, av);
         m_window.windowCreateDevice();

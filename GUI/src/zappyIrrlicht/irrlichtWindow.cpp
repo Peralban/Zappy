@@ -37,18 +37,23 @@ irrlichtWindow::irrlichtWindow(
 
 void irrlichtWindow::parseArgs(int ac, char **av)
 {
-    if (ac != 3) {
+    if (ac != 5) {
         throw WrongArgs();
     }
-    std::regex ip_regex(R"(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})");
-    if (!std::regex_match(av[1], ip_regex)) {
-        throw InvalidIP();
+    if (std::string(av[1]) == "-p") {
+        this->_ServerPort = std::stoi(av[2]);
+    } else if (std::string(av[1]) == "-h") {
+        this->_ServerAdress = av[2];
+    } else {
+        throw WrongArgs();
     }
-    if (std::stoi(av[2]) < 1024 || std::stoi(av[2]) > 65535) {
-        throw InvalidPort();
+    if (std::string(av[3]) == "-p") {
+        this->_ServerPort = std::stoi(av[4]);
+    } else if (std::string(av[3]) == "-h") {
+        this->_ServerAdress = av[4];
+    } else {
+        throw WrongArgs();
     }
-    this->_ServerAdress = av[1];
-    this->_ServerPort = std::stoi(av[2]);
 }
 
 void irrlichtWindow::windowCreateDevice()
