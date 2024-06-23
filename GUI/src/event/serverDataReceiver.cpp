@@ -149,7 +149,17 @@ void ServerDataParser::HandleServerMessage(std::string message)
             std::cerr << "HandleServerMessage: Error: pgt command should have 2 arguments" << std::endl;
             exit(EXIT_FAILURE);
         }
+        std::cout << "Passing 1" << std::endl;
+        this->getParentGame()->getPlayer(serverMessage.args[0])->printInventory();
+        int posX = this->getParentGame()->getPlayer(serverMessage.args[0])->getPlayerPosition()->getX();
+        int posY = this->getParentGame()->getPlayer(serverMessage.args[0])->getPlayerPosition()->getY();
+        this->getParentGame()->getChessBoard()->getMap()[posX][posY]->printInventory();
+        std::cout << "Passing 2" << std::endl;
         this->getParentGame()->playerTake(message);
+        std::cout << "Passing 3" << std::endl;
+        this->getParentGame()->getPlayer(serverMessage.args[0])->printInventory();
+        this->getParentGame()->getChessBoard()->getMap()[posX][posY]->printInventory();
+        std::cout << "Passing 4" << std::endl;
     }
 }
 

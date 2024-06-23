@@ -57,9 +57,6 @@ std::vector<bool> items::CompareInvAndMesh(std::vector<int> inventory, std::vect
     else
         diff.push_back(false);
     meshInventory[7] = eggInInventory;
-    for (int i = 0; i < 8; i++) {
-        std::cout << "diff: " << diff[i] << std::endl;
-    }
     return diff;
 }
 

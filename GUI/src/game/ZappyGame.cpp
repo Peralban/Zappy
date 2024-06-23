@@ -304,20 +304,18 @@ void ZappyGame::playerTake(std::string cmd)
 {
     //pgt #n T\n
     std::vector <std::string> args = split(cmd, ' ');
-    Tile *tile = this->_chessBoard->getMap()[this->getPlayer(args[1])->getPlayerPosition()->getX()][this->getPlayer(args[1])->getPlayerPosition()->getY()];
+    this->_chessBoard->getMap()[this->getPlayer(args[1])->getPlayerPosition()->getX()][this->getPlayer(args[1])->getPlayerPosition()->getY()]->dropRessource(args[2]);
 
     this->getPlayer(args[1])->takeResource(args[2]);
-    tile->dropRessource(args[2]);
 }
 
 void ZappyGame::playerDrop(std::string cmd)
 {
     //pdr #n T\n
     std::vector <std::string> args = split(cmd, ' ');
-    Tile *tile = this->_chessBoard->getMap()[this->getPlayer(args[1])->getPlayerPosition()->getX()][this->getPlayer(args[1])->getPlayerPosition()->getY()];
+    this->_chessBoard->getMap()[this->getPlayer(args[1])->getPlayerPosition()->getX()][this->getPlayer(args[1])->getPlayerPosition()->getY()]->takeRessource(args[2]);
 
     this->getPlayer(args[1])->dropResource(args[2]);
-    tile->takeRessource(args[2]);
 }
 
 ServerDataParser *ZappyGame::getServerDataParser()
