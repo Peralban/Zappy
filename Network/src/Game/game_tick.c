@@ -68,9 +68,9 @@ static void respawn_eggs(server_t *server)
     char buffer[1024];
     linked_list_egg_t *tmp;
 
-
     for (int i = 0; i < server->info_game.nb_teams; i++) {
-        if (server->game->teams[i].nb_egg + count_players(server, server->info_game.team_names[i]) < server->info_game.nb_client) {
+        if (server->game->teams[i].nb_egg + count_players(server,
+        server->info_game.team_names[i]) < server->info_game.nb_client) {
             tmp = calloc(1, sizeof(linked_list_egg_t));
             tmp->egg = create_egg(server->info_game.team_names[i],
                 rand() % server->info_game.width,

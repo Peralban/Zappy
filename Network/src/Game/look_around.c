@@ -38,8 +38,11 @@ static int for_s(orientation_t orientation, int value)
     return value - 1;
 }
 
-static bool for_c(orientation_t orientation, int i, int value)
+static bool for_c(orientation_t orientation, int i, int value,
+    char *return_str)
 {
+    if (strlen(return_str) > 8000)
+        return false;
     if (orientation == 0 || orientation == 3)
         return (i < value);
     return i >= 0;
@@ -53,29 +56,29 @@ static void for_i(orientation_t orientation, int *i)
         (*i)--;
 }
 
-static char *look_at(drone_t *drone, server_t *server, int nb_observable,
+static char *look_at(drone_t *drone, server_t *server, int n_ob,
     int level)
 {
     orientation_t ori = drone->orientation;
     int mov[] = {-level, -level, level, level};
     int ref[2][2] = {{drone->x, drone->y}, {0, 0}};
     int max[] = {server->info_game.width, server->info_game.height};
-    char *return_str = calloc(8192, sizeof(char));
+    char *r_str = calloc(8192, sizeof(char));
     axes_t link[4][2] = {{Y, X}, {X, Y}, {Y, X}, {X, Y}};
     char *tmp;
 
     ref[1][link[ori][0]] =
     (ref[0][link[ori][0]] + mov[ori] + max[link[ori][0]]) % max[link[ori][0]];
-    for (int j = for_s(ori, nb_observable); for_c(ori, j, nb_observable) && strlen(return_str) < 8000;) {
+    for (int j = for_s(ori, n_ob); for_c(ori, j, n_ob, r_str);) {
         ref[1][link[ori][1]] =
-        (ref[0][link[ori][1]] + (j - nb_observable / 2) + max[link[ori][1]]) %
+        (ref[0][link[ori][1]] + (j - n_ob / 2) + max[link[ori][1]]) %
         max[link[ori][1]];
         tmp = scan_tile(&(server->game->map[ref[1][X]][ref[1][Y]]));
-        strcat(return_str, strcat(tmp, ", "));
+        strcat(r_str, strcat(tmp, ", "));
         free(tmp);
         for_i(ori, &j);
     }
-    return return_str;
+    return r_str;
 }
 
 char *look_around(drone_t *drone, server_t *server)

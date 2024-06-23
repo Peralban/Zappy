@@ -14,6 +14,19 @@
 #include "lib/my.h"
 #include <stdio.h>
 
+static void start_playing_client(client_t *client, server_t *server,
+    char *buffer, int i)
+{
+    server->game->teams[i].nb_egg--;
+    sprintf(buffer, "%d\n%d %d\n",
+        server->game->teams[i].nb_egg,
+        server->info_game.width, server->info_game.height);
+    send(client->socket, buffer, strlen(buffer), 0);
+    client->state = PLAYING;
+    create_player(server, client, server->info_game.team_names[i]);
+    gui_pnw(server, client->drone);
+}
+
 static int start_communication_with_client(client_t *client,
     server_t *server, char *buffer)
 {
@@ -25,14 +38,7 @@ static int start_communication_with_client(client_t *client,
     for (int i = 0; server->info_game.team_names[i] != NULL; i++) {
         if (strcmp(buffer, server->info_game.team_names[i]) == 0 &&
             server->game->teams[i].nb_egg > 0) {
-            server->game->teams[i].nb_egg--;
-            sprintf(buffer, "%d\n%d %d\n",
-                server->game->teams[i].nb_egg,
-                server->info_game.width, server->info_game.height);
-            send(client->socket, buffer, strlen(buffer), 0);
-            client->state = PLAYING;
-            create_player(server, client, server->info_game.team_names[i]);
-            gui_pnw(server, client->drone);
+            start_playing_client(client, server, buffer, i);
             return 0;
         }
     }
@@ -164,18 +170,6 @@ static void set_all_in_fd(server_t *server, int *max_fd)
     }
 }
 
-static void inthand(int signum)
-{
-    (void)signum;
-    static int i = 0;
-    replace_stop(1);
-    if (i == 1) {
-        printf("Server stopped\n");
-        exit(0);
-    }
-    i++;
-}
-
 int server_loop(server_t *server)
 {
     int max_fd = server->socket;
@@ -183,7 +177,6 @@ int server_loop(server_t *server)
     struct timeval timeout = {0, 0};
 
     while (!replace_stop(-1)) {
-        signal(SIGINT, inthand);
         if (FD_ISSET(server->socket, &server->readfds))
             new_client(server);
         FD_ZERO(&server->readfds);

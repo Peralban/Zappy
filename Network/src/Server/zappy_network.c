@@ -35,6 +35,19 @@ static void bind_and_listen(server_t *server)
         exit(EXIT_FAIL);
 }
 
+static void inthand(int signum)
+{
+    static int i = 0;
+
+    (void)signum;
+    replace_stop(1);
+    if (i == 1) {
+        printf("Server stopped\n");
+        exit(0);
+    }
+    i++;
+}
+
 int zappy_network(char **args)
 {
     server_t *server = move_args_to_server_struct(args);
@@ -50,5 +63,6 @@ int zappy_network(char **args)
     setup_server_address(server);
     bind_and_listen(server);
     server->list = create_client_list();
+    signal(SIGINT, inthand);
     return server_loop(server);
 }
