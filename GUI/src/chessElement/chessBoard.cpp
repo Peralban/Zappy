@@ -90,7 +90,6 @@ bool chessBoard::isCreated()
 
 void chessBoard::updateMapItem()
 {
-    std::cout << "Updating map" << std::endl;
     this->_ItemsHandler->updateMap(this->_map);
 }
 

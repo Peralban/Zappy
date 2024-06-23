@@ -89,9 +89,7 @@ void ServerDataParser::HandleServerMessage(std::string message)
             std::cerr << "HandleServerMessage: Error: bct command should have 9 arguments" << std::endl;
             exit(EXIT_FAILURE);
         }
-        std::cout << "Updating map" << std::endl;
         this->getParentGame()->getChessBoard()->updateMapBtc(message);
-        std::cout << "Map updated" << std::endl;
     } else if (serverMessage.command == "pnw") {
         if (serverMessage.args.size() != 6) {
             std::cerr << "HandleServerMessage: Error: pnw command should have 6 arguments" << std::endl;

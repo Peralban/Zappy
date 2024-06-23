@@ -80,7 +80,7 @@ public:
      * @param eggInInventory
      * @return A vector of booleans that represent the differences between the two inventories.
      */
-    std::vector<bool> CompareInvAndMesh(std::vector<int> inventory, std::vector<int> meshInventory, int eggInInventory);
+    std::vector<bool> CompareInvAndMesh(std::vector<int> inventory, std::vector<int> &meshInventory, int eggInInventory);
 
     /**
      * @brief Gets the mesh inventory.
@@ -101,8 +101,9 @@ public:
      * @brief Updates the text.
      * @param tile
      * @param inventory
+     * @param debug
      */
-    void updateText(Tile *tile, std::vector<int> inventory);
+    void updateText(Tile *tile, std::vector<int> inventory, bool debug);
 
     /**
      * @class UnsetParentchessBoard
@@ -205,6 +206,8 @@ private:
     std::vector<std::vector<irr::scene::ITextSceneNode *>> _TextNode; ///< The inventory of the items.
 
     std::vector<std::vector<std::array<irr::scene::IAnimatedMeshSceneNode *, 8>>> _ItemNode; ///< The node for the item.
+
+    std::vector<std::vector<std::vector<int>>> _DisplayNode; ///< The node for the display.
 
     chessBoard *_ParentchessBoard;                 ///< A pointer to the chessBoard object that contains the items.
 
