@@ -10,9 +10,10 @@
 #include "irrlicht/irrlicht.h"
 #include "loader/textureLoader.hpp"
 #include "../interface/AError.hpp"
-#include "items/tiles.hpp"
+#include "chessElement/tiles.hpp"
 #include <vector>
 
+class items;
 class ZappyGame;
 class irrlichtWindow;
 
@@ -79,15 +80,55 @@ class chessBoard {
          */
         void createBoard();
 
+        /**
+         * @brief Initializes the chess board.
+         * 
+         * This function initializes the chess board by creating the tiles and setting their positions.
+         */
         void InitMap(int width, int height);
 
+        /**
+         * @brief Updates the chess board.
+         * 
+         * This function updates the chess's tiles inventory thanks to a server data
+         */
         void updateMapBtc(std::string response);
 
+        /**
+         * @brief Prints the chess board.
+         * 
+         * This function prints the inventory of each tile on the chess board.
+         */
         void printMap();
 
+        /**
+         * @brief Prints the chess board's tile inventory at the specified position.
+         * 
+         * @param x The x-coordinate of the position.
+         * @param y The y-coordinate of the position.
+         */
         void printMapAtPos(int x, int y);
 
-        std::vector<std::vector<Tile *>> getMap() { return _map; }
+        /**
+         * @brief Updates the chess board.
+         * 
+         * This function updates the items on the chess board.
+         */
+        void updateMapItem();
+
+        /**
+         * @brief Returns the chess board's map.
+         * 
+         * @return A list of lists of Tile objects that represent the tiles of the chess board.
+         */
+        std::vector<std::vector<Tile *>> getMap();
+        
+        /**
+         * @brief Returns the items handler of the chess board.
+         * 
+         * @return A pointer to the items object that is used to manage the items on the tiles.
+         */
+        items *getItemsHandler();
 
         class NoParentWindow : public AError {
         public:
@@ -159,6 +200,11 @@ class chessBoard {
          */
         bool isCreated();
 
+        /**
+         * @brief Returns the parent window of the chess board.
+         * 
+         * @return A pointer to the irrlichtWindow object that is used as the parent window.
+         */
         irrlichtWindow *getParentWindow();
 
     private:
@@ -173,6 +219,8 @@ class chessBoard {
         irr::video::IVideoDriver *_Driver; ///< A pointer to the irr::video::IVideoDriver object for video rendering.
         ZappyGame *_ParentGame; ///< A pointer to the ZappyGame object that is used as the parent game.
         std::vector<std::vector<Tile *>> _map; ///< A list of lists of Tile objects that represent the tiles of the chess board.
+
+        items *_ItemsHandler; ///< A pointer to the items object that is used to manage the items on the tiles.
 
         irr::video::ITexture* _WhiteTexture; ///< A pointer to the white texture used for rendering the tiles.
         irr::video::ITexture* _BlackTexture; ///< A pointer to the black texture used for rendering the tiles.

@@ -136,6 +136,18 @@ public:
      */
     void remmovePlayerByName(std::string name);
 
+    /**
+     * @brief Sets the parent window.
+     * @param parentWindow The parent window to set.
+     */
+    irrlichtWindow *getParentWindow() { return _ParentWindow; }
+
+    /**
+     * @brief Get the debug mode.
+     * @return The debug mode.
+     */
+    bool getDebug() { return _debug; }
+
     class NullableDevice : public AError {
     public:
         /**
@@ -204,6 +216,7 @@ private:
 
     bool _LeftMouseButtonDown; /**< A boolean value that indicates whether the left mouse button is down. */
     bool _RightMouseButtonDown; /**< A boolean value that indicates whether the right mouse button is down. */
+    bool _debug; /**< A boolean value that indicates whether the debug mode is enabled. */
 
     std::vector<Tile *> _Tiles; /**< A list of Tile objects that represent the tiles of the chess board. */
     std::vector<Player *> _Players; /**< A list of Tile objects that represent the tiles of the chess board. */

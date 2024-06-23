@@ -37,18 +37,23 @@ irrlichtWindow::irrlichtWindow(
 
 void irrlichtWindow::parseArgs(int ac, char **av)
 {
-    if (ac != 3) {
+    if (ac != 5) {
         throw WrongArgs();
     }
-    std::regex ip_regex(R"(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})");
-    if (!std::regex_match(av[1], ip_regex)) {
-        throw InvalidIP();
+    if (std::string(av[1]) == "-p") {
+        this->_ServerPort = std::stoi(av[2]);
+    } else if (std::string(av[1]) == "-h") {
+        this->_ServerAdress = av[2];
+    } else {
+        throw WrongArgs();
     }
-    if (std::stoi(av[2]) < 1024 || std::stoi(av[2]) > 65535) {
-        throw InvalidPort();
+    if (std::string(av[3]) == "-p") {
+        this->_ServerPort = std::stoi(av[4]);
+    } else if (std::string(av[3]) == "-h") {
+        this->_ServerAdress = av[4];
+    } else {
+        throw WrongArgs();
     }
-    this->_ServerAdress = av[1];
-    this->_ServerPort = std::stoi(av[2]);
 }
 
 void irrlichtWindow::windowCreateDevice()
@@ -67,6 +72,7 @@ void irrlichtWindow::initDrivers()
     }
     this->_Driver = this->_Device->getVideoDriver();
     this->_SceneManager = this->_Device->getSceneManager();
+    this->_GuiEnv = this->_Device->getGUIEnvironment();
 }
 
 void irrlichtWindow::initLoader()
@@ -79,9 +85,24 @@ void irrlichtWindow::initCamera()
 {
     //making the height of the camera relative to the platform size
     int height = 25;
+    float rotatespeed = 40.0f;
+    float movespeed = 0.35f;
+    bool novertical = false;
+    irr::SKeyMap *keyMap = new irr::SKeyMap[6];
+    keyMap[0].Action = irr::EKA_MOVE_FORWARD;
+    keyMap[0].KeyCode = irr::KEY_KEY_Z;
+    keyMap[1].Action = irr::EKA_MOVE_BACKWARD;
+    keyMap[1].KeyCode = irr::KEY_KEY_S;
+    keyMap[2].Action = irr::EKA_STRAFE_LEFT;
+    keyMap[2].KeyCode = irr::KEY_KEY_Q;
+    keyMap[3].Action = irr::EKA_STRAFE_RIGHT;
+    keyMap[3].KeyCode = irr::KEY_KEY_D;
+    keyMap[4].Action = irr::EKA_JUMP_UP;
+    keyMap[4].KeyCode = irr::KEY_SPACE;
+    keyMap[5].Action = irr::EKA_CROUCH;
+    keyMap[5].KeyCode = irr::KEY_LSHIFT;
 
-
-	this->_ActiveCamera = this->_SceneManager->addCameraSceneNodeFPS(0, 40.f, 1.f, -1, 0, 0, true, 0.5f, false, true);
+	this->_ActiveCamera = this->_SceneManager->addCameraSceneNodeFPS(0, rotatespeed, movespeed, -1, keyMap, 6, novertical, 0.5f, false, true);
     if (this->_ActiveCamera == nullptr) {
         throw UnableToCreateCamera();
     }
@@ -194,8 +215,6 @@ static void UpdateAllPlayers(ZappyGame *game, guiNetworkClient *client)
 
 int irrlichtWindow::runWindow(ZappyGame *game, guiNetworkClient *client)
 {
-    (void) game;
-    (void) client;
     bool isRunning = true;
 
     try {
@@ -235,8 +254,10 @@ int irrlichtWindow::runWindow(ZappyGame *game, guiNetworkClient *client)
             }
             UpdateAllPlayers(game, client);
             if (this->_Device->isWindowActive() && (game->getPlatformWidth() != 0 && game->getPlatformHeight() != 0)) {
+                this->_LinkedZappyGame->getChessBoard()->updateMapItem();
                 this->_Driver->beginScene(true, true, irr::video::SColor(255, 100, 101, 140));
                 this->_SceneManager->drawAll();
+                this->_GuiEnv->drawAll(); // Draw the GUI
                 this->drawCursor();
                 this->_Driver->endScene();
             } else {
@@ -342,7 +363,7 @@ ObjLoader *irrlichtWindow::getObjLoader()
 TextureLoader *irrlichtWindow::getTextureLoader()
 {
     if (!this->_TextureLoader) {
-        throw ObjLoader();
+        throw UninitializedTextureLoader();
     }
     return this->_TextureLoader;
 }
@@ -384,4 +405,12 @@ irrlichtWindow::~irrlichtWindow()
     if (_Device) {
         _Device->drop();
     }
+}
+
+irr::gui::IGUIEnvironment *irrlichtWindow::getGuiEnv()
+{
+    if (!this->_GuiEnv) {
+        throw GuiEnvUninitialized();
+    }
+    return this->_GuiEnv;
 }

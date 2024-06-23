@@ -13,6 +13,7 @@ myEventReceiver::myEventReceiver(irrlichtWindow* parentWindow)
     if (parentWindow == nullptr) {
         throw NullableDevice();
     }
+    _debug = false;
     _ParentWindow = parentWindow;
     _LeftMouseButtonDown = false;
     _RightMouseButtonDown = false;
@@ -104,6 +105,12 @@ bool myEventReceiver::keyPress(const irr::SEvent& event)
         const irr::core::vector3df& target = _ActiveCamera->getTarget();
         std::cout << "Position: (" << position.X << ", " << position.Y << ", " << position.Z << ")" << std::endl;
         std::cout << "Target: (" << target.X << ", " << target.Y << ", " << target.Z << ")" << std::endl;
+        return false;
+    }
+    if (keyCode == irr::KEY_KEY_A) {
+        std::cout << "A key pressed" << std::endl;
+        _debug = !_debug;
+        std::cout << "Debug mode: " << _debug << std::endl;
         return false;
     }
     return false;

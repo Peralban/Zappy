@@ -9,7 +9,8 @@
 
 SRC		=       chessElement/chessBoard.cpp 		\
 				chessElement/chessPiece.cpp 		\
-				items/tiles.cpp 					\
+				chessElement/tiles.cpp 				\
+				items/items.cpp 					\
 				loader/objLoader.cpp 				\
 				loader/textureLoader.cpp 			\
 				event/irrlichtEventHandler.cpp 		\
@@ -17,6 +18,7 @@ SRC		=       chessElement/chessBoard.cpp 		\
 				zappyIrrlicht/irrlichtWindow.cpp    \
 				networkGui/guiClient.cpp			\
 				player/team.cpp     				\
+				core/Core.cpp						\
 				player/player.cpp   				\
 				player/playerPosition.cpp   		\
 				game/ZappyGame.cpp					\
