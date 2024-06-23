@@ -66,3 +66,31 @@ tests_run:
 	@$(MAKE) -f $(AI_MAKEFILE) -C AI tests_run
 	gcovr --exclude Network/Tests --exclude GUI/Tests --exclude AI/Tests
 	@printf "\033[1;32mCoverage generated ✅\033[0m\n"
+
+#-------------- Docs --------------#
+
+doc:
+	@which doxygen >/dev/null 2>&1 || { printf "\033[1;31mDoxygen is not installed. Aborting.\nInstall doxygen\033[0m\n"; exit 1; }
+	@which pdflatex >/dev/null 2>&1 || { printf "\033[1;31mpdflatex is not installed. Aborting.\nInstall texlive-scheme-full\033[0m\n"; exit 1; }
+	@doxygen Doc/AI/Doxyfile
+	@mv ./Doc/doxygen ./Doc/AI
+	@make -C Doc/AI/doxygen/latex
+	@mv Doc/AI/doxygen/latex/refman.pdf ./Doc/ZappyAIDevDocumentation.pdf
+	@doxygen Doc/Network/Doxyfile
+	@mv ./Doc/doxygen ./Doc/Network
+	@make -C Doc/Network/doxygen/latex
+	@mv Doc/Network/doxygen/latex/refman.pdf ./Doc/ZappyNetworkDevDocumentation.pdf
+	@doxygen Doc/GUI/Doxyfile
+	@mv ./Doc/doxygen ./Doc/GUI
+	@make -C Doc/GUI/doxygen/latex
+	@mv Doc/GUI/doxygen/latex/refman.pdf ./Doc/ZappyGUIDevDocumentation.pdf
+	@printf "\033[1;35mDocumentation generated ✅\033[0m\n"
+
+doc_clean:
+	@rm -rf Doc/AI/doxygen
+	@rm -rf Doc/Network/doxygen
+	@rm -rf Doc/GUI/doxygen
+	@rm -f Doc/*.pdf
+	@printf "\033[1;35mDocumentation removed ✅\033[0m\n"
+
+doc_re: doc_clean doc
