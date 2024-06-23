@@ -7,6 +7,7 @@
 
 #include "Server/server.h"
 #include "ClientList/client_list.h"
+#include "GuiProtocol/gui_event.h"
 #include <sys/time.h>
 
 static uint64_t get_time(void)
@@ -48,6 +49,43 @@ static void remove_dead_players(server_t *server)
     }
 }
 
+static int count_players(server_t *server, char *team_name)
+{
+    int n = 0;
+
+    for (client_list_t *tmp = server->list; tmp != NULL; tmp = tmp->next) {
+        if (tmp->client == NULL)
+            continue;
+        if (tmp->client->drone != NULL &&
+        strcmp(tmp->client->drone->team_name, team_name) == 0)
+            n++;
+    }
+    return n;
+}
+
+static void respawn_eggs(server_t *server)
+{
+    char buffer[1024];
+    linked_list_egg_t *tmp;
+
+    for (int i = 0; i < server->info_game.nb_teams; i++) {
+        if (server->game->teams[i].nb_egg + count_players(server,
+        server->info_game.team_names[i]) < server->info_game.nb_client) {
+            tmp = calloc(1, sizeof(linked_list_egg_t));
+            tmp->egg = create_egg(server->info_game.team_names[i],
+                rand() % server->info_game.width,
+                rand() % server->info_game.height);
+            server->game->teams[i].nb_egg++;
+            tmp->next = server->game->egg_list;
+            server->game->egg_list->prev = tmp;
+            server->game->egg_list = tmp;
+            sprintf(buffer, "enw %d %d %d %d\n", tmp->egg->id, -1,
+                    tmp->egg->x, tmp->egg->y);
+            send_all_graphics(server, buffer);
+        }
+    }
+}
+
 void game_tick_action(server_t *server)
 {
     update_players(server);
@@ -57,6 +95,7 @@ void game_tick_action(server_t *server)
         server->game->spawn_tick = 0;
         spawn_resources(server);
     }
+    respawn_eggs(server);
 }
 
 void game_tick(server_t *server)

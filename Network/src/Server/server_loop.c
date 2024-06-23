@@ -14,28 +14,39 @@
 #include "lib/my.h"
 #include <stdio.h>
 
-static void start_communication_with_client(client_t *client,
+static void start_playing_client(client_t *client, server_t *server,
+    char *buffer, int i)
+{
+    server->game->teams[i].nb_egg--;
+    sprintf(buffer, "%d\n%d %d\n",
+        server->game->teams[i].nb_egg,
+        server->info_game.width, server->info_game.height);
+    send(client->socket, buffer, strlen(buffer), 0);
+    client->state = PLAYING;
+    create_player(server, client, server->info_game.team_names[i]);
+    gui_pnw(server, client->drone);
+}
+
+static int start_communication_with_client(client_t *client,
     server_t *server, char *buffer)
 {
     if (strcmp(buffer, "GRAPHIC") == 0 || strcmp(buffer, "ADMIN") == 0) {
         client->state = buffer[0] == 'G' ? GRAPHIC : ADMIN;
-        return start_gui_client(server, client);
+        start_gui_client(server, client);
+        return 0;
     }
     for (int i = 0; server->info_game.team_names[i] != NULL; i++) {
         if (strcmp(buffer, server->info_game.team_names[i]) == 0 &&
             server->game->teams[i].nb_egg > 0) {
-            server->game->teams[i].nb_egg--;
-            sprintf(buffer, "%d\n%d %d\n",
-                server->game->teams[i].nb_egg,
-                server->info_game.width, server->info_game.height);
-            send(client->socket, buffer, strlen(buffer), 0);
-            client->state = PLAYING;
-            create_player(server, client, server->info_game.team_names[i]);
-            gui_pnw(server, client->drone);
-            return;
+            start_playing_client(client, server, buffer, i);
+            return 0;
         }
     }
-    send(client->socket, "ko\n", 3, 0);
+    if (send(client->socket, "ko\n", 3, 0) < 0) {
+        eject_client_from_server(client, server);
+        return 1;
+    }
+    return 0;
 }
 
 static void push_command(client_t *client, char *buffer)
@@ -85,13 +96,12 @@ static void exec_gui_commands(client_t *client, server_t *server, char *buffer)
     my_free_array(commands_arr);
 }
 
-static void client_state_switch(client_t *client, server_t *server,
+static int client_state_switch(client_t *client, server_t *server,
     char *buffer)
 {
     switch (client->state) {
         case WAITING:
-            start_communication_with_client(client, server, buffer);
-            break;
+            return start_communication_with_client(client, server, buffer);
         case PLAYING:
             push_command(client, buffer);
             break;
@@ -102,6 +112,7 @@ static void client_state_switch(client_t *client, server_t *server,
             exec_admin_commands(client, server, buffer);
             break;
     }
+    return 0;
 }
 
 static int recv_command(client_t *client, server_t *server)
@@ -116,15 +127,15 @@ static int recv_command(client_t *client, server_t *server)
         buffer[buffer_length - 2] = '\0';
     else
         buffer[buffer_length - 1] = '\0';
-    printf("Received: %s\n", buffer);
+    if (strlen(buffer) == 0)
+        strcpy(buffer, "quit");
     if (strcmp(buffer, "quit") == 0) {
         reset_client(client, server);
         eject_client_from_server(client, server);
         client_already_connected(server);
         return 1;
     } else
-        client_state_switch(client, server, buffer);
-    return 0;
+        return client_state_switch(client, server, buffer);
 }
 
 void client_already_connected(server_t *server)
@@ -132,8 +143,10 @@ void client_already_connected(server_t *server)
     for (client_list_t *tmp = server->list;
     tmp->client != NULL; tmp = tmp->next) {
         if (FD_ISSET(tmp->client->socket, &server->readfds) &&
-        recv_command(tmp->client, server))
+        recv_command(tmp->client, server)) {
+            client_already_connected(server);
             break;
+        }
         if (tmp->next == NULL || tmp->client == NULL)
             break;
     }
@@ -157,12 +170,6 @@ static void set_all_in_fd(server_t *server, int *max_fd)
     }
 }
 
-static void inthand(int signum)
-{
-    (void)signum;
-    replace_stop(1);
-}
-
 int server_loop(server_t *server)
 {
     int max_fd = server->socket;
@@ -170,7 +177,6 @@ int server_loop(server_t *server)
     struct timeval timeout = {0, 0};
 
     while (!replace_stop(-1)) {
-        signal(SIGINT, inthand);
         if (FD_ISSET(server->socket, &server->readfds))
             new_client(server);
         FD_ZERO(&server->readfds);

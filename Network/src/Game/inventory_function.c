@@ -22,7 +22,7 @@ static int count_item(drone_t *drone)
 
     for (int i = 0; i < 7; i++)
         if (drone->inventory[i] != 0)
-            nbr_item ++;
+            nbr_item++;
     return nbr_item;
 }
 
@@ -34,7 +34,7 @@ static char *finish_str(char *return_str)
 
 char *display_inventory(drone_t *drone)
 {
-    char *return_str = calloc(1, sizeof(char) * 1024);
+    char *return_str = calloc(1024, sizeof(char));
     char *type_str[] = {"food", "linemate", "deraumere",
     "sibur", "mendiane", "phiras", "thystame"};
     int nbr_item = count_item(drone);

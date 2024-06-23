@@ -28,6 +28,7 @@ int main(int ac, char **av)
 {
     char **args = NULL;
 
+    signal(SIGPIPE, SIG_IGN);
     if (ac == 2 && (strcmp(av[1], "--help") == 0 || strcmp(av[1], "-h") == 0))
         return print_help();
     args = get_array_from_args(ac, av);

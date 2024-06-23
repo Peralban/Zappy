@@ -47,7 +47,8 @@ void fork_player(client_t *client, server_t *server,
     }
     gui_enw(server, client->drone, tmp->egg);
     tmp->next = server->game->egg_list;
-    server->game->egg_list->prev = tmp;
+    if (server->game->egg_list != NULL)
+        server->game->egg_list->prev = tmp;
     server->game->egg_list = tmp;
     for (int i = 0; i < server->info_game.nb_teams; i++) {
         if (server->game->teams[i].name == client->drone->team_name)

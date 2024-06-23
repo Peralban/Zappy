@@ -18,18 +18,17 @@ sock_file = None
 data = []
 
 def get_next_instruction():
-    data = []
+    cdata = []
 
-    sock_file = sock.makefile('r')
-    inputs = [sock_file]
+    csock_file = sock.makefile('r')
+    inputs = [csock_file]
     readable, _, _ = select.select(inputs, [], [], 0)
     for s in readable:
-        if s is sock_file:
-            data = []
+        if s is csock_file:
             for i, message in enumerate(s):
-                data.append(message.strip())
+                cdata.append(message.strip())
                 break
-    return data
+    return cdata
 
 def send_instruction(instruction):
     sock.sendall((instruction + '\n').encode())
@@ -43,10 +42,12 @@ def connect_to_server(host, port, name):
         sock.connect(server_address)
         sock.sendall((name + '\n').encode())
     except ConnectionRefusedError:
+        print('Connection refused by server')
         sys.exit(84)
 
     sock_file = sock.makefile('r')
     inputs = [sock_file, sys.stdin]
+    nb = 0
 
     try:
         while True:
@@ -57,6 +58,7 @@ def connect_to_server(host, port, name):
                         current_line += 1
                         if not message:
                             print('Disconnected from server')
+                            sock.close()
                             sys.exit()
                         else:
                             print(message.strip())
@@ -65,31 +67,21 @@ def connect_to_server(host, port, name):
                                 if message.strip() == 'ko':
                                     sys.exit(84)
                                 else:
-                                    nb_players = int(message.strip())
-                                    #if nb_players != 0:
-                                    #    parsing.sub_process()
+                                    nb = int(parts[0])
                             if current_line == 3:
                                 LatLng = (int(parts[0]), int(parts[1]))
-                                Bot = ai_zappy.Bot(name, LatLng[0], LatLng[1])
+                                Bot = ai_zappy.Bot(name, LatLng[0], LatLng[1], nb)
                                 Bot.run()
-                                break
-                else:
-                    message = sys.stdin.readline()
-                    sock.sendall(message.encode())
-                    sys.stdout.write('<You> ')
-                    sys.stdout.write(message)
-                    sys.stdout.flush()
+                                sock.close()
+                                sock_file.close()
+                                sys.exit(0)
+
     except KeyboardInterrupt:
         print("\nClient interrupted.")
-        send_instruction('quit')
         sock.close()
+        sock_file.close()
         sys.exit(0)
-    except Exception as e:
-        print(f"An error occured: {e}")
-        send_instruction('quit')
-        sock.close()
-        sys.exit(84)
     finally:
-        send_instruction('quit')
         sock.close()
+        sock_file.close()
         sys.exit(0)
