@@ -210,9 +210,6 @@ static void UpdateAllPlayers(ZappyGame *game, guiNetworkClient *client)
 
 int irrlichtWindow::runWindow(ZappyGame *game, guiNetworkClient *client)
 {
-    (void) game;
-    (void) client;
-
     try {
         client->handleWrite("GRAPHIC\n");
         client->getServerResponse();

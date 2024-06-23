@@ -114,7 +114,6 @@ void chessBoard::InitMap(int width, int height)
             tmpTile = new Tile(this, tmpTexture, i, j, 0, _TileSize);
             tmp.push_back(tmpTile);
             _ParentWindow->getEventReceiver()->addTile(tmp.back());
-            
         }
         _map.push_back(tmp);
     }

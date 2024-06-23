@@ -103,7 +103,7 @@ public:
      * @param inventory
      * @param debug
      */
-    void updateText(Tile *tile, std::vector<int> inventory, bool debug);
+    void updateText(Tile *tile, bool debug);
 
     /**
      * @class UnsetParentchessBoard

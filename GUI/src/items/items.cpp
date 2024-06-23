@@ -31,7 +31,7 @@ void items::initItemsObj()
     _Linemate = _ParentchessBoard->getParentWindow()->getObjLoader()->loadObj("./GUI/assets/obj/items/coal/coal.obj");
     _Deraumere = _ParentchessBoard->getParentWindow()->getObjLoader()->loadObj("./GUI/assets/obj/items/diamond/diamond.obj");
     _Sibur = _ParentchessBoard->getParentWindow()->getObjLoader()->loadObj("./GUI/assets/obj/items/emerald/emerald.obj");
-    _Mendiane = _ParentchessBoard->getParentWindow()->getObjLoader()->loadObj("./GUI/assets/obj/items/gold/gold.obj");
+    _Mendiane = _ParentchessBoard->getParentWindow()->getObjLoader()->loadObj("./GUI/assets/obj/items/redstone/redstone.obj");
     _Phiras = _ParentchessBoard->getParentWindow()->getObjLoader()->loadObj("./GUI/assets/obj/items/iron/iron.obj");
     _Thystame = _ParentchessBoard->getParentWindow()->getObjLoader()->loadObj("./GUI/assets/obj/items/netherite/netherite.obj");
     _Egg = _ParentchessBoard->getParentWindow()->getObjLoader()->loadObj("./GUI/assets/obj//items/egg/egg.obj");
@@ -81,13 +81,13 @@ void items::updateMesh(std::array<irr::scene::IAnimatedMeshSceneNode *, 8> node,
             switch (i) {
                 case 0:
                     node[i] = _SceneManager->addAnimatedMeshSceneNode(_Food);
-                    node[i]->setScale(irr::core::vector3df(4, 1, 4)); // ny = 31
+                    node[i]->setScale(irr::core::vector3df(1.6, 1.6, 1.6)); // ny = 31
                     offsetX = 10;
                     offsetY = 0;
                     break;
                 case 1:
                     node[i] = _SceneManager->addAnimatedMeshSceneNode(_Linemate);
-                    node[i]->setScale(irr::core::vector3df(2, 1, 2)); // ny = 30
+                    node[i]->setScale(irr::core::vector3df(1.8, 1.8, 1.8)); // ny = 31
                     offsetX = 10;
                     offsetY = 10;
                     break;
@@ -99,19 +99,19 @@ void items::updateMesh(std::array<irr::scene::IAnimatedMeshSceneNode *, 8> node,
                     break;
                 case 3:
                     node[i] = _SceneManager->addAnimatedMeshSceneNode(_Sibur);
-                    node[i]->setScale(irr::core::vector3df(0.01, 0.01, 0.01)); // ny = 32
+                    node[i]->setScale(irr::core::vector3df(1.6, 1.6, 1.6)); // ny = 32
                     offsetX = -10;
                     offsetY = -10;
                     break;
                 case 4:
                     node[i] = _SceneManager->addAnimatedMeshSceneNode(_Mendiane);
-                    node[i]->setScale(irr::core::vector3df(0.01, 0.01, 0.01)); // ny = 32
+                    node[i]->setScale(irr::core::vector3df(2, 2, 2)); // ny = 32
                     offsetX = -10;
                     offsetY = 10;
                     break;
                 case 5:
                     node[i] = _SceneManager->addAnimatedMeshSceneNode(_Phiras);
-                    node[i]->setScale(irr::core::vector3df(0.01, 0.01, 0.01)); // ny = 32
+                    node[i]->setScale(irr::core::vector3df(1.5, 1.5, 1.5)); // ny = 32
                     offsetX = 0;
                     offsetY = -10;
                     break;
@@ -124,7 +124,7 @@ void items::updateMesh(std::array<irr::scene::IAnimatedMeshSceneNode *, 8> node,
             }
             node[i]->setPosition(irr::core::vector3df(
                 x * _ParentchessBoard->getParentWindow()->getLinkedZappyGame()->getTileSize() + offsetX,
-                (i == 0) ? 31 : (i == 1) ? 30 : (i == 2) ? 32.5 : (i == 3) ? 32 : (i == 4) ? 32 : (i == 5) ? 32 : (i == 6) ? 33 : 0,
+                33,
                 y * _ParentchessBoard->getParentWindow()->getLinkedZappyGame()->getTileSize() + offsetY
             ));
             node[i]->setMaterialFlag(irr::video::EMF_LIGHTING, false);
@@ -135,17 +135,17 @@ void items::updateMesh(std::array<irr::scene::IAnimatedMeshSceneNode *, 8> node,
         node[7] = nullptr;
     } else if (node[7] == nullptr && inventory[7] > 0) {
         node[7] = _SceneManager->addAnimatedMeshSceneNode(_Egg);
-        node[7]->setScale(irr::core::vector3df(1, 1, 1)); // ny = 31
+        node[7]->setScale(irr::core::vector3df(1.5, 1.5, 1.5)); // ny = 31
         node[7]->setPosition(irr::core::vector3df(
-                x * _ParentchessBoard->getParentWindow()->getLinkedZappyGame()->getTileSize() + 0,
-                38,
-                y * _ParentchessBoard->getParentWindow()->getLinkedZappyGame()->getTileSize() + 0
+        x * _ParentchessBoard->getParentWindow()->getLinkedZappyGame()->getTileSize() + 0,
+        33,
+        y * _ParentchessBoard->getParentWindow()->getLinkedZappyGame()->getTileSize() + 0
         ));
         node[7]->setMaterialFlag(irr::video::EMF_LIGHTING, false);
     }
 }
 
-void items::updateText(Tile *tile, std::vector<int> inventory, bool debug)
+void items::updateText(Tile *tile, bool debug)
 {
     if (_TextNode[tile->getPositionX()][tile->getPositionY()] != nullptr) {
         _TextNode[tile->getPositionX()][tile->getPositionY()]->remove();
@@ -153,7 +153,14 @@ void items::updateText(Tile *tile, std::vector<int> inventory, bool debug)
     }
     if (!debug)
         return;
-    std::string text = " food : " + std::to_string(inventory[0]) + "\nlinemate : " + std::to_string(inventory[1]) + "\nderaumere : " + std::to_string(inventory[2]) + "\nsibur : " + std::to_string(inventory[3]) + "\nmendiane : " + std::to_string(inventory[4]) + "\nphiras : " + std::to_string(inventory[5]) + "\nthystame : " + std::to_string(inventory[6]);
+    std::string text = " food : " + std::to_string(tile->getInventory()[0]) +
+    "\nlinemate : " + std::to_string(tile->getInventory()[1]) +
+    "\nderaumere : " + std::to_string(tile->getInventory()[2]) +
+    "\nsibur : " + std::to_string(tile->getInventory()[3]) +
+    "\nmendiane : " + std::to_string(tile->getInventory()[4]) +
+    "\nphiras : " + std::to_string(tile->getInventory()[5]) +
+    "\nthystame : " + std::to_string(tile->getInventory()[6]) +
+    "\negg : " + std::to_string(tile->getInventory()[7]);
     _TextNode[tile->getPositionX()][tile->getPositionY()] = _SceneManager->addTextSceneNode(
         _Font,
         irr::core::stringw(text.c_str()).c_str(),
@@ -206,7 +213,7 @@ void items::updateMap(std::vector<std::vector<Tile *>> map)
                 continue;
             std::vector<int> inventory = tile->getInventory();
             std::vector<bool> diff = CompareInvAndMesh(inventory, _DisplayNode[tile->getPositionX()][tile->getPositionY()], tile->getEgg());
-            updateText(tile, inventory, _ParentchessBoard->getParentWindow()->getEventReceiver()->getDebug());
+            updateText(tile, _ParentchessBoard->getParentWindow()->getEventReceiver()->getDebug());
             if(!isSameInventory(diff))
                 threads.push_back(std::thread(&items::updateMesh, this, _ItemNode[tile->getPositionX()][tile->getPositionY()], inventory, tile->getPositionX(), tile->getPositionY()));
             if (threads.size() >= maxThreads || (tile->getPositionX() == (int)map.size() - 1 && tile->getPositionY() == (int)map[0].size() - 1)) {
