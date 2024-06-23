@@ -193,11 +193,8 @@ void items::updateMap(std::vector<std::vector<Tile *>> map)
             std::vector<int> inventory = tile->getInventory();
             std::vector<bool> diff = CompareInvAndMesh(inventory, _DisplayNode[tile->getPositionX()][tile->getPositionY()], tile->getEgg());
             updateText(tile, inventory, _ParentchessBoard->getParentWindow()->getEventReceiver()->getDebug());
-            if(!isSameInventory(diff)) {
+            if(!isSameInventory(diff))
                 threads.push_back(std::thread(&items::updateMesh, this, _ItemNode[tile->getPositionX()][tile->getPositionY()], inventory, tile->getPositionX(), tile->getPositionY()));
-            } else {
-                std::cout << "same inventory" << std::endl;
-            }
             if (threads.size() >= maxThreads || (tile->getPositionX() == (int)map.size() - 1 && tile->getPositionY() == (int)map[0].size() - 1)) {
                 for (auto& thread : threads) {
                     thread.join();
