@@ -31,8 +31,9 @@ myEventReceiver::~myEventReceiver()
     _Tiles.clear();
 }
 
-void myEventReceiver::InitEventReceiver()
+void myEventReceiver::InitEventReceiver(guiNetworkClient* client)
 {
+    this->_LinkedGuiClient = client;
     _Device = _ParentWindow->getDevice();
     if (_Device == nullptr) {
         throw UnsetDevice();
@@ -91,8 +92,10 @@ bool myEventReceiver::keyPress(const irr::SEvent& event)
     irr::EKEY_CODE keyCode = event.KeyInput.Key;
 
     if (keyCode == irr::KEY_ESCAPE) {
+        _LinkedGuiClient->handleWrite("quit\n");
         if (_Device->isWindowActive())
             _Device->closeDevice();
+        exit(0);
         return true;
     }
 

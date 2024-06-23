@@ -89,7 +89,7 @@ public:
      * 
      * this will create the event receiver object.
      */
-    void LinkEventReceiver();
+    void LinkEventReceiver(guiNetworkClient* client);
 
     /**
      * @brief Initializes the camera.
