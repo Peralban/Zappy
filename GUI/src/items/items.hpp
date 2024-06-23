@@ -80,7 +80,7 @@ public:
      * @param eggInInventory
      * @return A vector of booleans that represent the differences between the two inventories.
      */
-    std::vector<bool> CompareInvAndMesh(Tile *tile, std::vector<int> &meshInventory);
+    std::vector<bool> CompareInvAndMesh(std::vector<int> inventory, std::vector<int> &meshInventory, int eggInInventory);
 
     /**
      * @brief Gets the mesh inventory.
