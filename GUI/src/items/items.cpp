@@ -82,8 +82,8 @@ void items::updateMesh(std::array<irr::scene::IAnimatedMeshSceneNode *, 8> node,
                 case 0:
                     node[i] = _SceneManager->addAnimatedMeshSceneNode(_Food);
                     node[i]->setScale(irr::core::vector3df(4, 1, 4)); // ny = 31
-                    offsetX = 0;
-                    offsetY = 10;
+                    offsetX = 10;
+                    offsetY = 0;
                     break;
                 case 1:
                     node[i] = _SceneManager->addAnimatedMeshSceneNode(_Linemate);
@@ -127,6 +127,7 @@ void items::updateMesh(std::array<irr::scene::IAnimatedMeshSceneNode *, 8> node,
                 (i == 0) ? 31 : (i == 1) ? 30 : (i == 2) ? 32.5 : (i == 3) ? 32 : (i == 4) ? 32 : (i == 5) ? 32 : (i == 6) ? 33 : 0,
                 y * _ParentchessBoard->getParentWindow()->getLinkedZappyGame()->getTileSize() + offsetY
             ));
+            node[i]->setMaterialFlag(irr::video::EMF_LIGHTING, false);
         }
     }
 }

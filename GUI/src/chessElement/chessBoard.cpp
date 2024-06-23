@@ -43,8 +43,8 @@ void chessBoard::setParentWindow(irrlichtWindow *parentWindow)
     this->_ParentWindow = parentWindow;
     this->_SceneManager = parentWindow->getSceneManager();
     this->_Driver = parentWindow->getDriver();
-    _WhiteTexture = parentWindow->getTextureLoader()->loadTexture("./GUI/assets/White.png");
-    _BlackTexture = parentWindow->getTextureLoader()->loadTexture("./GUI/assets/Black.png");
+    _WhiteTexture = parentWindow->getTextureLoader()->loadTexture("./GUI/assets/COLOR1.png");
+    _BlackTexture = parentWindow->getTextureLoader()->loadTexture("./GUI/assets/COLOR2.png");
     if (!_WhiteTexture || !_BlackTexture) {
         throw CouldNotLoadTexture();
     }
