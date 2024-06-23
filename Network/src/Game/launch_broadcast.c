@@ -45,17 +45,8 @@ static int get_square(int angle, orientation_t ori)
 
     for (int i = 0; i < 8; i++)
         if (conditions[i])
-            return values[(i + (8 - ori * 2)) % 8];
+            return values[(8 + i - ori * 2) % 8];
     return 0;
-}
-
-static char *form_message(char *args, int first_square)
-{
-    char *message = malloc(sizeof(char) * (strlen(args) +
-    strlen("message , ") + 64));
-
-    sprintf(message, "message %d, %s\n", first_square, args);
-    return message;
 }
 
 static void send_broadcast(drone_t *drone, const server_t *server,
@@ -63,17 +54,16 @@ static void send_broadcast(drone_t *drone, const server_t *server,
 {
     int *distance = get_distance(drone, tmp->drone, server->info_game);
     int angle_from_launcher =
-        (int)(atan2(distance[1], distance[0]) * 180 / M_PI);
+        ((int)(atan2(distance[1], distance[0]) * 180 / M_PI)) * -1;
     int first_square = get_square(angle_from_launcher, drone->orientation);
-    char *message;
+    char message[1024];
 
     if (distance[0] == 0 && distance[1] == 0)
-        message = form_message(args, 0);
+        sprintf(message, "message %d, %s\n", 0, args);
     else
-        message = form_message(args, first_square);
+        sprintf(message, "message %d, %s\n", first_square, args);
     send(tmp->socket, message, strlen(message), 0);
     free(distance);
-    free(message);
 }
 
 bool launch_broadcast(drone_t *drone, server_t *server, char *args)

@@ -8,6 +8,7 @@
 #include "chessBoard.hpp"
 #include "../game/ZappyGame.hpp"
 #include "../zappyIrrlicht/irrlichtWindow.hpp"
+#include "../items/items.hpp"
 #include <iostream>
 
 chessBoard::chessBoard(ZappyGame *ParentZappy, int width, int height, float tileSize)
@@ -30,8 +31,15 @@ chessBoard::chessBoard()
 
 chessBoard::~chessBoard()
 {
-    this->_BlackTexture->drop();
-    this->_WhiteTexture->drop();
+    if (_BlackTexture)
+        _BlackTexture->drop();
+    if (_WhiteTexture)
+        _WhiteTexture->drop();
+    for (int i = 0; i < _Width; ++i) {
+        for (int j = 0; j < _Height; ++j) {
+            delete _map[i][j];
+        }
+    }
 }
 
 void chessBoard::setParentWindow(irrlichtWindow *parentWindow)
@@ -42,8 +50,8 @@ void chessBoard::setParentWindow(irrlichtWindow *parentWindow)
     this->_ParentWindow = parentWindow;
     this->_SceneManager = parentWindow->getSceneManager();
     this->_Driver = parentWindow->getDriver();
-    _WhiteTexture = parentWindow->getTextureLoader()->loadTexture("./GUI/assets/White.png");
-    _BlackTexture = parentWindow->getTextureLoader()->loadTexture("./GUI/assets/Black.png");
+    _WhiteTexture = parentWindow->getTextureLoader()->loadTexture("./GUI/assets/COLOR1.png");
+    _BlackTexture = parentWindow->getTextureLoader()->loadTexture("./GUI/assets/COLOR2.png");
     if (!_WhiteTexture || !_BlackTexture) {
         throw CouldNotLoadTexture();
     }
@@ -79,11 +87,17 @@ void chessBoard::createBoard()
         }
     }
     _IsCreated = true;
+    this->_ItemsHandler->initItemsObj();
 }
 
 bool chessBoard::isCreated()
 {
     return _IsCreated;
+}
+
+void chessBoard::updateMapItem()
+{
+    this->_ItemsHandler->updateMap(this->_map);
 }
 
 void chessBoard::InitMap(int width, int height)
@@ -100,6 +114,14 @@ void chessBoard::InitMap(int width, int height)
     if (_WhiteTexture == nullptr || _BlackTexture == nullptr) {
         throw NoTexturesSet();
     }
+    for (auto& row : _map) {
+        for (auto& tile : row) {
+            delete tile;
+        }
+        row.clear();
+    }
+    _map.clear();
+
     for (i = 0; i < width; i++) {
         std::vector<Tile *> tmp;
         for (j = 0; j < height; j++) {
@@ -107,10 +129,10 @@ void chessBoard::InitMap(int width, int height)
             tmpTile = new Tile(this, tmpTexture, i, j, 0, _TileSize);
             tmp.push_back(tmpTile);
             _ParentWindow->getEventReceiver()->addTile(tmp.back());
-            
         }
         _map.push_back(tmp);
     }
+    this->_ItemsHandler = new items(this);
 }
 
 static std::vector<std::string> split(const std::string &s, char delimiter)
@@ -158,4 +180,14 @@ void chessBoard::printMapAtPos(int x, int y)
 irrlichtWindow *chessBoard::getParentWindow()
 {
     return _ParentWindow;
+}
+
+std::vector<std::vector<Tile *>> chessBoard::getMap()
+{
+    return _map;
+}
+
+items *chessBoard::getItemsHandler()
+{
+    return _ItemsHandler;
 }

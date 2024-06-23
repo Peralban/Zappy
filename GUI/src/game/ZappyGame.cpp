@@ -24,6 +24,15 @@ ZappyGame::ZappyGame()
 
 ZappyGame::~ZappyGame()
 {
+    delete _chessPieces;
+    delete _chessBoard;
+    delete _serverDataParser;
+    for (auto& pair : _playerList) {
+        delete pair.second;
+    }
+    for (auto& pair : _teamsList) {
+        delete pair.second;
+    }
 }
 
 void ZappyGame::linkWithDevice(irrlichtWindow *parentDevice)
@@ -240,8 +249,6 @@ void ZappyGame::setTileSize(float tileSize)
     this->_TileSize = tileSize;
     if (this->_chessBoard != nullptr)
         this->_chessBoard->setTileSize(tileSize);
-    else
-        std::cout << "setTileSize: Warning: ChessBoard is not setted so tileSize only settend on zappygame" << std::endl;
 }
 
 void ZappyGame::setTimeUnit(int timeUnit)

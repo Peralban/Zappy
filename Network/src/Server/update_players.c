@@ -76,7 +76,7 @@ static bool update_life(client_t *client, server_t *server)
     if (drone->life_ticks == 0) {
         if (drone->inventory[FOOD] > 0) {
             drone->life_ticks = 126;
-            drone->inventory[FOOD]--;
+            (drone->inventory[FOOD])--;
         } else {
             send(client->socket, "dead\n", 5, 0);
             gui_pdi(server, drone->id);
@@ -163,7 +163,8 @@ static void update_drone_action(client_t *client, server_t *server)
 void update_players(server_t *server)
 {
     for (client_list_t *tmp = server->list; tmp != NULL; tmp = tmp->next) {
-        if (tmp->client == NULL || tmp->client->drone == NULL)
+        if (tmp->client == NULL || tmp->client->drone == NULL
+        || tmp->client->state != PLAYING)
             continue;
         if (!update_life(tmp->client, server))
             continue;

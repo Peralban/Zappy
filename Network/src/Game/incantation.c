@@ -92,10 +92,14 @@ void incantation(client_t *client, server_t *server,
 {
     static int highest_lvl = 1;
 
-    if (client->drone->level > highest_lvl) {
-        highest_lvl = client->drone->level;
+    printf("Incantation from %s\n", client->drone->team_name);
+    if (client->drone->level + 1 > highest_lvl) {
+        highest_lvl = client->drone->level + 1;
         server->game->winning_team = client->drone->team_name;
-        if (highest_lvl == 8)
+        printf("New highest level: %d\n", highest_lvl);
+        if (highest_lvl == 8) {
+            printf("Team %s won\n", server->game->winning_team);
             gui_seg(server);
+        }
     }
 }

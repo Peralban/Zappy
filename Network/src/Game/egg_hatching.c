@@ -40,17 +40,17 @@ static int count_egg(linked_list_egg_t *list, char *team_name)
     return n;
 }
 
-static egg_t *pick_random_egg(linked_list_egg_t *list, char *team_name)
+static egg_t *pick_random_egg(linked_list_egg_t **list, char *team_name)
 {
-    linked_list_egg_t *tmp = list;
+    linked_list_egg_t *tmp = *list;
     egg_t *egg = NULL;
-    int n = count_egg(list, team_name);
+    int n = count_egg(*list, team_name);
     int r = rand() % n;
 
     while (tmp != NULL) {
         if (tmp->egg->team_name == team_name && r == 0) {
             egg = tmp->egg;
-            remove_egg_elem(tmp, &list);
+            remove_egg_elem(tmp, list);
             return egg;
         }
         if (tmp->egg->team_name == team_name) {
@@ -63,7 +63,7 @@ static egg_t *pick_random_egg(linked_list_egg_t *list, char *team_name)
 
 void spawn_on_egg(server_t *server, drone_t *drone, char *team_name)
 {
-    egg_t *egg = pick_random_egg(server->game->egg_list, team_name);
+    egg_t *egg = pick_random_egg(&server->game->egg_list, team_name);
 
     gui_ebo(server, egg);
     drone->x = egg->x;

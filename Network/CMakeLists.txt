@@ -23,6 +23,7 @@ add_executable(Zappy_Server
         src/Game/game_tick.c
         src/Server/complete_server.c
         src/Game/launch_broadcast.c
+        src/Game/look_around.c
 )
 
 # Specify the C standard
