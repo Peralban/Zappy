@@ -36,6 +36,13 @@ _PlayerPosition(PlayerPos(this))
 
 Player::~Player()
 {
+    this->_chessPieceNode->remove();
+    this->_ParentGame = nullptr;
+    this->_PlayerTeam = nullptr;
+    std::cout << "\nPlayer destroyed\n" << std::endl;
+}
+
+
     if (_chessPieceNode) {
         _chessPieceNode->remove();
         std::cout << "\nPlayer destroyed\n" << std::endl;
@@ -282,13 +289,13 @@ void Player::setInventory(int food, int linemate, int deraumere, int sibur, int 
 void Player::printInventory()
 {
     std::cout << "Inventory of player " << this->_Name << std::endl;
-    std::cout << "food: " << this->_food << std::endl;
-    std::cout << "linemate: " << this->_linemate << std::endl;
-    std::cout << "deraumere: " << this->_deraumere << std::endl;
-    std::cout << "sibur: " << this->_sibur << std::endl;
-    std::cout << "mendiane: " << this->_mendiane << std::endl;
-    std::cout << "phiras: " << this->_phiras << std::endl;
-    std::cout << "thystame: " << this->_thystame << std::endl;
+    std::cout << "\tfood: " << this->_food << std::endl;
+    std::cout << "\tlinemate: " << this->_linemate << std::endl;
+    std::cout << "\tderaumere: " << this->_deraumere << std::endl;
+    std::cout << "\tsibur: " << this->_sibur << std::endl;
+    std::cout << "\tmendiane: " << this->_mendiane << std::endl;
+    std::cout << "\tphiras: " << this->_phiras << std::endl;
+    std::cout << "\tthystame: " << this->_thystame << std::endl << std::endl;
 }
 
 void Player::setBroadcastMessage(std::string message)

@@ -109,6 +109,33 @@ public:
      * @return True if the node is clicked, false otherwise.
      */
     bool CheckIfNodeIsClicked(irr::core::line3d<irr::f32> ray, irr::scene::IAnimatedMeshSceneNode *node);
+
+    /**
+     * @brief Get the vector of players.
+     * @return The vector of players.
+     */
+    std::vector<Player *> getPlayers() { return _Players; }
+
+    /**
+     * @brief Removes a player from the list of players.
+     *
+     * This function removes a player from the game's player list using their Player object.
+     * If the player does not exist in the list, no action is performed.
+     *
+     * @param player A pointer to the Player object of the player to remove.
+     */
+    void removePlayer(Player *player);
+
+    /**
+     * @brief Removes a player from the list of players by their name.
+     *
+     * This function removes a player from the game's player list using their name as the key.
+     * If the player does not exist in the list, no action is performed.
+     *
+     * @param name The name of the player to remove.
+     */
+    void remmovePlayerByName(std::string name);
+
     class NullableDevice : public AError {
     public:
         /**

@@ -158,6 +158,29 @@ bool myEventReceiver::CheckIfTileIsClicked(const irr::SEvent::SMouseInput& mouse
     return false;
 }
 
+void myEventReceiver::removePlayer(Player *player)
+{
+    if (player == nullptr) {
+        throw NullPlayer();
+    }
+    for (auto it = _Players.begin(); it != _Players.end(); it++) {
+        if (*it == player) {
+            _Players.erase(it);
+            return;
+        }
+    }
+}
+
+void myEventReceiver::remmovePlayerByName(std::string name)
+{
+    for (auto it = _Players.begin(); it != _Players.end(); it++) {
+        if ((*it)->getName() == name) {
+            _Players.erase(it);
+            return;
+        }
+    }
+}
+
 bool myEventReceiver::CheckIfSimpleNodeIsClicked(irr::core::line3d<irr::f32> ray, irr::scene::ISceneNode *node)
 {
     if (node == nullptr)
