@@ -81,7 +81,6 @@ void get_player_inventory(client_t *client, server_t *server, char **args)
     tmp = get_drone_by_id(server, ref_id, client->socket);
     if (tmp == NULL)
         return;
-    tmp->client->drone->inventory[0] = 0;
     sprintf(response, "pin %d %d %d %d %d %d %d %d %d %d\n", ref_id,
     tmp->client->drone->x, tmp->client->drone->y,
     tmp->client->drone->inventory[0], tmp->client->drone->inventory[1],

@@ -163,7 +163,8 @@ static void update_drone_action(client_t *client, server_t *server)
 void update_players(server_t *server)
 {
     for (client_list_t *tmp = server->list; tmp != NULL; tmp = tmp->next) {
-        if (tmp->client == NULL || tmp->client->drone == NULL)
+        if (tmp->client == NULL || tmp->client->drone == NULL
+        || tmp->client->state != PLAYING)
             continue;
         if (!update_life(tmp->client, server))
             continue;
