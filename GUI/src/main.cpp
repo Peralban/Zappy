@@ -16,7 +16,7 @@ int main(int ac, char **av)
     int platformX = 0;
     int platformY = 0;
     float tileSize = 30.0f;
-    quality gameQuality = MID;
+    quality gameQuality = HIGH;
     bool debug = false;
     Core core(width, height, platformX, platformY, tileSize, gameQuality, debug);
 

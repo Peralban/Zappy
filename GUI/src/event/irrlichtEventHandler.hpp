@@ -129,6 +129,12 @@ public:
      */
     void remmovePlayerByName(std::string name);
 
+    /**
+     * @brief Sets the parent window.
+     * @param parentWindow The parent window to set.
+     */
+    irrlichtWindow *getParentWindow() { return _ParentWindow; }
+
     class NullableDevice : public AError {
     public:
         /**

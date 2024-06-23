@@ -88,8 +88,11 @@ bool myEventReceiver::keyPress(const irr::SEvent& event)
     irr::EKEY_CODE keyCode = event.KeyInput.Key;
 
     if (keyCode == irr::KEY_ESCAPE) {
-        if (_Device->isWindowActive())
+        if (_Device->isWindowActive()) {
+            getParentWindow()->getGuiClient()->handleWrite("quit\n");
             _Device->closeDevice();
+            std::exit(0);
+        }
         return true;
     }
 
