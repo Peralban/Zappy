@@ -42,23 +42,24 @@ void items::setParentchessBoard(chessBoard *ParentchessBoard)
     _ParentchessBoard = ParentchessBoard;
 }
 
-std::vector<bool> items::CompareInvAndMesh(std::vector<int> inventory, std::vector<int> &meshInventory, int eggInInventory)
+std::vector<bool> items::CompareInvAndMesh(Tile *tile, std::vector<int> &meshInventory)
 {
     std::vector<bool> diff;
     for (int i = 0; i < 7; i++) {
-        if ((inventory[i] >  0) == (meshInventory[i] > 0))
+        if ((tile->getInventory()[i] >  0) == (meshInventory[i] > 0))
             diff.push_back(true);
         else
             diff.push_back(false);
-        meshInventory[i] = inventory[i];
+        meshInventory[i] = tile->getInventory()[i];
     }
-    if ((eggInInventory > 0) == (meshInventory[7] > 0))
+    if ((tile->getEgg() > 0) == (meshInventory[7] > 0))
         diff.push_back(true);
     else
         diff.push_back(false);
-    meshInventory[7] = eggInInventory;
+    meshInventory[7] = tile->getEgg();
     for (int i = 0; i < 8; i++) {
-        std::cout << "diff: " << diff[i] << std::endl;
+        if (!diff[i])
+            std::cout << "diff: " << diff[i] << " " << ((i == 0) ? "food" : (i == 1) ? "linemate" : (i == 2) ? "deraumere" : (i == 3) ? "sibur" : (i == 4) ? "mendiane" : (i == 5) ? "phiras" : (i == 6) ? "thystame" : "egg") << std::endl;
     }
     return diff;
 }
@@ -215,11 +216,10 @@ void items::updateMap(std::vector<std::vector<Tile *>> map)
         for (const auto& tile : line) {
             if (tile == nullptr)
                 continue;
-            std::vector<int> inventory = tile->getInventory();
-            std::vector<bool> diff = CompareInvAndMesh(inventory, _DisplayNode[tile->getPositionX()][tile->getPositionY()], tile->getEgg());
+            std::vector<bool> diff = CompareInvAndMesh(tile, _DisplayNode[tile->getPositionX()][tile->getPositionY()]);
             updateText(tile, _ParentchessBoard->getParentWindow()->getEventReceiver()->getDebug());
             if(!isSameInventory(diff))
-                threads.push_back(std::thread(&items::updateMesh, this, _ItemNode[tile->getPositionX()][tile->getPositionY()], inventory, tile->getPositionX(), tile->getPositionY()));
+                threads.push_back(std::thread(&items::updateMesh, this, _ItemNode[tile->getPositionX()][tile->getPositionY()], tile->getInventory(), tile->getPositionX(), tile->getPositionY()));
             if (threads.size() >= maxThreads || (tile->getPositionX() == (int)map.size() - 1 && tile->getPositionY() == (int)map[0].size() - 1)) {
                 for (auto& thread : threads) {
                     thread.join();
