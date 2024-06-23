@@ -191,3 +191,41 @@ std::vector<int> Tile::getInventory()
     std::vector<int> inventory = {_food, _linemate, _deraumere, _sibur, _mendiane, _phiras, _thystame};
     return inventory;
 }
+
+void Tile::dropRessource(std::string ressource)
+{
+    std::cout << "Dropping ressource " << ressource << std::endl;
+    std::cout << "Drop at pos " << _X << " " << _Y << std::endl;
+    if (ressource == "food")
+        _food--;
+    else if (ressource == "linemate")
+        _linemate--;
+    else if (ressource == "deraumere")
+        _deraumere--;
+    else if (ressource == "sibur")
+        _sibur--;
+    else if (ressource == "mendiane")
+        _mendiane--;
+    else if (ressource == "phiras")
+        _phiras--;
+    else if (ressource == "thystame")
+        _thystame--;
+}
+
+void Tile::takeRessource(std::string ressource)
+{
+    if (ressource == "food")
+        _food++;
+    else if (ressource == "linemate")
+        _linemate++;
+    else if (ressource == "deraumere")
+        _deraumere++;
+    else if (ressource == "sibur")
+        _sibur++;
+    else if (ressource == "mendiane")
+        _mendiane++;
+    else if (ressource == "phiras")
+        _phiras++;
+    else if (ressource == "thystame")
+        _thystame++;
+}

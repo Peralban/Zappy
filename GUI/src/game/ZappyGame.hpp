@@ -304,6 +304,18 @@ class ZappyGame {
          */
         void deletePlayer(Player *player);
 
+        /**
+         * @brief Drop an item from a player's inventory.
+         * @param cmd
+         */
+        void playerDrop(std::string cmd);
+
+        /**
+         * @brief Take an item from a tile.
+         * @param cmd
+         */
+        void playerTake(std::string cmd);
+
         class NullableParentDevice : public AError {
         public:
             /**

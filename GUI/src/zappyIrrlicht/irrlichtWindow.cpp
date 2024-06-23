@@ -187,7 +187,8 @@ void signalHandler(int signal) {
 
 static void UpdateAllPlayers(ZappyGame *game, guiNetworkClient *client)
 {
-
+    client->handleWrite("mct\n");
+    client->selectSocket();
     if (game->getPlayerList()->empty())
         return;
     for (auto player : *game->getPlayerList()) {

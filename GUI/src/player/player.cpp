@@ -302,3 +302,41 @@ std::string Player::getBroadcastMessage()
 {
     return this->_broadcastMessage;
 }
+
+void Player::dropResource(std::string ressource)
+{
+    if (ressource == "0") {
+        _food -= 1;
+    } else if (ressource == "1") {
+        _linemate -= 1;
+    } else if (ressource == "2") {
+        _deraumere -= 1;
+    } else if (ressource == "3") {
+        _sibur -= 1;
+    } else if (ressource == "4") {
+        _mendiane -= 1;
+    } else if (ressource == "5") {
+        _phiras -= 1;
+    } else if (ressource == "6") {
+        _thystame -= 1;
+    }
+}
+
+void Player::takeResource(std::string ressource)
+{
+    if (ressource == "0") {
+        _food += 1;
+    } else if (ressource == "1") {
+        _linemate += 1;
+    } else if (ressource == "2") {
+        _deraumere += 1;
+    } else if (ressource == "3") {
+        _sibur += 1;
+    } else if (ressource == "4") {
+        _mendiane += 1;
+    } else if (ressource == "5") {
+        _phiras += 1;
+    } else if (ressource == "6") {
+        _thystame += 1;
+    }
+}

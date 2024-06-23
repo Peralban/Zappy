@@ -130,6 +130,22 @@ class chessBoard {
          */
         items *getItemsHandler();
 
+        /**
+         * @brief Take a ressource from a tile. at
+         * @param ressource The ressource to take.
+         * @param x The x-coordinate of the tile.
+         * @param y The y-coordinate of the tile.
+         */
+        void takeRessource(std::string ressource, int x, int y);
+
+        /**
+         * @brief Drop a ressource on a tile.
+         * @param ressource The ressource to drop.
+         * @param x The x-coordinate of the tile.
+         * @param y The y-coordinate of the tile.
+         */
+        void dropRessource(std::string ressource, int x, int y);
+
         class NoParentWindow : public AError {
         public:
             /**

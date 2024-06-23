@@ -134,6 +134,18 @@ public:
      */
     chessBoard *getParentChessBoard();
 
+    /**
+     * @brief Takes a ressource for the tile.
+     * @param ressource
+     */
+    void takeRessource(std::string ressource);
+
+    /**
+     * @brief the tile drop a ressource.
+     * @param ressource
+     */
+    void dropRessource(std::string ressource);
+
     class UnsetParentChessboard : public AError {
         public:
             /**

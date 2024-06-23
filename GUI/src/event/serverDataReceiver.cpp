@@ -138,6 +138,18 @@ void ServerDataParser::HandleServerMessage(std::string message)
             exit(EXIT_FAILURE);
         }
         this->getParentGame()->playerDie(message);
+    } else if (serverMessage.command == "pdr") {
+        if (serverMessage.args.size() != 2) {
+            std::cerr << "HandleServerMessage: Error: ppo command should have 1 arguments" << std::endl;
+            exit(EXIT_FAILURE);
+        }
+        this->getParentGame()->playerDrop(message);
+    } else if (serverMessage.command == "pgt") {
+        if (serverMessage.args.size() != 2) {
+            std::cerr << "HandleServerMessage: Error: pgt command should have 2 arguments" << std::endl;
+            exit(EXIT_FAILURE);
+        }
+        this->getParentGame()->playerTake(message);
     }
 }
 

@@ -222,6 +222,10 @@ class Player {
          */
         std::string getBroadcastMessage();
 
+        void dropResource(std::string ressource);
+
+        void takeResource(std::string ressource);
+
         class NullableParentGame : public AError {
         public:
             /**

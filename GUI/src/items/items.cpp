@@ -57,6 +57,9 @@ std::vector<bool> items::CompareInvAndMesh(std::vector<int> inventory, std::vect
     else
         diff.push_back(false);
     meshInventory[7] = eggInInventory;
+    for (int i = 0; i < 8; i++) {
+        std::cout << "diff: " << diff[i] << std::endl;
+    }
     return diff;
 }
 
@@ -74,6 +77,7 @@ void items::updateMesh(std::array<irr::scene::IAnimatedMeshSceneNode *, 8> node,
     float offsetX = 0;
     float offsetY = 0;
     for (int i = 0; i < 7; i++) {
+        std::cout << "inventory: " << inventory[i] << " " << ((i == 0) ? "food" : (i == 1) ? "linemate" : (i == 2) ? "deraumere" : (i == 3) ? "sibur" : (i == 4) ? "mendiane" : (i == 5) ? "phiras" : (i == 6) ? "thystame" : "egg") << std::endl;
         if (node[i] != nullptr && inventory[i] == 0) {
             node[i]->remove();
             node[i] = nullptr;

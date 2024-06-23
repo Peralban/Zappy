@@ -300,6 +300,22 @@ Player *ZappyGame::getPlayer(std::string name)
     return this->_playerList[name];
 }
 
+void ZappyGame::playerTake(std::string cmd)
+{
+    //pgt #n T\n
+    std::vector <std::string> args = split(cmd, ' ');
+
+    this->getPlayer(args[1])->takeResource(args[2]);
+}
+
+void ZappyGame::playerDrop(std::string cmd)
+{
+    //pdr #n T\n
+    std::vector <std::string> args = split(cmd, ' ');
+
+    this->getPlayer(args[1])->dropResource(args[2]);
+}
+
 ServerDataParser *ZappyGame::getServerDataParser()
 {
     if (this->_serverDataParser == nullptr) {

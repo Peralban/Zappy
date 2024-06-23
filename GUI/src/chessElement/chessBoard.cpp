@@ -191,3 +191,13 @@ items *chessBoard::getItemsHandler()
 {
     return _ItemsHandler;
 }
+
+void chessBoard::dropRessource(std::string ressource, int x, int y)
+{
+    _map[x][y]->dropRessource(ressource);
+}
+
+void chessBoard::takeRessource(std::string ressource, int x, int y)
+{
+    _map[x][y]->takeRessource(ressource);
+}
