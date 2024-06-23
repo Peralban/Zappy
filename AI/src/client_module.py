@@ -50,8 +50,7 @@ def connect_to_server(host, port, name):
     nb = 0
 
     #try:
-    loop = True
-    while loop:
+    while True:
         readable, _, _ = select.select(inputs, [], [], 0)
         for s in readable:
             if s is sock_file:
@@ -73,8 +72,9 @@ def connect_to_server(host, port, name):
                             LatLng = (int(parts[0]), int(parts[1]))
                             Bot = ai_zappy.Bot(name, LatLng[0], LatLng[1], nb)
                             Bot.run()
-                            loop = False
-                            break
+                            sock.close()
+                            sock_file.close()
+                            sys.exit(0)
     #except KeyboardInterrupt:
     #    print("\nClient interrupted.")
     #    sock.close()

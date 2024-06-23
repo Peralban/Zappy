@@ -6,6 +6,7 @@ Description:
 AI algorithm for the Zappy project.
 """
 import random
+import sys
 
 import AI.src.client_module as client_module
 import time
@@ -42,19 +43,32 @@ class Bot:
         self.queen_exists = False
         self.is_queen = False
         self.missing_player = 6 - n - 1 if n < 6 else 0
+        self.last_connection = 0
+        self.should_pause = False
         self.ready_to_incant = False
         self.im_in_incantation = False
         self.im_incantation_master = False
         self.mode = "survive"
         self.target = None
+        self.tick_time = None
+        self.tick_start = None
+        self.tick_end = None
+        self.time_last_received = time.time()
 
     def run(self):
+
+        self.waiting_command.append("Look")
+        self.tick_start = time.time()
+        self.send_commands()
+        while self.tick_end is None:
+            self.get_result()
+        self.tick_time = (self.tick_end - self.tick_start) / 7
+
         while self.alive:
             self.get_result()
             self.send_commands()
             self.change_mode()
             self.do_action()
-            self.print_stuff(seconds=1, inventory=True, command=True, lvl=True, mode=True)
         return
 
     def move_to(self, x, y):
@@ -110,18 +124,29 @@ class Bot:
         for e in ressources_types[1::]:
             for _ in range(self.inventory[e]):
                 self.push_command(f"Set {e}")
-        if self.inventory['food'] > 50:
-            for _ in range(self.inventory['food'] - 50):
+        if self.inventory['food'] > 60:
+            for _ in range(self.inventory['food'] - 60):
                 self.push_command("Set food")
         return
 
     # mode functions
 
     def change_mode(self):
+        # check if the bot is doing an action for too long
+        if len(self.waiting_command) > 0 and self.time_last_received - time.time() > self.tick_time * 350:
+            self.doing_action = False
+            self.waiting_command = []
+            self.im_in_incantation = False
+            self.im_incantation_master = False
+            self.ready_to_incant = False
+            self.should_pause = False
+            self.mode = "survive"
+
         if self.doing_action or len(self.waiting_command) > 0 or self.im_in_incantation:
             return
 
-        if self.level == 8:
+        if self.level == 8 or self.should_pause:
+            self.should_pause = False
             self.mode = "survive"
             return
         if not self.is_queen:
@@ -138,12 +163,12 @@ class Bot:
                 return
 
             def should_return():
-                if self.inventory['food'] > 80:
+                if self.inventory['food'] > 90:
                     return True
                 nb_stones = 0
                 for e in ressources_types[1::]:
                     nb_stones += self.inventory[e]
-                if self.inventory['food'] > 60 and nb_stones >= 6:
+                if nb_stones >= 6:
                     return True
                 return False
 
@@ -170,7 +195,8 @@ class Bot:
 
             def can_incant():
                 for e in ressources_types[1::]:
-                    if self.world[self.mid_y][self.mid_x][e] < incantation_prerequisites[self.level][e]:
+                    if (self.world[self.mid_y][self.mid_x][e] < incantation_prerequisites[self.level][e]) and \
+                    (self.inventory[e] < incantation_prerequisites[self.level][e]):
                         return False
                 return True
 
@@ -239,18 +265,19 @@ class Bot:
             return
 
         def take_everything_on_tile_queen():
-            for i in range(self.world[self.mid_y][self.mid_x]['food']):
-                self.push_command(f"Take food")
-                if i % 3 == 0:
-                    self.create_broadcast("I am the queen")
+            nb = 0
+            for e in ressources_types:
+                for i in range(self.world[self.mid_y][self.mid_x][e]):
+                    self.push_command(f"Take {e}")
+                    nb += 1
+                    if nb % 3 == 0:
+                        self.create_broadcast("I am the queen")
             return
 
         take_everything_on_tile_queen()
         self.push_command("Right")
         self.create_broadcast("I am the queen")
         self.push_command("Connect_nbr")
-        if self.world[self.mid_y][self.mid_x]['player'] > 1:
-            print(f"I am the queen and there is {self.world[self.mid_y][self.mid_x]['player']} players on my tile")
         return
 
     def queen_election(self):
@@ -271,19 +298,19 @@ class Bot:
         if self.queen_direction == 0:
             return
         elif self.queen_direction == 1:
-            self.move_to(0, -1) #None
+            self.move_to(random.randint(-1, 1), -1) #None
         elif self.queen_direction == 2:
             self.move_to(-1, -1) #None
         elif self.queen_direction == 3:
-            self.move_to(-1, 0) #self.push_command("Left")
+            self.move_to(-1, random.randint(-1, 1)) #self.push_command("Left")
         elif self.queen_direction == 4:
             self.move_to(-1, 1) #self.push_command("Left")
         elif self.queen_direction == 5:
-            self.move_to(0, 1) #self.push_command("Left")
+            self.move_to(random.randint(-1, 1), 1) #self.push_command("Left")
         elif self.queen_direction == 6:
             self.move_to(1, 1) #self.push_command("Right")
         elif self.queen_direction == 7:
-            self.move_to(1, 0) #self.push_command("Right")
+            self.move_to(1, random.randint(-1, 1)) #self.push_command("Right")
         elif self.queen_direction == 8:
             self.move_to(1, -1) #None
         self.queen_direction = -1
@@ -295,12 +322,18 @@ class Bot:
         return
 
     def queen_incantation(self):
+
+        def drop_required_stones():
+            for stone in ressources_types[1::]:
+                for _ in range(min(incantation_prerequisites[self.level][stone], self.inventory[stone])):
+                    self.push_command(f"Set {stone}")
+            return
+
         if not self.ready_to_incant:
             self.create_broadcast("Queen incantation")
-            for e in ressources_types[1::]:
-                for _ in range(incantation_prerequisites[self.level][e]):
-                    self.push_command(f"Set {e}")
+            drop_required_stones()
             self.ready_to_incant = True
+            return
 
         if self.world[self.mid_y][self.mid_x]['player'] >= 6:
             self.push_command("Incantation")
@@ -313,21 +346,9 @@ class Bot:
                     self.create_broadcast("Queen incantation")
             return
 
-        #def drop_required_stones():
-        #    for stone in ressources_types[1::]:
-        #        for _ in range(min(incantation_prerequisites[self.level][stone], self.inventory[stone])):
-        #            self.push_command(f"Set {stone}")
-        #    return
-
+        self.push_command("Connect_nbr")
         take_all_food()
-        #drop_required_stones()
         self.create_broadcast("Queen incantation")
-        if self.inventory['food'] > 100:
-            for i in range(10):
-                if i % 3 == 0:
-                    self.create_broadcast("Queen_incantation")
-                self.push_command("Set food")
-
         return
 
     # end of mode functions
@@ -375,6 +396,10 @@ class Bot:
     def get_result(self):
         results = client_module.get_next_instruction()
         for result in results:
+            if result != "message":
+                self.time_last_received = time.time()
+            if self.tick_end is None:
+                self.tick_end = time.time()
             if "Elevation underway" in result:
                 self.im_in_incantation = True
                 self.ready_to_incant = False
@@ -385,9 +410,11 @@ class Bot:
                         break
                 continue
             if "Current level" in result:
-                print("Ameno")
+                if self.is_queen:
+                    print(f"level: {result[-1]}")
                 self.incantation(int(result[-1]))
                 self.im_in_incantation = False
+                self.should_pause = True
                 if self.im_incantation_master:
                     self.doing_action = False
                     self.im_incantation_master = False
@@ -400,6 +427,7 @@ class Bot:
             elif "ko" in result:
                 if self.im_in_incantation:
                     self.im_in_incantation = False
+                    self.should_pause = True
                     if self.im_incantation_master:
                         self.im_incantation_master = False
                         self.ready_to_incant = False
@@ -543,21 +571,22 @@ class Bot:
         if res == " " or res == "":
             return
         res = res.split(', ')
-        print(res)
+        #print(res)
         for objects in res:
             objects = objects.split()
             self.inventory[objects[0]] = int(objects[1])
         return
 
     def connect_nbr(self, nb):
-        #if self.is_queen:
-        #    if nb > 0:
-        #        for i in range(nb):
-        #            client_module.parsing.sub_process()
+        if self.is_queen:
+            if nb > 0:
+                self.last_connection += 1
+                if self.last_connection == 40:
+                    self.last_connection = 0
+                    client_module.parsing.sub_process()
         return
 
     def fork(self):
-        #client_module.parsing.sub_process()
         return
 
     def eject(self):
@@ -613,6 +642,6 @@ class Bot:
         nb_message = int(decrypted_broadcast.split(':', 1)[0].split(' ')[1])
         content = decrypted_broadcast.split(':', 1)[1]
 
-        print(team, nb_message, content, direction)
+        #print(team, nb_message, content, direction)
 
         return team, nb_message, content, direction
