@@ -88,8 +88,11 @@ bool myEventReceiver::keyPress(const irr::SEvent& event)
     irr::EKEY_CODE keyCode = event.KeyInput.Key;
 
     if (keyCode == irr::KEY_ESCAPE) {
-        if (_Device->isWindowActive())
+        if (_Device->isWindowActive()) {
+            getParentWindow()->getGuiClient()->handleWrite("quit\n");
             _Device->closeDevice();
+            std::exit(0);
+        }
         return true;
     }
 
@@ -150,6 +153,29 @@ bool myEventReceiver::CkeckIfTileIsClicked(const irr::SEvent::SMouseInput& mouse
         }
     }
     return false;
+}
+
+void myEventReceiver::removePlayer(Player *player)
+{
+    if (player == nullptr) {
+        throw NullPlayer();
+    }
+    for (auto it = _Players.begin(); it != _Players.end(); it++) {
+        if (*it == player) {
+            _Players.erase(it);
+            return;
+        }
+    }
+}
+
+void myEventReceiver::remmovePlayerByName(std::string name)
+{
+    for (auto it = _Players.begin(); it != _Players.end(); it++) {
+        if ((*it)->getName() == name) {
+            _Players.erase(it);
+            return;
+        }
+    }
 }
 
 bool myEventReceiver::CheckIfSimpleNodeIsClicked(irr::core::line3d<irr::f32> ray, irr::scene::ISceneNode *node)

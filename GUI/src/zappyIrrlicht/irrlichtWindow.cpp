@@ -81,7 +81,7 @@ void irrlichtWindow::initCamera()
     //making the height of the camera relative to the platform size
     int height = 25;
     float rotatespeed = 40.0f;
-    float movespeed = 0.5f;
+    float movespeed = 0.35f;
     bool novertical = false;
     irr::SKeyMap *keyMap = new irr::SKeyMap[6];
     keyMap[0].Action = irr::EKA_MOVE_FORWARD;
@@ -92,7 +92,10 @@ void irrlichtWindow::initCamera()
     keyMap[2].KeyCode = irr::KEY_KEY_Q;
     keyMap[3].Action = irr::EKA_STRAFE_RIGHT;
     keyMap[3].KeyCode = irr::KEY_KEY_D;
-
+    keyMap[4].Action = irr::EKA_JUMP_UP;
+    keyMap[4].KeyCode = irr::KEY_SPACE;
+    keyMap[5].Action = irr::EKA_CROUCH;
+    keyMap[5].KeyCode = irr::KEY_LSHIFT;
 
 	this->_ActiveCamera = this->_SceneManager->addCameraSceneNodeFPS(0, rotatespeed, movespeed, -1, keyMap, 6, novertical, 0.5f, false, true);
     if (this->_ActiveCamera == nullptr) {
@@ -147,22 +150,6 @@ void irrlichtWindow::drawCursor()
     _Driver->draw2DRectangle(_CursorColor, irr::core::rect<irr::s32>(centerX - _CursorThickness, centerY - _CursorLength, centerX + _CursorThickness, centerY + _CursorLength)); // Vertical line
 }
 
-void irrlichtWindow::createText()
-{
-    _SceneManager->addTextSceneNode(
-        _GuiEnv->getBuiltInFont(), // Font
-        L"hola soy dora",      // Text to display
-        irr::video::SColor(255, 0, 0, 0), // Text color
-        0,                        // Parent node
-        irr::core::vector3df(
-            0,
-            10,
-            0
-        )                         // Position
-    );
-
-}
-
 void irrlichtWindow::LinkEventReceiver()
 {
     this->_EventReceiver = new myEventReceiver(this);
@@ -195,13 +182,27 @@ void signalHandler(int signal) {
 
 static void UpdateAllPlayers(ZappyGame *game, guiNetworkClient *client)
 {
+
     if (game->getPlayerList()->empty())
         return;
     for (auto player : *game->getPlayerList()) {
+        std::string player_name = player.second->getName();
+        if (game->getPlayer(player_name) == nullptr) {
+            UpdateAllPlayers(game, client);
+            break;
+        }
         client->handleWrite("ppo " + player.second->getName() + "\n");
         client->selectSocket();
+        if (game->getPlayer(player_name) == nullptr) {
+            UpdateAllPlayers(game, client);
+            break;
+        }
         client->handleWrite("plv " + player.second->getName() + "\n");
         client->selectSocket();
+        if (game->getPlayer(player_name) == nullptr) {
+            UpdateAllPlayers(game, client);
+            break;
+        }
         client->handleWrite("pin " + player.second->getName() + "\n");
         client->selectSocket();
     }
@@ -223,8 +224,6 @@ int irrlichtWindow::runWindow(ZappyGame *game, guiNetworkClient *client)
         client->selectSocket();
         client->handleWrite("sgt\n");
         client->selectSocket();
-
-        createText();
         std::cout << "Running window..." << std::endl;
         while(this->_Device->run()) {
             std::signal(SIGINT, signalHandler);
@@ -236,8 +235,8 @@ int irrlichtWindow::runWindow(ZappyGame *game, guiNetworkClient *client)
                 this->_LinkedGuiClient->selectSocket();
             }
             UpdateAllPlayers(game, client);
-            this->_LinkedZappyGame->getChessBoard()->updateMapItem();
             if (this->_Device->isWindowActive() && (game->getPlatformWidth() != 0 && game->getPlatformHeight() != 0)) {
+                this->_LinkedZappyGame->getChessBoard()->updateMapItem();
                 this->_Driver->beginScene(true, true, irr::video::SColor(255, 100, 101, 140));
                 this->_SceneManager->drawAll();
                 this->_GuiEnv->drawAll(); // Draw the GUI
