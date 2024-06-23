@@ -130,6 +130,19 @@ void items::updateMesh(std::array<irr::scene::IAnimatedMeshSceneNode *, 8> node,
             node[i]->setMaterialFlag(irr::video::EMF_LIGHTING, false);
         }
     }
+    if (node[7] != nullptr && inventory[7] == 0) {
+        node[7]->remove();
+        node[7] = nullptr;
+    } else if (node[7] == nullptr && inventory[7] > 0) {
+        node[7] = _SceneManager->addAnimatedMeshSceneNode(_Egg);
+        node[7]->setScale(irr::core::vector3df(1, 1, 1)); // ny = 31
+        node[7]->setPosition(irr::core::vector3df(
+                x * _ParentchessBoard->getParentWindow()->getLinkedZappyGame()->getTileSize() + 0,
+                38,
+                y * _ParentchessBoard->getParentWindow()->getLinkedZappyGame()->getTileSize() + 0
+        ));
+        node[7]->setMaterialFlag(irr::video::EMF_LIGHTING, false);
+    }
 }
 
 void items::updateText(Tile *tile, std::vector<int> inventory, bool debug)
