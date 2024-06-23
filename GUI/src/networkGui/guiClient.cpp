@@ -23,7 +23,10 @@ guiNetworkClient::guiNetworkClient(irrlichtWindow *linkedWindow)
 
 guiNetworkClient::~guiNetworkClient()
 {
-    close(_Sockfd);
+    if (_Sockfd != -1) {
+        close(_Sockfd);
+    }
+    delete _ServerDataParser;
 }
 
 void guiNetworkClient::createSocket()
@@ -48,9 +51,17 @@ void guiNetworkClient::createSocket()
 
 void guiNetworkClient::handleRead()
 {
-    std::string response = getServerResponse();
-    if (response.size() > 0)
+    std::string response;
+    try {
+        response = getServerResponse();
+    } catch (const std::exception &e) {
+        std::cerr << "Error in handleRead: " << e.what() << std::endl;
+        throw SelectError();
+    }
+    if (!response.empty()) {
+        response.pop_back();
         _HandleServerMessage(response);
+    }
 }
 
 void guiNetworkClient::handleWrite(std::string message)

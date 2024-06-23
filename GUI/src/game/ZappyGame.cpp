@@ -24,6 +24,15 @@ ZappyGame::ZappyGame()
 
 ZappyGame::~ZappyGame()
 {
+    delete _chessPieces;
+    delete _chessBoard;
+    delete _serverDataParser;
+    for (auto& pair : _playerList) {
+        delete pair.second;
+    }
+    for (auto& pair : _teamsList) {
+        delete pair.second;
+    }
 }
 
 void ZappyGame::linkWithDevice(irrlichtWindow *parentDevice)

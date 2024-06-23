@@ -150,14 +150,14 @@ void irrlichtWindow::drawCursor()
     _Driver->draw2DRectangle(_CursorColor, irr::core::rect<irr::s32>(centerX - _CursorThickness, centerY - _CursorLength, centerX + _CursorThickness, centerY + _CursorLength)); // Vertical line
 }
 
-void irrlichtWindow::LinkEventReceiver()
+void irrlichtWindow::LinkEventReceiver(guiNetworkClient* client)
 {
     this->_EventReceiver = new myEventReceiver(this);
     if (this->_EventReceiver == nullptr) {
         throw UnableToCreateEvent();
     }
     this->_Device->setEventReceiver(this->_EventReceiver);
-    this->_EventReceiver->InitEventReceiver();
+    this->_EventReceiver->InitEventReceiver(client);
 }
 
 char *irrlichtWindow::getServerAdress()
@@ -210,6 +210,8 @@ static void UpdateAllPlayers(ZappyGame *game, guiNetworkClient *client)
 
 int irrlichtWindow::runWindow(ZappyGame *game, guiNetworkClient *client)
 {
+    bool isRunning = true;
+
     try {
         client->handleWrite("GRAPHIC\n");
         client->getServerResponse();
@@ -222,11 +224,25 @@ int irrlichtWindow::runWindow(ZappyGame *game, guiNetworkClient *client)
         client->handleWrite("sgt\n");
         client->selectSocket();
         std::cout << "Running window..." << std::endl;
-        while(this->_Device->run()) {
+        while(this->_Device->run() && isRunning) {
             std::signal(SIGINT, signalHandler);
             if (gSignalStatus == SIGINT) {
+                isRunning = false;
                 client->handleWrite("quit\n");
-                std::exit(0);
+                if (_EventReceiver) {
+                    delete _EventReceiver;
+                }
+                if (_ObjLoader) {
+                    delete _ObjLoader;
+                }
+                if (_TextureLoader) {
+                    delete _TextureLoader;
+                }
+                if (_Device) {
+                    _Device->drop();
+                }
+                if (isRunning == false)
+                    return 0;
             }
             for (int i = 0; i < game->getTimeUnit(); i++) {
                 this->_LinkedGuiClient->selectSocket();
