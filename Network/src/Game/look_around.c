@@ -10,18 +10,19 @@
 
 static char *scan_tile(tile_t *tile)
 {
-    char *return_str = calloc(1024, sizeof(char));
+    char *return_str = calloc(8192, sizeof(char));
     char *type_str[] = {"food", "linemate", "deraumere",
     "sibur", "mendiane", "phiras", "thystame"};
 
     for (int i = 0; i < 7; i++) {
-        for (int k = 0; k < tile->inventory[i]; k++) {
+        for (int k = 0; k < tile->inventory[i] &&
+        strlen(return_str) < 8000; k++) {
             strcat(return_str, type_str[i]);
             strcat(return_str, " ");
         }
     }
     for (linked_list_drone_t *tmp = tile->drone_list;
-    tmp != NULL; tmp = tmp->next) {
+    tmp != NULL && strlen(return_str) < 8000; tmp = tmp->next) {
         strcat(return_str, "player");
         strcat(return_str, " ");
     }
@@ -59,13 +60,13 @@ static char *look_at(drone_t *drone, server_t *server, int nb_observable,
     int mov[] = {-level, -level, level, level};
     int ref[2][2] = {{drone->x, drone->y}, {0, 0}};
     int max[] = {server->info_game.width, server->info_game.height};
-    char *return_str = calloc(1024, sizeof(char));
+    char *return_str = calloc(8192, sizeof(char));
     axes_t link[4][2] = {{Y, X}, {X, Y}, {Y, X}, {X, Y}};
     char *tmp;
 
     ref[1][link[ori][0]] =
     (ref[0][link[ori][0]] + mov[ori] + max[link[ori][0]]) % max[link[ori][0]];
-    for (int j = for_s(ori, nb_observable); for_c(ori, j, nb_observable);) {
+    for (int j = for_s(ori, nb_observable); for_c(ori, j, nb_observable) && strlen(return_str) < 8000;) {
         ref[1][link[ori][1]] =
         (ref[0][link[ori][1]] + (j - nb_observable / 2) + max[link[ori][1]]) %
         max[link[ori][1]];
@@ -80,13 +81,13 @@ static char *look_at(drone_t *drone, server_t *server, int nb_observable,
 char *look_around(drone_t *drone, server_t *server)
 {
     int nb_observable;
-    char *return_str = calloc(1024, sizeof(char));
+    char *return_str = calloc(8192, sizeof(char));
     char *tmp2;
 
     if (return_str == NULL)
         return NULL;
     strcat(return_str, "[");
-    for (int i = 0; i < drone->level + 1; i++) {
+    for (int i = 0; i < drone->level + 1 && strlen(return_str) < 8000; i++) {
         nb_observable = (i * 2) + 1;
         tmp2 = look_at(drone, server, nb_observable, i);
         strcat(return_str, tmp2);

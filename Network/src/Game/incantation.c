@@ -29,17 +29,26 @@ bool check_incantation_prerequisites(client_t *client, server_t *server)
 {
     int count;
 
-    if (client->drone->level > 7)
+    if (client->drone->level > 7) {
+        printf("Level 8 reached\n");
         return false;
+    }
     for (int i = 1; i < 7; i++) {
         if (server->game->map[client->drone->x][client->drone->y].inventory[i]
-        < incantation_level_prerequisites[client->drone->level - 1][i])
+        < incantation_level_prerequisites[client->drone->level - 1][i]) {
+            printf("Not enough resources: %d: %d < %d\n", i,
+                server->game->map[client->drone->x][client->drone->y].inventory[i],
+                incantation_level_prerequisites[client->drone->level - 1][i]);
             return false;
+        }
     }
     count = count_players_on_tile_at_lvl(client->drone->x,
         client->drone->y, client->drone->level, server);
-    if (count < incantation_level_prerequisites[client->drone->level - 1][0])
+    if (count < incantation_level_prerequisites[client->drone->level - 1][0]) {
+        printf("Not enough players\n");
         return false;
+    }
+    printf("Incantation prerequisites met\n");
     return true;
 }
 
